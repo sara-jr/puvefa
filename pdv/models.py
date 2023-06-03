@@ -16,7 +16,7 @@ class Article(models.Model):
     quantity = models.IntegerField(default=1, null=False)
     min_quantity = models.IntegerField(default=1, null=False)
     has_iva = models.BooleanField(default=False, null=False)
-    category = models.ForeignKey(Category)
+    category = models.ForeignKey(Category, on_delete=models.RESTRICT)
 
 
 class ExpiryDate(models.Model):
@@ -30,8 +30,8 @@ class Sale(models.Model):
 
 
 class SingleSale(models.Model):
-    article = models.ForeignKey(Article)
-    sale = models.ForeignKey(Sale)
+    article = models.ForeignKey(Article, on_delete=models.RESTRICT)
+    sale = models.ForeignKey(Sale, on_delete=models.RESTRICT)
     quantity = models.IntegerField(default=1, null=False)
 
 
@@ -45,5 +45,5 @@ class Medic(models.Model):
 
 
 class Prescription(models.Model):
-    medic = models.ForeignKey(Medic)
-    sale = models.ForeignKey(SingleSale)
+    medic = models.ForeignKey(Medic, on_delete=models.RESTRICT)
+    sale = models.ForeignKey(SingleSale, on_delete=models.RESTRICT)
