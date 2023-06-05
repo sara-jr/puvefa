@@ -1,0 +1,52 @@
+{% extends 'pdv/base.html' %}
+
+{% block content %}
+  <article class='secondary-container'>
+    <h5>Buscar</h5>
+    <div class='prefix field fill primary extra border'>
+      <i class='large'>search</i>
+      <input type='text' name='buscar' placeholder='Escribir nombre o codigo de barras' />
+    </div>
+  </article>
+
+  <article class='secondary-container responsive max'>
+    <h4>Articulos en esta venta</h4>
+    <table class='border medium-space'>
+      <thead>
+        <tr> <th><h6>Nombre</h6></th> <th><h6>Cantidad</h6></th> <th><h6>Precio</h6></th> <th><h6>Opciones</h6></th> </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Aspirina 500mg</td>
+          <td>5</td>
+          <td>$25.50</td>
+          <td>
+            <nav class='no-space'>
+              <button class='extra circle left-round'><i>add</i></button>
+              <button class='extra circle square'><i>remove</i></button>
+              <button class='extra circle tertiary right-round'><i>delete</i></button>
+            </nav>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th><h5>Total a pagar</h5></th>
+          <td>
+              <p id='total'>$ 1212.00</p>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class='large-space'></div> <!-- BRUH -->
+    <form method='post'>
+      {% csrf_token %}
+      <nav class='no-space'>
+        <button type='submit' class='vertical border left-round primary extra'><i>print</i> Cobrar e imprimir ticket </button>
+        <button type='submit' class='vertical border no-round primary extra'><i>payments</i> Cobrar </button>
+        <button type='button' class='vertical border right-round tertiary extra'><i>close</i> Cancelar venta </button>
+      </nav>
+    </form>
+  </article>
+{% endblock %}
