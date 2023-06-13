@@ -1,11 +1,44 @@
 {% extends 'pdv/base.html' %}
 
 {% block content %}
+<div x-data='{articles:{}}'>
+  <script>
+    function addOrIncrement(articleList, article){
+      if(article.id in articleList){
+        articleList[article.id].quantity++;
+        return;
+      }
+      articleList[article.id] = {...article, quantity: 1};
+    }
+
+    function computeTotal(articleList){
+      return Object.values(articleList).map((a)=>a.price*a.quantity).reduce((a,b)=>a+b, 0);
+    }
+  </script>
   <article class='secondary-container'>
     <h5>Buscar</h5>
     <div class='prefix field fill primary extra border'>
       <i class='large'>search</i>
-      <input type='text' name='buscar' placeholder='Escribir nombre o codigo de barras' />
+      <input type='text' name='barname' 
+      placehoder='Escribir nombre o codigo de barras' autofocus />
+      <menu class="min">
+        <header class="fixed">
+          <div class="field large prefix suffix no-margin">
+            <i class="front">arrow_back</i>
+            <input
+              hx-get="/pdv/activesearch"
+              hx-trigger="keyup changed delay:200ms"
+              hx-target="#search-results" 
+              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'            
+              pattern='.{2,}'
+              name='barname'
+              placeholder='Escribir nombre o codigo de barras'/>
+            <i class="front">close</i>
+          </div>
+        </header>
+        <div id='search-results'>
+        </div>
+      </menu>
     </div>
   </article>
 
@@ -13,27 +46,46 @@
     <h4>Articulos en esta venta</h4>
     <table class='border medium-space'>
       <thead>
-        <tr> <th><h6>Nombre</h6></th> <th><h6>Cantidad</h6></th> <th><h6>Precio</h6></th> <th><h6>Opciones</h6></th> </tr>
+        <tr> 
+          <th><h6>Nombre</h6></th> 
+          <th><h6>Cantidad</h6></th> 
+          <th><h6>Precio</h6></th> 
+          <th><h6>Opciones</h6></th> 
+        </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Aspirina 500mg</td>
-          <td>5</td>
-          <td>$25.50</td>
-          <td>
-            <nav class='no-space'>
-              <button class='extra circle left-round'><i>add</i></button>
-              <button class='extra circle square'><i>remove</i></button>
-              <button class='extra circle tertiary right-round'><i>delete</i></button>
-            </nav>
-          </td>
-        </tr>
+        <template x-for='article in Object.values(articles)'>
+          <tr x-transition>
+            <td><p class='large-text' x-text='article.name'></p></td>
+            <td x-text='article.quantity'></td>
+            <td>$<span x-text='article.price'></span></td>
+            <td>
+              <nav class='no-space'>
+                <button 
+                x-on:click='article.quantity++' 
+                class='extra circle left-round'>
+                  <i>add</i>
+                </button>
+                <button 
+                x-on:click='article.quantity--' 
+                class='extra circle square'>
+                  <i>remove</i>
+                </button>
+                <button 
+                x-on:click='delete articles[article.id]'
+                class='extra circle tertiary right-round'>
+                  <i>delete</i>
+                </button>
+              </nav>
+            </td>
+          </tr>
+        </template>
       </tbody>
       <tfoot>
         <tr>
           <th><h5>Total a pagar</h5></th>
           <td>
-              <p id='total'>$ 1212.00</p>
+              $<span x-text='computeTotal(articles)'></span>
           </td>
         </tr>
       </tfoot>
@@ -49,4 +101,5 @@
       </nav>
     </form>
   </article>
+<div>
 {% endblock %}
