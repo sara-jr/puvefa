@@ -14,30 +14,32 @@
     function computeTotal(articleList){
       return Object.values(articleList).map((a)=>a.price*a.quantity).reduce((a,b)=>a+b, 0);
     }
+
+    window.onkeydown = function(){
+      const element = document.getElementById('barname-search');
+      element.focus()
+    };
+    
   </script>
   <article class='secondary-container'>
     <h5>Buscar</h5>
-    <div class='prefix field fill primary extra border'>
-      <i class='large'>search</i>
-      <input type='text' name='barname' 
-      placehoder='Escribir nombre o codigo de barras' autofocus />
-      <menu class="min">
-        <header class="fixed">
-          <div class="field large prefix suffix no-margin">
-            <i class="front">arrow_back</i>
-            <input
-              hx-get="/pdv/activesearch"
-              hx-trigger="keyup changed delay:200ms"
-              hx-target="#search-results" 
-              hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'            
-              pattern='.{2,}'
-              name='barname'
-              placeholder='Escribir nombre o codigo de barras'/>
-            <i class="front">close</i>
-          </div>
-        </header>
-        <div id='search-results'>
-        </div>
+    <div>
+      <div class='field fill primary large border'>
+        <input type='text'
+          id='barname-search'
+          hx-get="/pdv/activesearch"
+          hx-trigger="keyup changed delay:200ms"
+          hx-target="#search-results" 
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'            
+          pattern='.{2,}'
+          name='barname'
+          onblur='this.value = ""; this.classList.toggle("shake")'
+          onfocus='this.classList.toggle("shake")'
+          autofocus
+          placeholder='Escribir nombre o codigo de barras'/>
+        <i class="front">close</i>
+      </div>
+      <menu id='search-results'>
       </menu>
     </div>
   </article>
@@ -55,7 +57,7 @@
       </thead>
       <tbody>
         <template x-for='article in Object.values(articles)'>
-          <tr x-transition>
+          <tr class='slideRight'>
             <td><p class='large-text' x-text='article.name'></p></td>
             <td x-text='article.quantity'></td>
             <td>$<span x-text='article.price'></span></td>
@@ -97,9 +99,17 @@
       <nav class='no-space'>
         <button type='submit' class='vertical border left-round primary extra'><i>print</i> Cobrar e imprimir ticket </button>
         <button type='submit' class='vertical border no-round primary extra'><i>payments</i> Cobrar </button>
-        <button type='button' class='vertical border right-round tertiary extra'><i>close</i> Cancelar venta </button>
+        <button type='button' @click='$refs.confirm_dialog.open = true' class='vertical border right-round tertiary extra'><i>close</i> Cancelar venta </button>
       </nav>
     </form>
+    <dialog class='modal' x-ref='confirm_dialog'>
+      <h5>Advertencia</h5>
+      <div class='row'>¿Cancelar la venta?</div>
+      <nav>
+        <button @click='$refs.confirm_dialog.open=false; articles={}'><i>check</i></button>
+        <button @click='$refs.confirm_dialog.open=false'><i>close</i></button>
+      </nav>
+    </dialog>
   </article>
 <div>
 {% endblock %}

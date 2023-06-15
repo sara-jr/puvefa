@@ -15,9 +15,9 @@ def sell(request):
 def active_search(request):
     barname = request.GET['barname']
     articles = Article.objects.filter(
-        Q(name__contains=barname) | Q(barcode__contains=barname))
+        Q(name__contains=barname) | Q(barcode__contains=barname))[:20]
     html = ''.join(map(lambda article: f'''
-        <a class="row" 
+        <a class="row wave" 
         @click='addOrIncrement(articles, $el.dataset)'
         data-name="{article.name}" 
         data-id="{article.id}" 
