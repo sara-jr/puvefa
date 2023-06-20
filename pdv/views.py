@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse
 from django.db.models import Q
 from django.core import serializers
-from .models import Article
+from .models import Article, SingleSale, Sale
+from decimal import localcontext, Decimal
 
 
 # Create your views here.
@@ -17,12 +18,15 @@ def active_search(request):
     articles = Article.objects.filter(
         Q(name__contains=barname) | Q(barcode__contains=barname))[:20]
     html = ''.join(map(lambda article: f'''
-        <a class="row wave" 
+        <a
         @click='addOrIncrement(articles, $el.dataset)'
-        data-name="{article.name}" 
-        data-id="{article.id}" 
+        class='row'
+        data-name="{article.name}"
+        data-id="{article.id}"
         data-price="{article.price}">
-            <i>arrow_right_alt</i><div>{article.name}</div>
+            <i>barcode</i>   
+            <span>{article.barcode}</span>
+            <span>{article.name}</span>
         </a>
         ''', articles))
     return HttpResponse(html)
@@ -34,3 +38,20 @@ def article_search(request):
         Q(name__contains=barname) | Q(barcode__contains=barname)
         )))
     return JsonResponse(data, safe=False)
+
+
+def make_sale(request):
+    if request.method != 'POST':
+        return redirect('pdv:sell')
+        
+    sale = Sale.objects.create(amount_payed=0)
+    sale.save()
+    sale_data = request.POST.dict()
+    del sale_data['csrfmiddlewaretoken']
+    with localcontext(prec=12):
+        for id, quantity in sale_data.items():
+            article = Article.objects.get(id=id)
+            ssale = SingleSale.objects.create(article=article, sale=sale, quantity=quantity)
+            sale.amount_payed += article.price * Decimal(ssale.quantity)
+            ssale.save()
+    return redirect('pdv:sell')

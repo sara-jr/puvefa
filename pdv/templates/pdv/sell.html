@@ -1,5 +1,7 @@
 {% extends 'pdv/base.html' %}
 
+{% block title %}Ventas{% endblock %}
+
 {% block content %}
 <div x-data='{articles:{}}'>
   <script>
@@ -17,18 +19,25 @@
 
     window.onkeydown = function(){
       const element = document.getElementById('barname-search');
-      element.focus()
+      element.focus();
     };
+    
+    window.onkeyup = function(){
+      let el = document.getElementById('search-results');
+      el.children[0].focus();
+    }
     
   </script>
   <article class='secondary-container'>
-    <h5>Buscar</h5>
-    <div>
-      <div class='field fill primary large border'>
-        <input type='text'
+    <h5>Venta</h5>
+    <br>
+    <div class='container'>
+      <div class='suffix field prefix fill primary large border'>
+        <i class='front'>barcode_reader</i>
+        <input type='search'
           id='barname-search'
           hx-get="/pdv/activesearch"
-          hx-trigger="keyup changed delay:200ms"
+          hx-trigger="keyup changed delay:300ms"
           hx-target="#search-results" 
           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'            
           pattern='.{2,}'
@@ -39,13 +48,9 @@
           placeholder='Escribir nombre o codigo de barras'/>
         <i class="front">close</i>
       </div>
-      <menu id='search-results'>
+      <menu x-ref='searchres' id='search-results'>
       </menu>
     </div>
-  </article>
-
-  <article class='secondary-container responsive max'>
-    <h4>Articulos en esta venta</h4>
     <table class='border medium-space'>
       <thead>
         <tr> 
@@ -94,11 +99,14 @@
     </table>
 
     <div class='large-space'></div> <!-- BRUH -->
-    <form method='post'>
+    <form method='post' action='{% url "pdv:makesale" %}'>
       {% csrf_token %}
       <nav class='no-space'>
+        <template x-for='article in articles'>
+          <input type='hidden' x-bind:name='article.id' x-bind:value='article.quantity' />
+        </template>
         <button type='submit' class='vertical border left-round primary extra'><i>print</i> Cobrar e imprimir ticket </button>
-        <button type='submit' class='vertical border no-round primary extra'><i>payments</i> Cobrar </button>
+        <button type='submit' @click='$refs.articles_input.value = articles' class='vertical border no-round primary extra'><i>payments</i> Cobrar </button>
         <button type='button' @click='$refs.confirm_dialog.open = true' class='vertical border right-round tertiary extra'><i>close</i> Cancelar venta </button>
       </nav>
     </form>
