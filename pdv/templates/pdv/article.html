@@ -1,0 +1,16 @@
+{% extends 'pdv/base.html' %}
+
+{% block title %}Ventas{% endblock %}
+
+{% block content %}
+  <article>
+    <form>
+      {% for field in form %}
+        <div class='field label border round'>
+          {{ field }} {{ field.label_tag }}
+        </div>
+      {% endfor %}
+      <button class='extra' type='submit'>Guardar</button>
+    </form>
+  </article>
+{% endblock %}

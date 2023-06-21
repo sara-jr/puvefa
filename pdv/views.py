@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.core import serializers
 from .models import Article, SingleSale, Sale
 from decimal import localcontext, Decimal
+from .forms import ArticleForm
 
 
 # Create your views here.
@@ -55,3 +56,7 @@ def make_sale(request):
             sale.amount_payed += article.price * Decimal(ssale.quantity)
             ssale.save()
     return redirect('pdv:sell')
+
+def article(request):
+    form = ArticleForm()    
+    return render(request, 'pdv/article.html', {'form': form})
