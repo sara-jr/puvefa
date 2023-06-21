@@ -22,10 +22,6 @@
       element.focus();
     };
     
-    window.onkeyup = function(){
-      let el = document.getElementById('search-results');
-      el.children[0].focus();
-    }
     
   </script>
   <article class='secondary-container'>
@@ -51,52 +47,24 @@
       <menu x-ref='searchres' id='search-results'>
       </menu>
     </div>
-    <table class='border medium-space'>
-      <thead>
-        <tr> 
-          <th><h6>Nombre</h6></th> 
-          <th><h6>Cantidad</h6></th> 
-          <th><h6>Precio</h6></th> 
-          <th><h6>Opciones</h6></th> 
-        </tr>
-      </thead>
-      <tbody>
-        <template x-for='article in Object.values(articles)'>
-          <tr class='slideRight'>
-            <td><p class='large-text' x-text='article.name'></p></td>
-            <td x-text='article.quantity'></td>
-            <td>$<span x-text='article.price'></span></td>
-            <td>
-              <nav class='no-space'>
-                <button 
-                x-on:click='article.quantity++' 
-                class='extra circle left-round'>
-                  <i>add</i>
-                </button>
-                <button 
-                x-on:click='article.quantity--' 
-                class='extra circle square'>
-                  <i>remove</i>
-                </button>
-                <button 
-                x-on:click='delete articles[article.id]'
-                class='extra circle tertiary right-round'>
-                  <i>delete</i>
-                </button>
-              </nav>
-            </td>
-          </tr>
-        </template>
-      </tbody>
-      <tfoot>
-        <tr>
-          <th><h5>Total a pagar</h5></th>
-          <td>
-              $<span x-text='computeTotal(articles)'></span>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+
+    <div>
+    <div class='row'><h4>Total: </h4> <h5>$<p x-text='computeTotal(articles)'></p></h5></div>
+      <template x-for='article in articles'>
+        <div class='row min slideRight'>
+          <p class='max' x-text='article.name'></p>
+          <p>$<p class='max' x-text='article.price'></p></p>
+          <nav class='no-space'>
+            <button class='border large left-round' @click='article.quantity++'><i>add</i></button>
+            <div class='field min border no-round border'>
+              <input type='number' min='1' x-model='article.quantity'/>
+            </div> 
+            <button class='border large right-round' @click='article.quantity = article.quantity > 1? article.quantity - 1 : 1'><i>remove</i></button>
+          </nav>
+          <a class='circle tertiary' @click='delete articles[article.id]'><i>delete</i></a>
+          </div>
+      </template>
+    </div>
 
     <div class='large-space'></div> <!-- BRUH -->
     <form method='post' action='{% url "pdv:makesale" %}'>
