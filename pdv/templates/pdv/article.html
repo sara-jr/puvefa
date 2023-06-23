@@ -1,15 +1,65 @@
 {% extends 'pdv/base.html' %}
 
-{% block title %}Ventas{% endblock %}
+{% block title %}Administración de articulo{% endblock %}
 
 {% block content %}
   <article>
-    <form>
-      {% for field in form %}
+    <h4>Articulo</h4>
+    <br>
+    <form action='{% url "pdv:article" %}' method='{{ method }}'>
+        {% csrf_token %}
         <div class='field label border round'>
-          {{ field }} {{ field.label_tag }}
+          {{ form.name }} {{ form.name.label_tag }}
         </div>
-      {% endfor %}
+        <div class='field label border round'>
+          {{ form.description }} {{ form.description.label_tag }}
+        </div>
+        <div class='field label border round'>
+          {{ form.barcode }} {{ form.barcode.label_tag }}
+        </div>
+
+        <!-- ALPINE ROOT -->
+        <div x-data='{price:0,purchase_price:0,percent:20}'>
+          <div class='field label border round'>
+              <input type='number' id='{{ form.purchase_price.id_for_label }}' 
+              name='{{ form.price.html_name }}' 
+              x-model='purchase_price' 
+              value='{{ form.purchase_price.value }}' />
+              {{ form.purchase_price.label_tag }}
+          </div>
+          <div class='row'>
+            <div class='field label border round'>
+              <input type='number' id='{{ form.price.id_for_label }}' 
+              name='{{ form.price.html_name }}' 
+              x-model='price' 
+              value='{{ form.price.value }}' />
+              {{ form.price.label_tag }}
+            </div>
+            <button type='button' @click='price = percent*purchase_price/100'>
+              Calcular en base a porcentaje de ganancia
+            </button>
+            <div class='field label prefix border round'>
+              <i>percent</i>
+              <input type='number' value='20' x-model='percent' />
+            </div>
+          </div>
+        </div>
+        <!-- ALPINE -->
+          
+        <div class='field label border round'>
+          {{ form.quantity }} {{ form.quantity.label_tag }}
+        </div>
+        <div class='field label border round'>
+          {{ form.min_quantity }} {{ form.min_quantity.label_tag }}
+        </div>
+        <label class='checkbox'>
+          {{ form.has_iva }} 
+          <span><h4>Incluye IVA</h4></span>
+        </label>
+        <div class='field label border round'>
+          {{ form.category }} {{ form.category.label_tag }}
+        </div>
+
       <button class='extra' type='submit'>Guardar</button>
     </form>
   </article>

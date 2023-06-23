@@ -3,20 +3,20 @@ from django.db import models
 
 # Create your models here.
 class Category(models.Model):
-    name = models.CharField(max_length=256, null=False)
-    description = models.TextField(null=True)
+    name = models.CharField(verbose_name='Nombre de categoria', max_length=256, null=False)
+    description = models.TextField(verbose_name='Descripcion', null=True)
 
 
 class Article(models.Model):
-    name = models.CharField(max_length=256, unique=True, null=False)
-    description = models.TextField(null=True)
-    barcode = models.CharField(max_length=48, unique=True)
-    price = models.DecimalField(max_digits=8, decimal_places=2, null=False)
-    purchase_price = models.DecimalField(max_digits=8, decimal_places=2, null=False)
-    quantity = models.IntegerField(default=1, null=False)
-    min_quantity = models.IntegerField(default=1, null=False)
-    has_iva = models.BooleanField(default=False, null=False)
-    category = models.ForeignKey(Category, on_delete=models.RESTRICT)
+    name = models.CharField(verbose_name='Nombre del articulo', max_length=256, unique=True, null=False)
+    description = models.TextField(verbose_name='Descripcion', null=True)
+    barcode = models.CharField(verbose_name='Codigo de barras', max_length=48, unique=True)
+    price = models.DecimalField(verbose_name='Precio de venta', max_digits=8, decimal_places=2, null=False)
+    purchase_price = models.DecimalField(verbose_name='Precio de compra', max_digits=8, decimal_places=2, null=False)
+    quantity = models.IntegerField(verbose_name='Cantidad', default=1, null=False)
+    min_quantity = models.IntegerField(verbose_name='Cantidad minima', default=1, null=False)
+    has_iva = models.BooleanField(verbose_name='Incluye IVA', default=False, null=False)
+    category = models.ForeignKey(Category, verbose_name='Categoria', on_delete=models.RESTRICT)
 
 
 class ExpiryDate(models.Model):
