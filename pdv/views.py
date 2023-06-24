@@ -58,5 +58,15 @@ def make_sale(request):
     return redirect('pdv:sell')
 
 def article(request):
-    form = ArticleForm()    
+    form = ArticleForm()
+    return render(request, 'pdv/article.html', {'form': form})
+
+def article_get(request, id):
+    if request.method == 'PUT':
+        print(request.PUT)
+        article = Article.objects.get(id=id).update(**request.PUT)
+        return redirect('pdv:sell')
+
+    article = Article.objects.get(id=id)
+    form = ArticleForm(instance=article)
     return render(request, 'pdv/article.html', {'form': form})

@@ -10,20 +10,18 @@
 </div>
 
 <!-- ALPINE ROOT -->
-<div x-data='{price:0,purchase_price:0,percent:20}'>
+<div x-data='{price:{{form.price.value}},purchase_price:{{form.purchase_price.value}},percent:20}'>
   <div class='field label border round'>
       <input type='number' id='{{ form.purchase_price.id_for_label }}' 
       name='{{ form.price.html_name }}' 
-      x-model='purchase_price' 
-      value='{{ form.purchase_price.value }}' />
+      x-model='purchase_price' />
       {{ form.purchase_price.label_tag }}
   </div>
   <div class='row'>
     <div class='field label border round'>
-      <input type='number' id='{{ form.price.id_for_label }}' 
+      <input type='number' inc='0.01' id='{{ form.price.id_for_label }}' 
       name='{{ form.price.html_name }}' 
-      x-model='price' 
-      value='{{ form.price.value }}' />
+      x-model='price' />
       {{ form.price.label_tag }}
     </div>
     <button type='button' @click='price = percent*purchase_price/100'>
