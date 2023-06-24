@@ -2,6 +2,7 @@ from django import forms
 from .models import Article
 
 class ArticleForm(forms.ModelForm):
+    template_name = 'pdv/article-form.html'
     class Meta:
         model = Article
         fields = [        
