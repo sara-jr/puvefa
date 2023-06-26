@@ -10,26 +10,28 @@
 </div>
 
 <!-- ALPINE ROOT -->
-<div x-data='{price:{{form.price.value}},purchase_price:{{form.purchase_price.value}},percent:20}'>
+<div x-data='{price:"{{form.price.value}}",purchase_price:"{{form.purchase_price.value}}",percent:20}'>
   <div class='field label border round'>
       <input type='number' id='{{ form.purchase_price.id_for_label }}' 
-      name='{{ form.price.html_name }}' 
+      step='0.01'
+      min='1'
+      name='{{ form.purchase_price.html_name }}' 
       x-model='purchase_price' />
       {{ form.purchase_price.label_tag }}
   </div>
   <div class='row'>
     <div class='field label border round'>
-      <input type='number' inc='0.01' id='{{ form.price.id_for_label }}' 
+      <input type='number' step='0.01' id='{{ form.price.id_for_label }}' 
       name='{{ form.price.html_name }}' 
       x-model='price' />
       {{ form.price.label_tag }}
     </div>
-    <button type='button' @click='price = percent*purchase_price/100'>
+    <button type='button' @click='price = currency(purchase_price).multiply(1 + percent/100)'>
       Calcular en base a porcentaje de ganancia
     </button>
     <div class='field label prefix border round'>
       <i>percent</i>
-      <input type='number' value='20' x-model='percent' />
+      <input type='number' step='1' min='1' value='20' x-model='percent' />
     </div>
   </div>
 </div>

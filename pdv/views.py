@@ -62,11 +62,17 @@ def article(request):
     return render(request, 'pdv/article.html', {'form': form})
 
 def article_get(request, id):
-    if request.method == 'PUT':
-        print(request.PUT)
-        article = Article.objects.get(id=id).update(**request.PUT)
-        return redirect('pdv:sell')
-
     article = Article.objects.get(id=id)
+    context = {}
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            form.save()
+        else:
+            context['error'] = form.errors
+        return render(request, 'pdv/sell.html', context)
+
     form = ArticleForm(instance=article)
-    return render(request, 'pdv/article.html', {'form': form})
+    context['form'] = form.render()
+    context['id'] = id
+    return render(request, 'pdv/article.html', context)

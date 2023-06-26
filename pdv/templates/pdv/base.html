@@ -14,14 +14,15 @@
 
   <link rel="stylesheet" href="{% static 'pdv/css/wickedcss.min.css' %}">
   <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
-  <script type="module" src="https://unpkg.com/minze@latest/dist/module.js" refer></script>
+  <script src="https://unpkg.com/currency.js@~2.0.0/dist/currency.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="{% static 'pdv/components.js' %}"></script>
 </head>
 <body class='dark'>
+  <div @click='$el.classList.toggle("active")' x-data class="toast error top {% if error %} active {% endif %}">{{ error }}</div>
   <header class='primary-container'>
     <nav>
-      <h4 class='max'>{{ title }}</h4> <button>Ventas</button> <button>Articulos</button> <button>Administracion</button>
+      <h4 class='max'></h4> <button>Ventas</button> <button>Articulos</button> <button>Administracion</button>
     </nav>
   </header>
   <main class='responsive max center padding'>
