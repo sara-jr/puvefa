@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse
@@ -59,7 +60,16 @@ def make_sale(request):
 
 def article(request):
     form = ArticleForm()
-    return render(request, 'pdv/article.html', {'form': form})
+    context = {'name':'Artículo', 'url':reverse('pdv:article')}
+    if request.method == 'POST':
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            context['error'] = form.errors
+        return render(request, 'pdv/sell.html', context)
+    context['form'] = form.render()
+    return render(request, 'pdv/post-form.html', context)
 
 def article_get(request, id):
     article = Article.objects.get(id=id)
