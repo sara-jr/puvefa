@@ -1,0 +1,39 @@
+{% extends 'pdv/base.html' %}
+
+{% block title %} Lista {% endblock %}
+
+{% block content %}
+  <article>
+    <table>
+    <thead>
+      <tr>
+        <th> </th>
+        <th>Nombre</th>
+        <th>Cantidad</th>
+        <th>Precio Venta</th>
+        <th>Precio Compra</th>
+      </tr> 
+    </thead>
+    <tbody>
+    {% for article in articles %}
+      <tr 
+      {% if article.quantity <= article.min_quantity %}
+        class='tertiary-container'
+      {% endif %}>
+          <td>
+            <nav class='s1 no-space'>
+              <a href='{% url "pdv:article_existing" article.id %}' class='left-round small'><div class='tooltip'>Editar el artículo</div><i>edit</i></a>
+            </nav>
+          </td>
+          <td>
+            {{ article.name }}
+          </td>
+          <td>{{ article.quantity }}</td>
+          <td>${{ article.price }}</td>
+          <td>${{ article.purchase_price }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+  </article>
+{% endblock %}

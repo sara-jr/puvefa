@@ -86,3 +86,11 @@ def article_get(request, id):
     context['form'] = form.render()
     context['id'] = id
     return render(request, 'pdv/article.html', context)
+
+def list_articles(request):
+    context = {}
+    index = int(request.GET['index'])
+    if index <= 0:
+        index = 1
+    context['articles'] = Article.objects.all()[:50*index]
+    return render(request, 'pdv/list.html', context)
