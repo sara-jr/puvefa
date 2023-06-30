@@ -1,3 +1,4 @@
+import math
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
@@ -89,8 +90,10 @@ def article_get(request, id):
 
 def list_articles(request):
     context = {}
-    index = int(request.GET['index'])
-    if index <= 0:
+    index = int(request.GET.get('index', 1))
+    indexes = math.ceil(Article.objects.count() / 50)
+    if index <= 0 or index > indexes:
         index = 1
-    context['articles'] = Article.objects.all()[:50*index]
+    context['articles'] = Article.objects.all()[50*(index-1):50*index]
+    context['indexes'] = range(1, indexes+1)
     return render(request, 'pdv/list.html', context)

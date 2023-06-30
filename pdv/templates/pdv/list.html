@@ -35,5 +35,11 @@
     {% endfor %}
     </tbody>
     </table>
+
+    <div class='row bottom-align center-align'>
+    {% for index in indexes %}
+      <a class='chip border' href='{% url "pdv:article_list" %}?index={{ index }}'>{{ index }}</a>
+    {% endfor %}
+    </div>
   </article>
 {% endblock %}
