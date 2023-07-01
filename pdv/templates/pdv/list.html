@@ -4,6 +4,11 @@
 
 {% block content %}
   <article>
+    <div class='row top-align center-align'>
+      <a class='chip border' href='{% url "pdv:article_list" "all" 1 %}'>Todos</a>
+      <a class='chip border' href='{% url "pdv:article_list" "low" 1 %}'>En baja cantidad</a>
+      <a class='chip border' href='{% url "pdv:article_list" "soldout" 1 %}'>Agotados</a>
+    </div>
     <table>
     <thead>
       <tr>
@@ -37,8 +42,12 @@
     </table>
 
     <div class='row bottom-align center-align'>
-    {% for index in indexes %}
-      <a class='chip border' href='{% url "pdv:article_list" %}?index={{ index }}'>{{ index }}</a>
+    {% for i in indexes %}
+      <a 
+      {% if i == index %}class='chip'{% else %}class='chip border'{% endif %}
+      href='{% url "pdv:article_list" filter i %}'>
+        {{ i }}
+      </a>
     {% endfor %}
     </div>
   </article>

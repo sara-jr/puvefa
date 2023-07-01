@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse
-from django.db.models import Q
+from django.db.models import Q, F
 from django.core import serializers
 from .models import Article, SingleSale, Sale
 from decimal import localcontext, Decimal
@@ -88,12 +88,21 @@ def article_get(request, id):
     context['id'] = id
     return render(request, 'pdv/article.html', context)
 
-def list_articles(request):
-    context = {}
-    index = int(request.GET.get('index', 1))
-    indexes = math.ceil(Article.objects.count() / 50)
+def list_articles(request, filter, index):
+    ITEMS_PER_PAGE = 3
+    context = {'filter':filter, 'index':index}
+    indexes = math.ceil(Article.objects.count() / ITEMS_PER_PAGE)
     if index <= 0 or index > indexes:
         index = 1
-    context['articles'] = Article.objects.all()[50*(index-1):50*index]
+
+    FILTERS = {
+        'low':Q(quantity__lte=F('min_quantity')),
+        'soldout':Q(quantity=0)
+    }
+
+    if filter == 'all':
+        context['articles'] = Article.objects.all()[ITEMS_PER_PAGE*(index-1):ITEMS_PER_PAGE*index]
+    else:
+        context['articles'] = Article.objects.filter(FILTERS[filter])[ITEMS_PER_PAGE*(index-1):ITEMS_PER_PAGE*index]
     context['indexes'] = range(1, indexes+1)
     return render(request, 'pdv/list.html', context)
