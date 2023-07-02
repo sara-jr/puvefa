@@ -89,20 +89,20 @@ def article_get(request, id):
     return render(request, 'pdv/article.html', context)
 
 def list_articles(request, filter, index):
-    ITEMS_PER_PAGE = 3
-    context = {'filter':filter, 'index':index}
-    indexes = math.ceil(Article.objects.count() / ITEMS_PER_PAGE)
-    if index <= 0 or index > indexes:
-        index = 1
-
+    ITEMS_PER_PAGE = 10
     FILTERS = {
         'low':Q(quantity__lte=F('min_quantity')),
         'soldout':Q(quantity=0)
     }
 
-    if filter == 'all':
-        context['articles'] = Article.objects.all()[ITEMS_PER_PAGE*(index-1):ITEMS_PER_PAGE*index]
-    else:
-        context['articles'] = Article.objects.filter(FILTERS[filter])[ITEMS_PER_PAGE*(index-1):ITEMS_PER_PAGE*index]
+    articles = Article.objects.all()
+    context = {'filter':filter, 'index':index}
+    if filter != 'all':
+        articles = articles.filter(FILTERS[filter])
+    indexes = math.ceil(articles.count() / ITEMS_PER_PAGE)
+    
+    if index <= 0 or index > indexes:
+        index = 1
+    context['articles'] = articles[(index - 1)*ITEMS_PER_PAGE:index*ITEMS_PER_PAGE]
     context['indexes'] = range(1, indexes+1)
     return render(request, 'pdv/list.html', context)
