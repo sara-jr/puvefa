@@ -22,7 +22,18 @@
   <div @click='$el.classList.toggle("active")' x-data class="toast error top {% if error %} active {% endif %}">{{ error }}</div>
   <header class='primary-container'>
     <nav>
-      <h4 class='max'></h4> <button>Ventas</button> <button>Articulos</button> <button>Administracion</button>
+      <h4 class='max'></h4> 
+      <div>
+        <p x-data='{date:new Date()}' 
+        x-init='setInterval(()=>date = new Date(), 60000)'
+        x-text='date.toLocaleTimeString("es-MX",{timeStyle:"short"})'></p>
+      </div>
+      <a href='{% url "pdv:makesale" %}' class='chip transparent' >
+        Ventas
+      </a> 
+      <a href='{% url "pdv:article_list" "all" 1 %}' class='chip transparent' >
+        Articulos
+      </a> 
     </nav>
   </header>
   <main class='responsive max center padding'>
