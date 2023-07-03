@@ -95,10 +95,13 @@ def list_articles(request, filter, index):
         'soldout':Q(quantity=0)
     }
 
+    barname = request.GET.get('barname', '')
     articles = Article.objects.all()
     context = {'filter':filter, 'index':index}
     if filter != 'all':
         articles = articles.filter(FILTERS[filter])
+    if barname != '':
+        articles = articles.filter(Q(name__contains=barname)|Q(barcode=barname))
     indexes = math.ceil(articles.count() / ITEMS_PER_PAGE)
     
     if index <= 0 or index > indexes:

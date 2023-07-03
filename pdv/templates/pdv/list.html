@@ -5,14 +5,23 @@
 {% block content %}
   <article>
     <div class='row top-align center-align'>
+      <form class='max' action='{% url "pdv:article_list" filter 1 %}' method='GET'>
+        <div class='fill field border primary prefix'>
+          <i class='front'>barcode_reader</i>
+          <input type='text' name='barname' 
+          placeholder='Escribir nombre o código de barras'/>
+        </div>
+      </form>
       <a class='chip border' href='{% url "pdv:article_list" "all" 1 %}'>Todos</a>
       <a class='chip border' href='{% url "pdv:article_list" "low" 1 %}'>En baja cantidad</a>
       <a class='chip border' href='{% url "pdv:article_list" "soldout" 1 %}'>Agotados</a>
     </div>
+    <br/>
     <table>
     <thead>
       <tr>
         <th> </th>
+        <th>Código de Barras</th>
         <th>Nombre</th>
         <th>Cantidad</th>
         <th>Precio Venta</th>
@@ -30,9 +39,8 @@
               <a href='{% url "pdv:article_existing" article.id %}' class='left-round small'><div class='tooltip'>Editar el artículo</div><i>edit</i></a>
             </nav>
           </td>
-          <td>
-            {{ article.name }}
-          </td>
+          <td>{{ article.barcode }}</td>
+          <td>{{ article.name }}</td>
           <td>{{ article.quantity }}</td>
           <td>${{ article.price }}</td>
           <td>${{ article.purchase_price }}</td>
