@@ -9,5 +9,6 @@ urlpatterns = [
     path('makesale/', views.make_sale, name='makesale'),
     path('article/', views.article, name='article'),
     path('article/<int:id>/', views.article_get, name='article_existing'),
-    path('articles/<str:filter>/<int:index>/', views.list_articles, name='article_list')
+    path('articles/<str:filter>/<int:index>/', views.list_articles, name='article_list'),
+    path('sales/today/', views.daily_sales, name='daily_sales'),
 ]

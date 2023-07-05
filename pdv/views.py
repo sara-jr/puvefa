@@ -1,4 +1,6 @@
+from functools import reduce
 import math
+import datetime
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
@@ -109,3 +111,21 @@ def list_articles(request, filter, index):
     context['articles'] = articles[(index - 1)*ITEMS_PER_PAGE:index*ITEMS_PER_PAGE]
     context['indexes'] = range(1, indexes+1)
     return render(request, 'pdv/list.html', context)
+
+def daily_sales(request):
+    sales = Sale.objects.filter(date__gte=datetime.date.today())
+    items_sold = SingleSale.objects.filter(sale__in=sales)
+    context = {}
+    with localcontext(prec=12):
+        context['total_count'] = reduce(
+            lambda value, ssale: value + ssale.quantity,
+            items_sold, 0)
+        context['total_sold'] = reduce(
+            lambda value, ssale: value + ssale.article.price*ssale.quantity,
+            items_sold, Decimal(0.0))
+        context['total_purchased'] = reduce(
+            lambda value, ssale: value + ssale.article.purchase_price*ssale.quantity,
+            items_sold, Decimal(0.0))
+        context['gain'] = context['total_sold'] - context['total_purchased']
+        context['gain_percentage'] = round(100 - context['total_purchased']/context['total_sold']*100,2)
+    return render(request, 'pdv/sale-daily.html', context)
