@@ -8,6 +8,7 @@
       Buscando artículos  
     </h4>
     <div class='row top-align center-align'>
+      <a class='chip fill' href='{% url "pdv:article" %}'><i>add</i>Agregar producto</a>
       <form class='max' action='{% url "pdv:article_list" filter 1 %}' method='GET'>
         <div class='fill field border primary prefix'>
           <i class='front'>barcode_reader</i>
