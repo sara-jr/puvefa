@@ -23,10 +23,10 @@
   <header class='primary-container'>
     <nav>
       <h4 class='max'></h4> 
-      <div>
-        <p x-data='{date:new Date()}' 
-        x-init='setInterval(()=>date = new Date(), 60000)'
-        x-text='date.toLocaleTimeString("es-MX",{timeStyle:"short"})'></p>
+      <div class='max'>
+        <h4 x-data='{date:new Date()}' 
+        x-init='setInterval(()=>date = new Date(), 1000)'
+        x-text='date.toLocaleTimeString("es-MX",{timeStyle:"medium"})'></h4>
       </div>
       <a href='{% url "pdv:makesale" %}' class='chip transparent' >
         Ventas
