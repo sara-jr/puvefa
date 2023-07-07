@@ -1,0 +1,42 @@
+{% extends 'pdv/base.html' %}
+{% block content %}
+  <article>
+    {% if sale_count == 0 %}
+      <h3>Ninguna venta realizada</h3>
+    {% else %}
+      {% if begin == end %}
+        <h4>Ventas del día {{ begin }}</h4>
+      {% else %}
+        <h4>Ventas entre los dias {{ begin }} y {{ end }}</h4>
+      {% endif %}
+      <table>
+        <tbody>
+          <tr>
+            <th>Numero de ventas</th>
+            <td>{{sale_count}}</td>
+          </tr>
+          <tr>
+            <th>Numero de artículos vendidos</th>
+            <td>{{total_count}}</td>
+          </tr>
+          <tr>
+            <th>Total vendido</th>
+            <td>${{total_sold}}</td>
+          </tr>
+          <tr>
+            <th>Costo total</th>
+            <td>${{total_purchased}}</td>
+          </tr>
+          <tr>
+            <th>Ganancia</th>
+            <td>${{gain}}</td>
+          </tr>
+          <tr>
+            <th>Porcentaje de ganancia</th>
+            <td>{{gain_percentage}}%</td>
+          </tr>
+        </tbody>
+      </table>
+  {% endif %}
+  </article>
+{% endblock %}

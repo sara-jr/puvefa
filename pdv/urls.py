@@ -10,5 +10,7 @@ urlpatterns = [
     path('article/', views.article, name='article'),
     path('article/<int:id>/', views.article_get, name='article_existing'),
     path('articles/<str:filter>/<int:index>/', views.list_articles, name='article_list'),
-    path('sales/today/', views.daily_sales, name='daily_sales'),
+    path('sales/today/', views.sales_report, name='report_today'),
+    path('sales/<str:begin>/', views.sales_report, name='report_from'),
+    path('sales/<str:begin>/<str:end>/', views.sales_report, name='report'),
 ]

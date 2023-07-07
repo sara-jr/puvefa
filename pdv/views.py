@@ -4,7 +4,7 @@ import datetime
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.db.models import Q, F
 from django.core import serializers
 from .models import Article, SingleSale, Sale
@@ -112,20 +112,47 @@ def list_articles(request, filter, index):
     context['indexes'] = range(1, indexes+1)
     return render(request, 'pdv/list.html', context)
 
-def daily_sales(request):
-    sales = Sale.objects.filter(date__gte=datetime.date.today())
-    items_sold = SingleSale.objects.filter(sale__in=sales)
-    context = {}
+
+def compute_sale_stats(items_sold):
     with localcontext(prec=12):
-        context['total_count'] = reduce(
+        count = reduce(
             lambda value, ssale: value + ssale.quantity,
             items_sold, 0)
-        context['total_sold'] = reduce(
+        sold = reduce(
             lambda value, ssale: value + ssale.article.price*ssale.quantity,
             items_sold, Decimal(0.0))
-        context['total_purchased'] = reduce(
+        purchased = reduce(
             lambda value, ssale: value + ssale.article.purchase_price*ssale.quantity,
             items_sold, Decimal(0.0))
-        context['gain'] = context['total_sold'] - context['total_purchased']
-        context['gain_percentage'] = round(100 - context['total_purchased']/context['total_sold']*100,2)
-    return render(request, 'pdv/sale-daily.html', context)
+        gain = sold - purchased
+        gain_percentage = round(100 - purchased/sold*100,2)
+    return {'total_count':count, 'total_sold':sold, 'total_purchased':purchased, 'gain':gain, 'gain_percentage':gain_percentage}
+
+    
+def sales_report(request, begin='', end=''):
+    context = {'sale_count':0}
+    date_begin = datetime.date.today()
+    date_end = date_begin
+    
+    # Convertir los argumentos de la url a fechas
+    try:
+        if not (begin == '' or begin == 'today'):
+            date_begin = datetime.date.fromisoformat(begin)
+        if end != '':
+            date_end = datetime.date.fromisoformat(end)
+    except AttributeError as error:
+        return HttpResponseBadRequest(f'Formato de fecha invalido {error.name} {error.obj}')
+    
+    context['begin'] = date_begin
+    context['end'] = date_end
+    sales = Sale.objects.filter(date__gte=date_begin)
+    if date_end != date_begin:
+        sales = sales.filter(date__lte=date_end)
+    items_sold = SingleSale.objects.filter(sale__in=sales)
+
+    context['sale_count'] = sales.count()
+    if context['sale_count'] == 0:
+        return render(request, 'pdv/sales-report.html', context)
+    
+    context.update(compute_sale_stats(items_sold))
+    return render(request, 'pdv/sales-report.html', context)
