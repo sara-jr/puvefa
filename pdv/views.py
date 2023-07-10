@@ -129,17 +129,39 @@ def compute_sale_stats(items_sold):
     return {'total_count':count, 'total_sold':sold, 'total_purchased':purchased, 'gain':gain, 'gain_percentage':gain_percentage}
 
     
+def sales_report_named(request, name):
+    begin = datetime.date.today()
+    end = None
+
+    match name:
+        case 'today':
+            end = begin
+        case 'week':
+            begin -= datetime.timedelta(days=begin.weekday())
+            end = begin + datetime.timedelta(days=6)
+        case 'month':
+            begin = begin.replace(day=1)
+            end = begin
+            end = begin.replace(month=begin.month + 1)
+            end -= datetime.timedelta(days=1)
+        case _:
+            return HttpResponseBadRequest('Nombre de reporte invalido')
+
+    return sales_report(request, begin.isoformat(), end.isoformat())
+
+
 def sales_report(request, begin='', end=''):
+    '''Genera una página con estadisticas de venta entre las fechas [begin, end]'''
     context = {'sale_count':0}
     date_begin = datetime.date.today()
     date_end = date_begin
+    if begin == '':
+        begin = request.GET['begin']
+        end = request.GET['end']
     
-    # Convertir los argumentos de la url a fechas
     try:
-        if not (begin == '' or begin == 'today'):
-            date_begin = datetime.date.fromisoformat(begin)
-        if end != '':
-            date_end = datetime.date.fromisoformat(end)
+        date_begin = datetime.date.fromisoformat(begin)
+        date_end = datetime.date.fromisoformat(end)
     except AttributeError as error:
         return HttpResponseBadRequest(f'Formato de fecha invalido {error.name} {error.obj}')
     
@@ -156,3 +178,7 @@ def sales_report(request, begin='', end=''):
     
     context.update(compute_sale_stats(items_sold))
     return render(request, 'pdv/sales-report.html', context)
+
+
+def reports(request):
+    return render(request, 'pdv/reports.html')

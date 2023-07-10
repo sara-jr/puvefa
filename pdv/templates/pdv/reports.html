@@ -1,0 +1,24 @@
+{% extends 'pdv/base.html' %}
+
+{% block title %}Reportes{% endblock %}
+
+{% block content %}
+  <article>
+    <h4>Reportes de ventas</h4>
+    <a href='{% url "pdv:report_named" "today" %}' class='chip'>Ventas de hoy</a>
+    <a href='{% url "pdv:report_named" "week" %}' class='chip'>Ventas de la semana</a>
+    <a href='{% url "pdv:report_named" "month" %}' class='chip'>Ventas del mes</a>
+    <h5>Generar reporte de ventas</h5>
+    <form method='GET' action='{% url "pdv:report_query" %}'>
+      <div class='field label border'>
+        <label>Desde</label>
+        <input type='date' name='begin'/>
+      </div>
+      <div class='field label border'>
+        <label>Hasta</label>
+        <input type='date' name='end'/>
+      </div>
+      <button type='submit' class='primary fill'>Generar</button>
+    </form>
+  </article>
+{% endblock %}

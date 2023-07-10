@@ -28,12 +28,21 @@
         x-init='setInterval(()=>date = new Date(), 1000)'
         x-text='date.toLocaleTimeString("es-MX",{timeStyle:"medium"})'></h4>
       </div>
-      <a href='{% url "pdv:makesale" %}' class='chip transparent' >
-        Ventas
-      </a> 
-      <a href='{% url "pdv:article_list" "all" 1 %}' class='chip transparent' >
-        Articulos
-      </a> 
+      <button>
+        <span>Ventas</span>
+        <menu class='no-wrap'>
+          <a href='{% url "pdv:makesale" %}'>Hacer ventas</a>
+          <a href='{% url "pdv:reports" %}'>Reportes</a>
+        </menu>
+      </button>
+      <button>
+        <span>Articulos</span>
+        <menu>
+          <a href='{% url "pdv:article_list" "all" 1 %}'>
+            Lista
+          </a> 
+        </menu>
+      </button>
     </nav>
   </header>
   <main class='responsive max center padding'>
