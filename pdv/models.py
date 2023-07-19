@@ -36,12 +36,12 @@ class SingleSale(models.Model):
 
 
 class Medic(models.Model):
-    name = models.CharField(max_length=256, null=False)
-    sur_name_a = models.CharField(max_length=256, null=False)
-    sur_name_b = models.CharField(max_length=256, null=True)
-    address = models.TextField(null=False)
-    cedula = models.IntegerField(null=False, unique=True)
-    ssa = models.IntegerField(null=False, unique=True)
+    name = models.CharField(verbose_name='Nombre', max_length=256, null=False)
+    sur_name_a = models.CharField(verbose_name='Apellido Paterno', max_length=256, null=False)
+    sur_name_b = models.CharField(verbose_name='Apellido Materno', max_length=256, null=True)
+    address = models.TextField(verbose_name='Direccion', null=False)
+    cedula = models.IntegerField(verbose_name='Cedula Profesional', null=False, unique=True)
+    ssa = models.IntegerField(verbose_name='Registro de Salubridad', null=False, unique=True)
 
 
 class Prescription(models.Model):
