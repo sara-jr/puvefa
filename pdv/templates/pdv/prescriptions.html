@@ -1,0 +1,21 @@
+{% extends 'pdv/base.html' %}
+
+{% block content %}
+  <article>
+    <h4>Recetas</h4>
+    <a class='chip'>Nueva</a>
+    <br>
+    <hr>
+    {% if prescription %}
+      
+    {% else %}
+      <h5>No hay recetas medicas</h5>
+    {% endif %}
+    <br>
+    {% if controlled %}
+      <h5>Medicamentos que requieren receta medica</h5>
+    {% else %}
+      <h5>No hay medicamento que requieran receta medica</h5>
+    {% endif %}
+  </article>
+{% endblock %}

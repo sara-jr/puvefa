@@ -6,8 +6,9 @@ from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.db.models import Q, F
+from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
-from .models import Article, SingleSale, Sale
+from .models import Article, SingleSale, Sale, Category
 from decimal import localcontext, Decimal
 from .forms import ArticleForm
 
@@ -182,3 +183,14 @@ def sales_report(request, begin='', end=''):
 
 def reports(request):
     return render(request, 'pdv/reports.html')
+
+def prescriptions(request):
+    context = {}
+    try:
+        category = Category.objects.get(name='Antibiotico')
+    except ObjectDoesNotExist:
+        return render(request, 'pdv/prescriptions.html', context)
+
+    context['controlled'] = Article.objects.filter(category=category.id)
+    return render(request, 'pdv/prescriptions.html', context)
+

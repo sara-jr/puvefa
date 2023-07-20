@@ -14,5 +14,6 @@ urlpatterns = [
     path('sales/ranged/', views.sales_report, name='report_query'),
     path('sales/ranged/<str:begin>/', views.sales_report, name='report_from'),
     path('sales/ranged/<str:begin>/<str:end>/', views.sales_report, name='report'),
-    path('reports/', views.reports, name='reports')
+    path('reports/', views.reports, name='reports'),
+    path('prescriptions/', views.prescriptions, name='prescriptions')
 ]
