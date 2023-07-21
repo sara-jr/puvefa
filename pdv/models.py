@@ -45,5 +45,10 @@ class Medic(models.Model):
 
 
 class Prescription(models.Model):
-    medic = models.ForeignKey(Medic, on_delete=models.RESTRICT)
+    medic = models.ForeignKey(Medic, verbose_name='Medico', on_delete=models.RESTRICT, null=False)
+    date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
+
+
+class PrescriptionArticle(models.Model):
+    prescription = models.ForeignKey(Prescription, on_delete=models.RESTRICT)
     sale = models.ForeignKey(SingleSale, on_delete=models.RESTRICT)
