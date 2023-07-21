@@ -2,10 +2,12 @@
 
 {% block content %}
   <article>
-    <h4>Recetas</h4>
-    <a class='chip'>Nueva</a>
+    <h3>Recetas</h3>
+      <nav>
+        <a class='chip'>Nueva Receta</a>
+        <a href='{% url "pdv:medics" %}' class='chip'>Agregar medico</a>
+      </nav>
     <br>
-    <hr>
     {% if prescription %}
       
     {% else %}

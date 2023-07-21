@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from .models import Article, SingleSale, Sale, Category
 from decimal import localcontext, Decimal
-from .forms import ArticleForm
+from .forms import ArticleForm, MedicForm
 
 
 # Create your views here.
@@ -183,6 +183,11 @@ def sales_report(request, begin='', end=''):
 
 def reports(request):
     return render(request, 'pdv/reports.html')
+
+
+def medics(request):
+    return render(request, 'pdv/post-form-fields.html', {'form':MedicForm()})
+
 
 def prescriptions(request):
     context = {}
