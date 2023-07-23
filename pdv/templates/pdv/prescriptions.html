@@ -16,6 +16,22 @@
     <br>
     {% if controlled %}
       <h5>Medicamentos que requieren receta medica</h5>
+
+      <table>
+      <thead>
+        <th>Fecha</th><th>Nombre</th><th>Cantidad</th>
+      </thead>
+      <tbody>
+      {% for ss in controlled %}
+        <tr>
+          <td>{{ss.sale.date}}</td>
+          <td>{{ss.article.name}}</td> 
+          <td>{{ss.quantity}}</td> 
+        </tr>
+      {% endfor %}
+      </tbody>
+      </table>
+      
     {% else %}
       <h5>No hay medicamento que requieran receta medica</h5>
     {% endif %}
