@@ -49,6 +49,6 @@ class Prescription(models.Model):
     date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
 
 
-class PrescriptionArticle(models.Model):
+class PrescriptionSale(models.Model):
     prescription = models.ForeignKey(Prescription, on_delete=models.RESTRICT)
     sale = models.ForeignKey(SingleSale, on_delete=models.RESTRICT)
