@@ -8,7 +8,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.db.models import Q, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
-from .models import Article, SingleSale, Sale, Category, Prescription, PrescriptionSale
+from .models import Article, SingleSale, Sale, Category, Prescription
 from decimal import localcontext, Decimal
 from .forms import ArticleForm, MedicForm
 
@@ -206,7 +206,7 @@ def prescriptions(request):
         return render(request, 'pdv/prescriptions.html', context)
 
     # Todas las ventas de antibiticos registradas en recetas
-    prescriptions_sold = PrescriptionSale.objects.all().only('sale')
+    prescriptions_sold = Prescription.objects.all().only('sale')
     # Todos los articulos que sean antibioticos
     antibiotics = Article.objects.filter(category=category.id)
     # Todas las ventas que sean de antibioticos

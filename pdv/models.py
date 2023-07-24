@@ -47,8 +47,6 @@ class Medic(models.Model):
 class Prescription(models.Model):
     medic = models.ForeignKey(Medic, verbose_name='Medico', on_delete=models.RESTRICT, null=False)
     date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
-
-
-class PrescriptionSale(models.Model):
-    prescription = models.ForeignKey(Prescription, on_delete=models.RESTRICT)
-    sale = models.ForeignKey(SingleSale, on_delete=models.RESTRICT)
+    total = models.BooleanField(null=False, default=False)
+    number = models.IntegerField(verbose_name='Folio', null=True, unique=True)
+    sale = models.ForeignKey(SingleSale, null=False, on_delete=models.RESTRICT)
