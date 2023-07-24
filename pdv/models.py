@@ -6,6 +6,9 @@ class Category(models.Model):
     name = models.CharField(verbose_name='Nombre de categoria', max_length=256, null=False)
     description = models.TextField(verbose_name='Descripcion', null=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Article(models.Model):
     name = models.CharField(verbose_name='Nombre del articulo', max_length=256, unique=True, null=False)
@@ -18,6 +21,9 @@ class Article(models.Model):
     has_iva = models.BooleanField(verbose_name='Incluye IVA', default=False, null=False)
     category = models.ForeignKey(Category, verbose_name='Categoria', on_delete=models.RESTRICT)
 
+    def __str__(self):
+        return self.name
+
 
 class ExpiryDate(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, primary_key=True)
@@ -28,12 +34,18 @@ class Sale(models.Model):
     date = models.DateTimeField(auto_now_add=True, null=False)
     amount_payed = models.DecimalField(max_digits=8, decimal_places=2, null=False)
 
+    def __str__(self):
+        return self.date.isoformat(timespec='seconds')
+
 
 class SingleSale(models.Model):
     article = models.ForeignKey(Article, on_delete=models.RESTRICT)
     sale = models.ForeignKey(Sale, on_delete=models.RESTRICT)
     quantity = models.IntegerField(default=1, null=False)
 
+
+    def __str__(self):
+        return f'x{self.quantity} {self.article.name}'
 
 class Medic(models.Model):
     name = models.CharField(verbose_name='Nombre', max_length=256, null=False)
