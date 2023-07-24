@@ -186,7 +186,16 @@ def reports(request):
 
 
 def medics(request):
-    return render(request, 'pdv/post-form-fields.html', {'form':MedicForm()})
+    if request.method == 'GET':
+        return render(request, 'pdv/post-form-fields.html', {'form':MedicForm()})
+
+    context = {}
+    form = MedicForm(request.POST)
+    if form.is_valid():
+        form.save()
+    else:
+        context['error'] = form.error()
+    return render(request, 'pdv/sell.html', context)
 
 
 def prescriptions(request):
