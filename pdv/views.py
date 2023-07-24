@@ -204,6 +204,8 @@ def prescriptions(request):
     sold = SingleSale.objects.filter(article__in=antibiotics)
     # Excluir las ventas de antibioticos que ya estan en una receta
     non_registered = sold.exclude(pk__in=prescriptions_sold)
-    context['controlled'] = sold 
+    context['controlled'] = list(map(
+        lambda s: {'date': s.sale.date, 'name':s.article.name, 'quantity':s.quantity},
+        sold))
     return render(request, 'pdv/prescriptions.html', context)
 
