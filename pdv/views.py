@@ -208,13 +208,27 @@ def prescriptions(request):
     # Todas las ventas de antibiticos registradas en recetas
     prescriptions_sold = Prescription.objects.all().only('sale')
     # Todos los articulos que sean antibioticos
-    antibiotics = Article.objects.filter(category=category.id)
+    antibiotics = Article.objects.filter(category=category.id).only('id')
     # Todas las ventas que sean de antibioticos
     sold = SingleSale.objects.filter(article__in=antibiotics)
     # Excluir las ventas de antibioticos que ya estan en una receta
     non_registered = sold.exclude(pk__in=prescriptions_sold)
-    context['controlled'] = list(map(
-        lambda s: {'date': s.sale.date, 'name':s.article.name, 'quantity':s.quantity},
-        sold))
+    # Selecionar los ids unicos de las ventas de antibioticos 
+    controlled_sales = Sale.objects.filter(pk__in=non_registered.values('sale').distinct())
+    data = dict(map(lambda sale: (sale.id, {'date':sale.date, 'articles':[]}), controlled_sales))
+    for ssale in non_registered:
+         data[ssale.sale.id]['articles'].append({'name':ssale.article.name, 'quantity':ssale.quantity})
+    '''
+    data = {
+        id:{
+            date: ...,
+            articles: [
+                {name:..., quantity:...}
+            ]
+        }
+    }       
+    '''
+    context['controlled'] = data
+    context['count'] = controlled_sales.count()
     return render(request, 'pdv/prescriptions.html', context)
 

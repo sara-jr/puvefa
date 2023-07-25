@@ -4,7 +4,6 @@
   <article>
     <h3>Recetas</h3>
       <nav>
-        <a class='chip'>Nueva Receta</a>
         <a href='{% url "pdv:medics" %}' class='chip'>Agregar medico</a>
       </nav>
     <br>
@@ -14,23 +13,41 @@
       <h5>No hay recetas medicas</h5>
     {% endif %}
     <br>
-    {% if controlled %}
-      <h5>Medicamentos que requieren receta medica</h5>
-
-      <table>
-      <thead>
-        <th>Fecha</th><th>Nombre</th><th>Cantidad</th>
-      </thead>
-      <tbody>
-      {% for ss in controlled %}
-        <tr>
-          <td>{{ss.date}}</td>
-          <td>{{ss.name}}</td> 
-          <td>{{ss.quantity}}</td> 
-        </tr>
+    {% if count > 0 %}
+      <h5>Ventas que requieren receta medica</h5>
+      {% for id, data in controlled.items %}
+      <article class='border round'>
+        <div class='row'>
+            <div class='max'>
+              <strong>Fecha</strong>
+              <p>{{data.date|date:"d/m/Y P"}}</p>
+            </div>
+            <div class='scroll'>
+              <strong>Articulos</strong>
+            {% for article in data.articles %}
+              <span>x{{article.quantity}} {{article.name}}</span>
+            {% endfor %}
+            </div>
+          <div>
+            <div class='field border'>
+              <input type='text' placeholder='Medico' />
+            </div>
+          </div>
+          <div>
+            <label class='radio'>
+              <input type='radio' name='type' value='true'/>
+              <span>Total</span>
+            </label>
+            <label class='radio'>
+              <input type='radio' name='type' value='false'/>
+              <span>Parcial</span>
+            </label>
+          </div>
+        </div>
+        <br/>
+      </article>
       {% endfor %}
-      </tbody>
-      </table>
+      <button type='submit'>Guardar</button>
       
     {% else %}
       <h5>No hay medicamento que requieran receta medica</h5>
