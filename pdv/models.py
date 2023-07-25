@@ -61,4 +61,4 @@ class Prescription(models.Model):
     date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
     total = models.BooleanField(null=False, default=False)
     number = models.IntegerField(verbose_name='Folio', null=True, unique=True)
-    sale = models.ForeignKey(SingleSale, null=False, on_delete=models.RESTRICT)
+    sale = models.ForeignKey(Sale, null=False, on_delete=models.RESTRICT)
