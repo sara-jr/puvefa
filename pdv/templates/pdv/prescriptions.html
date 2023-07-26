@@ -15,38 +15,35 @@
     <br>
     {% if count > 0 %}
       <h5>Ventas que requieren receta medica</h5>
-      {% for id, data in controlled.items %}
-      <article class='border round'>
+      <div>
+        {% for id, data in controlled.items %}
         <div class='row'>
-            <div class='max'>
-              <strong>Fecha</strong>
-              <p>{{data.date|date:"d/m/Y P"}}</p>
+          <article class='max border round'>
+            <h5>Fecha {{data.date|date:"d/m/Y P"}}</h5>
+            <br/>
+            <div class='grid'>
+              {% for article in data.articles %}
+                <div class='s2'><i>arrow_right</i>{{article.quantity}} {{article.name}}</div>
+              {% endfor %}
             </div>
-            <div class='scroll'>
-              <strong>Articulos</strong>
-            {% for article in data.articles %}
-              <span>x{{article.quantity}} {{article.name}}</span>
-            {% endfor %}
+            <div class='row'>
+                <div class='field border'>
+                  <input type='text' placeholder='Medico' />
+                </div>
+                <label class='radio'>
+                  <input type='radio' name='type' value='true'/>
+                  <span>Total</span>
+                </label>
+                <label class='radio'>
+                  <input type='radio' name='type' value='false'/>
+                  <span>Parcial</span>
+                </label>
             </div>
-          <div>
-            <div class='field border'>
-              <input type='text' placeholder='Medico' />
-            </div>
-          </div>
-          <div>
-            <label class='radio'>
-              <input type='radio' name='type' value='true'/>
-              <span>Total</span>
-            </label>
-            <label class='radio'>
-              <input type='radio' name='type' value='false'/>
-              <span>Parcial</span>
-            </label>
-          </div>
+          </article>
         </div>
-        <br/>
-      </article>
-      {% endfor %}
+        {% endfor %}
+      </div>
+      <br/>
       <button type='submit'>Guardar</button>
       
     {% else %}
