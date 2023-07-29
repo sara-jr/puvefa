@@ -59,9 +59,12 @@ class Medic(models.Model):
         return f'[ {self.cedula} ] {self.name} {self.sur_name_a} {self.sur_name_b}'
 
 
-class Prescription(models.Model):
+class PrescriptionPartial(models.Model):
     medic = models.ForeignKey(Medic, verbose_name='Medico', on_delete=models.RESTRICT, null=False)
     date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
-    total = models.BooleanField(null=False, default=False)
-    number = models.IntegerField(verbose_name='Folio', null=True, unique=True)
+    sale = models.ForeignKey(Sale, null=False, on_delete=models.RESTRICT)
+
+class PrescriptionTotal(models.Model):
+    medic = models.ForeignKey(Medic, verbose_name='Medico', on_delete=models.RESTRICT, null=False)
+    date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
     sale = models.ForeignKey(Sale, null=False, on_delete=models.RESTRICT)
