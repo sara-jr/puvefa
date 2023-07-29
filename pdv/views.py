@@ -8,7 +8,7 @@ from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.db.models import Q, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
-from .models import Article, SingleSale, Sale, Category, Prescription
+from .models import *
 from decimal import localcontext, Decimal
 from .forms import ArticleForm, MedicForm
 
@@ -200,13 +200,23 @@ def medics(request):
 
 def prescriptions(request):
     context = {}
+    
+    if request.method == 'POST':
+        prescription = PrescriptionTotal() if request.POST['type'] == 'total' else PrescritptionPartial()
+        prescription.sale = Sale.objects.get(pk=request.POST['sale'])
+        prescription.medic = Medic.objects.get(pk=request.POST['medic'])
+        prescription.save()    
+        context['message'] = 'Receta creada'
+        return render(request, 'pdv/prescriptions.html', context)
+        
     try:
         category = Category.objects.get(name='Antibiotico')
     except ObjectDoesNotExist:
         return render(request, 'pdv/prescriptions.html', context)
 
     # Todas las ventas de antibiticos registradas en recetas
-    prescriptions_sold = Prescription.objects.all().only('sale')
+    prescriptions_sold = PrescriptionTotal.objects.all().only('sale') \
+            .union(PrescriptionPartial.objects.all().only('sale'))
     # Todos los articulos que sean antibioticos
     antibiotics = Article.objects.filter(category=category.id).only('id')
     # Todas las ventas que sean de antibioticos
@@ -232,3 +242,9 @@ def prescriptions(request):
     context['count'] = controlled_sales.count()
     return render(request, 'pdv/prescriptions.html', context)
 
+def medic_search(request):
+    context = {}
+    query = request.GET['name']
+    results = Medic.objects.filter(name__contains=query)[:20]
+    context['results'] = list(map(lambda medic: {'display':str(medic), 'value':medic.id}, results))
+    return render(request, 'pdv/search-result.html', context) 

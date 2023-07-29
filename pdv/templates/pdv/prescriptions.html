@@ -15,7 +15,7 @@
     <br>
     {% if count > 0 %}
       <h5>Ventas que requieren receta medica</h5>
-      <div>
+      <div class='padding'>
         {% for id, data in controlled.items %}
         <div class='row'>
           <article class='max border round'>
@@ -26,26 +26,31 @@
                 <div class='s2'><i>arrow_right</i>{{article.quantity}} {{article.name}}</div>
               {% endfor %}
             </div>
-            <div class='row'>
-                <div class='field border'>
-                  <input type='text' placeholder='Medico' />
+            <br/>
+            <div class='max row'>
+              {% include "pdv/search-bar-input.html" with id="medic-id-input" parameter="name" placeholder="Medico" urlname="pdv:medic_search" %}
+              <form action='{% url "pdv:prescriptions" %}' method='POST'>
+                {% csrf_token %}
+                <input type='hidden' name='sale' value='{{id}}' />
+                <input type='hidden' name='medic' id='medic-id-input'/>
+                <div class='row padding'>
+                  <label class='radio'>
+                    <input type='radio' name='type' value='total'/>
+                    <span>Total</span>
+                  </label>
+                  <label class='radio'>
+                    <input type='radio' name='type' value='partial'/>
+                    <span>Parcial</span>
+                  </label>
+                  <button type='submit'>Guardar</button>
                 </div>
-                <label class='radio'>
-                  <input type='radio' name='type' value='true'/>
-                  <span>Total</span>
-                </label>
-                <label class='radio'>
-                  <input type='radio' name='type' value='false'/>
-                  <span>Parcial</span>
-                </label>
+              </form>
             </div>
           </article>
         </div>
         {% endfor %}
       </div>
       <br/>
-      <button type='submit'>Guardar</button>
-      
     {% else %}
       <h5>No hay medicamento que requieran receta medica</h5>
     {% endif %}
