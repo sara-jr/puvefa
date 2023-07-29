@@ -1,0 +1,7 @@
+{% for result in results %}
+  <a 
+  @click='value="{{result.value}}"; display="{{result.display}}"' 
+  class='row wave'>
+    {{result.display}}
+  </a>
+{% endfor %}

@@ -1,0 +1,41 @@
+{% comment %}
+Parametros
+-id 
+  El id de la input con la cual se vinculara el valor del elemento seleccionado
+-name
+  El nombre del parametro que sera enviado en la solicitud GET al realizar la busqueda
+-urlname
+  La url a la cual se realizara la solicitud GET para poblar las opciones
+-placeholder 
+  El texto que se mostrara en la barra de busqueda cuando esté vacia
+
+Barra de busqueda que cambia el valor de una input externa basado en el 
+elemento que del menu desplegable que el usuario seleccione
+
+Realiza una solicitud GET a la url asociada a la ruta {{urlname}}
+con el valor de la etiqueta input con el atributo name igual a 
+{{parameter}} mediante htmx para poblar la etiqueta menu
+
+Una vez el usuario selecciona un elemento del menu, se realiza un
+querySelector para buscar al elemento con el {{id}} provisto para
+cambiar su valor al valor asociado al elemento seleccionado
+{% endcomment %}
+<div 
+x-data='{value:"", display:""}' 
+x-init='$watch("value", v => document.querySelector("#{{id}}").value = v)'>
+  <div class="max field large prefix suffix round fill">
+    <i class='front'>search</i>
+    <input placeholder="{{placeholder}}" name='{{parameter}}'
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+      hx-get='{% url urlname %}'
+      hx-trigger="keyup changed delay:200ms" 
+      hx-target='next menu'
+      x-model='display'
+      autocomplete='off'
+    />
+    <i class='front' @click='display="";value=""'>close</i>
+  </div>
+  <menu>
+
+  </menu>
+</div>
