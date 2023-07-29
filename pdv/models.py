@@ -55,6 +55,9 @@ class Medic(models.Model):
     cedula = models.IntegerField(verbose_name='Cedula Profesional', null=False, unique=True)
     ssa = models.IntegerField(verbose_name='Registro de Salubridad', null=False, unique=True)
 
+    def __str__(self):
+        return f'[ {self.cedula} ] {self.name} {self.sur_name_a} {self.sur_name_b}'
+
 
 class Prescription(models.Model):
     medic = models.ForeignKey(Medic, verbose_name='Medico', on_delete=models.RESTRICT, null=False)
