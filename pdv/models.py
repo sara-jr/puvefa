@@ -35,7 +35,7 @@ class Sale(models.Model):
     amount_payed = models.DecimalField(max_digits=8, decimal_places=2, null=False)
 
     def __str__(self):
-        return self.date.isoformat(timespec='seconds')
+        return f'{self.id} {self.date.isoformat(timespec="minutes", sep=" ")}'
 
 
 class SingleSale(models.Model):
