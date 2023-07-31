@@ -4,7 +4,7 @@ import datetime
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
-from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.db.models import Q, F
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
@@ -202,32 +202,29 @@ def prescriptions(request):
     context = {}
     
     if request.method == 'POST':
-        prescription = PrescriptionTotal() if request.POST['type'] == 'total' else PrescritptionPartial()
+        prescription = PrescriptionTotal() if request.POST['type'] == 'total' else PrescriptionPartial()
         prescription.sale = Sale.objects.get(pk=request.POST['sale'])
         prescription.medic = Medic.objects.get(pk=request.POST['medic'])
-        prescription.save()    
+        prescription.save()
         context['message'] = 'Receta creada'
-        return render(request, 'pdv/prescriptions.html', context)
+        return HttpResponseRedirect(request.path_info)
         
-    try:
-        category = Category.objects.get(name='Antibiotico')
-    except ObjectDoesNotExist:
-        return render(request, 'pdv/prescriptions.html', context)
+    # Ids de las ventas registradas en recetas
+    sales_in_prescriptions = PrescriptionTotal.objects.only('sale') \
+        .union(PrescriptionPartial.objects.only('sale')) \
+        .values('sale')
+    # Ventas individuales de antibioticos
+    antibiotics_sold = SingleSale.objects.filter(article__category__name='Antibiotico')
+    # Ventas individuales de antibioticos sin registrar en recetas
+    unregistered_sales = antibiotics_sold.exclude(sale__in=sales_in_prescriptions)
 
-    # Todas las ventas de antibiticos registradas en recetas
-    prescriptions_sold = PrescriptionTotal.objects.all().only('sale') \
-            .union(PrescriptionPartial.objects.all().only('sale'))
-    # Todos los articulos que sean antibioticos
-    antibiotics = Article.objects.filter(category=category.id).only('id')
-    # Todas las ventas que sean de antibioticos
-    sold = SingleSale.objects.filter(article__in=antibiotics)
-    # Excluir las ventas de antibioticos que ya estan en una receta
-    non_registered = sold.exclude(pk__in=prescriptions_sold)
-    # Selecionar los ids unicos de las ventas de antibioticos 
-    controlled_sales = Sale.objects.filter(pk__in=non_registered.values('sale').distinct())
-    data = dict(map(lambda sale: (sale.id, {'date':sale.date, 'articles':[]}), controlled_sales))
-    for ssale in non_registered:
-         data[ssale.sale.id]['articles'].append({'name':ssale.article.name, 'quantity':ssale.quantity})
+    data = {}
+    for id, date, name, quantity in unregistered_sales.values_list('sale', 'sale__date', 'article__name', 'quantity'):
+        if not id in data:
+            data[id] = {'date':date, 'articles':[]}
+        else:
+            data[id]['articles'].append({'name':name, 'quantity':quantity})
+        
     '''
     data = {
         id:{
@@ -238,8 +235,10 @@ def prescriptions(request):
         }
     }       
     '''
+    context['prescriptions'] = list(map(lambda p: {'type':'Total', 'number':p.id, 'medic':str(p.medic), 'date':p.date}, PrescriptionTotal.objects.all()[:20]))
+    context['prescriptions'] += list(map(lambda p: {'type':'Parcial', 'number':'---', 'medic':str(p.medic), 'date':p.date}, PrescriptionPartial.objects.all()[:20])) 
     context['controlled'] = data
-    context['count'] = controlled_sales.count()
+    context['count'] = unregistered_sales.count()
     return render(request, 'pdv/prescriptions.html', context)
 
 def medic_search(request):

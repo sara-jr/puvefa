@@ -7,8 +7,27 @@
         <a href='{% url "pdv:medics" %}' class='chip'>Agregar medico</a>
       </nav>
     <br>
-    {% if prescription %}
-      
+    {% if prescriptions %}
+      <table>
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Fecha</th>
+            <th>Medico</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for prescription in prescriptions %}
+          <tr>
+            <td>{{prescription.number}}</td>
+            <td>{{prescription.date}}</td>
+            <td>{{prescription.medic}}</td>
+            <td>{{prescription.type}}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     {% else %}
       <h5>No hay recetas medicas</h5>
     {% endif %}
@@ -31,15 +50,15 @@
               {% include "pdv/search-bar-input.html" with id="medic-id-input" parameter="name" placeholder="Medico" urlname="pdv:medic_search" %}
               <form action='{% url "pdv:prescriptions" %}' method='POST'>
                 {% csrf_token %}
-                <input type='hidden' name='sale' value='{{id}}' />
-                <input type='hidden' name='medic' id='medic-id-input'/>
+                <input type='hidden' name='sale' value='{{id}}' required/>
+                <input type='hidden' name='medic' value='' id='medic-id-input' required/>
                 <div class='row padding'>
                   <label class='radio'>
-                    <input type='radio' name='type' value='total'/>
+                    <input type='radio' name='type' value='total' required/>
                     <span>Total</span>
                   </label>
                   <label class='radio'>
-                    <input type='radio' name='type' value='partial'/>
+                    <input type='radio' name='type' value='partial' required/>
                     <span>Parcial</span>
                   </label>
                   <button type='submit'>Guardar</button>
