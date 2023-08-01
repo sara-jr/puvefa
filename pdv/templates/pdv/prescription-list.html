@@ -1,0 +1,42 @@
+{% extends 'pdv/base.html' %}
+
+{% block content %}
+  <article>
+    <h3>Recetas</h3>
+      <nav>
+        <a href='{% url "pdv:medics" %}' class='chip'>Agregar medico</a>
+      </nav>
+    <br>
+    {% if prescriptions %}
+      <table>
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Fecha</th>
+            <th>Cedula del Medico</th>
+            <th>Registro de Salubridad</th>
+            <th>Direccion</th>
+            <th>Nombre del Medico</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for prescription in prescriptions %}
+          <tr {% if prescription.total %}class='border secondary'{% endif %}>
+            <td>{{prescription.number}}</td>
+            <td>{{prescription.date}}</td>
+            <td>{{prescription.cedula}}</td>
+            <td>{{prescription.ssa}}</td>
+            <td>{{prescription.address}}</td>
+            <td>{{prescription.medic}}</td>
+            <td>{% if prescription.total %}Total{% else %}Parcial{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <h5>No hay recetas medicas</h5>
+    {% endif %}
+    <br>
+  </article>
+{% endblock %}

@@ -235,11 +235,54 @@ def prescriptions(request):
         }
     }       
     '''
-    context['prescriptions'] = list(map(lambda p: {'type':'Total', 'number':p.id, 'medic':str(p.medic), 'date':p.date}, PrescriptionTotal.objects.all()[:20]))
-    context['prescriptions'] += list(map(lambda p: {'type':'Parcial', 'number':'---', 'medic':str(p.medic), 'date':p.date}, PrescriptionPartial.objects.all()[:20])) 
     context['controlled'] = data
     context['count'] = unregistered_sales.count()
     return render(request, 'pdv/prescriptions.html', context)
+
+
+def index_slicing(index, count, perpage):
+    '''
+    Realiza un "slizing" a un objeto para que el resultado encaje en
+    el indice dado
+    '''
+    lower_bound = (index - 1)*perpage
+    if lower_bound > count:
+        return slice(perpage - count, count)
+
+    return slice(lower_bound, lower_bound + perpage)
+
+def prescription_list(request):
+    ITEMS_PERPAGE = 20
+    context = {'index': 1}
+    idx = 1
+    values = [
+        'id', 
+        'date',
+        'medic__cedula',
+        'medic__ssa',
+        'medic__address',
+        'medic__name',
+        'medic__sur_name_a',
+        'medic__sur_name_b'
+    ]
+    data = []
+    slicing = index_slicing(idx, PrescriptionPartial.objects.count() + PrescriptionTotal.objects.count(), ITEMS_PERPAGE)
+    partial = PrescriptionPartial.objects.values_list(*values)[slicing]
+    total = PrescriptionTotal.objects.values_list(*values)[slicing]
+
+    partial = list(map(
+        lambda t: {'id':t[0], 'number':'-'*4, 'date':t[1], 'cedula':t[2], 'ssa':t[3], 'address':t[4], 'medic':f'{t[5]} {t[6]} {t[7]}', 'total':False},
+        partial
+    ))
+    total = list(map(
+        lambda t: {'id':t[0], 'number':t[0], 'date':t[1], 'cedula':t[2], 'ssa':t[3], 'address':t[4], 'medic':f'{t[5]} {t[6]} {t[7]}', 'total':True},
+        total
+    ))
+
+    partial.extend(total)
+    partial.sort(key=lambda t: t['date'], reverse=True)
+    context['prescriptions'] = partial
+    return render(request, 'pdv/prescription-list.html', context)
 
 def medic_search(request):
     context = {}
