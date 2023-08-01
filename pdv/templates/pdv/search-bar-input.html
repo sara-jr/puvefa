@@ -1,7 +1,7 @@
 {% comment %}
 Parametros
--id 
-  El id de la input con la cual se vinculara el valor del elemento seleccionado
+-selector 
+  El selector css de la input con la cual se vinculara el valor del elemento seleccionado
 -name
   El nombre del parametro que sera enviado en la solicitud GET al realizar la busqueda
 -urlname
@@ -22,7 +22,7 @@ cambiar su valor al valor asociado al elemento seleccionado
 {% endcomment %}
 <div 
 x-data='{value:"", display:""}' 
-x-init='$watch("value", v => document.querySelector("#{{id}}").value = v)'>
+x-init='$watch("value", v => document.querySelector("{{selector}}").value = v)'>
   <div class="max field large prefix suffix round fill">
     <i class='front'>search</i>
     <input placeholder="{{placeholder}}" name='{{parameter}}'

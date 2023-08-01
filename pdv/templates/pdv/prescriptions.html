@@ -7,31 +7,6 @@
         <a href='{% url "pdv:medics" %}' class='chip'>Agregar medico</a>
       </nav>
     <br>
-    {% if prescriptions %}
-      <table>
-        <thead>
-          <tr>
-            <th>Folio</th>
-            <th>Fecha</th>
-            <th>Medico</th>
-            <th>Tipo</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for prescription in prescriptions %}
-          <tr>
-            <td>{{prescription.number}}</td>
-            <td>{{prescription.date}}</td>
-            <td>{{prescription.medic}}</td>
-            <td>{{prescription.type}}</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <h5>No hay recetas medicas</h5>
-    {% endif %}
-    <br>
     {% if count > 0 %}
       <h5>Ventas que requieren receta medica</h5>
       <div class='padding'>
@@ -47,7 +22,7 @@
             </div>
             <br/>
             <div class='max row'>
-              {% include "pdv/search-bar-input.html" with id="medic-id-input" parameter="name" placeholder="Medico" urlname="pdv:medic_search" %}
+              {% include "pdv/search-bar-input.html" with selector="#medic-id-input" parameter="name" placeholder="Medico" urlname="pdv:medic_search" %}
               <form action='{% url "pdv:prescriptions" %}' method='POST'>
                 {% csrf_token %}
                 <input type='hidden' name='sale' value='{{id}}' required/>
