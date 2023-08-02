@@ -2,13 +2,9 @@
 
 {% block content %}
   <article>
-    <h3>Recetas</h3>
-      <nav>
-        <a href='{% url "pdv:medics" %}' class='chip'>Agregar medico</a>
-      </nav>
+    <h3>Ventas de Antibioticos sin registrar</h3>
     <br>
     {% if count > 0 %}
-      <h5>Ventas que requieren receta medica</h5>
       <div class='padding'>
         {% for id, data in controlled.items %}
         <div class='row'>

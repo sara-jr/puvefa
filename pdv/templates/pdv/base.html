@@ -30,6 +30,7 @@
       </div>
       <button>
         <span>Ventas</span>
+        <i>arrow_drop_down</i>
         <menu class='no-wrap'>
           <a href='{% url "pdv:makesale" %}'>Hacer ventas</a>
           <a href='{% url "pdv:reports" %}'>Reportes</a>
@@ -37,17 +38,25 @@
       </button>
       <button>
         <span>Articulos</span>
-        <menu>
+        <i>arrow_drop_down</i>
+        <menu class='no-wrap'>
           <a href='{% url "pdv:article_list" "all" 1 %}'>
-            Lista
+            Lista de Articulos
           </a> 
         </menu>
       </button>
       <button>
-        <span>Recetas medicas</span>
-        <menu>
+        <span>Farmacia</span>
+        <i>arrow_drop_down</i>
+        <menu class='no-wrap'>
           <a href='{% url "pdv:prescriptions" %}'>
-            Recetas
+            Registrar Antibioticos
+          </a>
+          <a href='{% url "pdv:prescriptions_list" %}'>
+            Ver Recetas
+          </a>
+          <a href='{% url "pdv:medics" %}'>
+            Agregar Medicos
           </a>
         </menu>
     </nav>
