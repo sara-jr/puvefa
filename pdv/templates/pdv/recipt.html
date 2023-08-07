@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Receta</title>
+        <style>
+          h1, h2, h3, h4, h5{
+            text-align: center;  
+          }
+
+          h1{ font-size: 16pt; }
+          h2{ font-size: 14pt; }
+          h3{ font-size: 12pt; }
+                  
+          main{
+            max-width: 80mm;
+            display: flex;
+            flex-direction: column;
+            padding: 8pt;
+            font-size: 8pt;
+          }
+
+          tr{
+            display: grid;
+            grid-template-columns: 9fr 1fr 3fr 3fr;
+          }
+          
+          tbody tr{
+            border-bottom: solid black 2px;
+          }
+
+          tfoot tr{
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            font-size: 12pt;
+          }
+
+          tbody, tfoot{
+            margin-bottom: 24pt;
+          }
+
+          table{
+            display: flex;
+            flex-direction: column;
+          }
+
+
+          th{
+            text-align: center;
+          }
+
+          .txtcenter{
+            text-align: center;
+          }
+        </style>
+    </head>
+    <body>
+    <main>
+      <header>
+        <h1>{{header}}</h1>
+        <h2>{{address}}</h2>
+        <h3>{{date|date:"d F Y H:i:s a"}}</h3>
+      </header>
+      <table>
+          <thead>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Descripción</th>
+              <th>C.</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+            </tr>
+            {% for article in articles %}
+              <tr>
+                <td>{{article.description}}</td>
+                <td class="txtcenter">{{article.quantity}}</td>
+                <td>${{article.price}}</td>
+                <td>${{article.sub}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>TOTAL</td>
+              <td>${{total}}</td>
+            </tr>
+            <tr>
+              <td>PAGADO</td>
+              <td>${{payed}}</td>
+            </tr>
+            <tr>
+              <td>CAMBIO</td>
+              <td>${{change}}</td>
+            </tr>
+          </tfoot>
+      </table>
+    </main>
+    </body>
+</html>

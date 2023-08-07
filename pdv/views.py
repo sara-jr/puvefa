@@ -290,3 +290,28 @@ def medic_search(request):
     results = Medic.objects.filter(name__contains=query)[:20]
     context['results'] = list(map(lambda medic: {'display':str(medic), 'value':medic.id}, results))
     return render(request, 'pdv/search-result.html', context) 
+
+def make_recipt(request, id):
+    context = {}
+    sale = Sale.objects.get(pk=id)
+    articles = SingleSale.objects.filter(sale=id).values_list('quantity', 'article__name', 'article__price')
+    total = reduce(lambda cumm, tup: tup[0]*tup[2] + cumm, articles, 0)
+    context['articles'] = list(map(
+        lambda tup: {\
+            'quantity':tup[0],
+            'description':tup[1],
+            'price':tup[2],
+            'sub':tup[0]*tup[2]
+        },
+        articles
+    ))
+    context.update(
+        total=total,
+        change=sale.amount_payed - total,
+        payed=sale.amount_payed,
+        date=sale.date,
+        header='HEADER',
+        address='Addres #1234 TEAST'
+    )
+    return render(request, 'pdv/recipt.html', context)
+
