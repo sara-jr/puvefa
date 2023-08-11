@@ -50,16 +50,21 @@ def make_sale(request):
     if request.method != 'POST':
         return redirect('pdv:sell')
         
-    sale = Sale.objects.create(amount_payed=0)
+    print_recipt = request.POST['print'] == '1'
+    sale = Sale.objects.create(amount_payed=request.POST['payed'])
     sale.save()
     sale_data = request.POST.dict()
     del sale_data['csrfmiddlewaretoken']
+    del sale_data['print']
+    del sale_data['payed']
     with localcontext(prec=12):
         for id, quantity in sale_data.items():
             article = Article.objects.get(id=id)
             ssale = SingleSale.objects.create(article=article, sale=sale, quantity=quantity)
             sale.amount_payed += article.price * Decimal(ssale.quantity)
             ssale.save()
+    if print_recipt:
+        return redirect('pdv:recipt', sale.id)
     return redirect('pdv:sell')
 
 def article(request):
