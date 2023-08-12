@@ -51,7 +51,7 @@ def make_sale(request):
         return redirect('pdv:sell')
         
     print_recipt = request.POST['print'] == '1'
-    sale = Sale.objects.create(amount_payed=request.POST['payed'])
+    sale = Sale.objects.create(amount_payed=Decimal(request.POST['payed']))
     sale.save()
     sale_data = request.POST.dict()
     del sale_data['csrfmiddlewaretoken']
