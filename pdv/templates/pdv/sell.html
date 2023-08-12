@@ -3,7 +3,10 @@
 {% block title %}Ventas{% endblock %}
 
 {% block content %}
-<div x-data='{articles:{}}'>
+<div x-data='{articles:{}, payed:0, change:0, total:0}' 
+  x-init='
+    $watch("articles", val => {total=computeTotal(val); change=payed-total;});
+    $watch("payed", val => change=payed-total)'>
   <script>
     function addOrIncrement(articleList, article){
       if(article.id in articleList){
@@ -17,12 +20,6 @@
       return Object.values(articleList).map((a)=>a.price*a.quantity).reduce((a,b)=>a+b, 0);
     }
 
-    window.onkeydown = function(){
-      const element = document.getElementById('barname-search');
-      element.focus();
-    };
-    
-    
   </script>
   <article class='secondary-container'>
     <h5>Venta</h5>
@@ -40,6 +37,7 @@
           name='barname'
           onblur='this.value = ""; this.classList.toggle("shake")'
           onfocus='this.classList.toggle("shake")'
+          autocomplete="off"
           autofocus
           placeholder='Escribir nombre o codigo de barras'/>
         <i class="front">close</i>
@@ -48,33 +46,61 @@
       </menu>
     </div>
 
-    <div>
-    <div class='row'><h4>Total: </h4> <h5>$<p x-text='computeTotal(articles)'></p></h5></div>
-      <template x-for='article in articles'>
-        <div class='row min slideRight'>
-          <p class='max' x-text='article.name'></p>
-          <p>$<p class='max' x-text='article.price'></p></p>
-          <nav class='no-space'>
-            <button class='border large left-round' @click='article.quantity++'><i>add</i></button>
-            <div class='field min border no-round border'>
-              <input type='number' min='1' x-model='article.quantity'/>
-            </div> 
-            <button class='border large right-round' @click='article.quantity = article.quantity > 1? article.quantity - 1 : 1'><i>remove</i></button>
-          </nav>
-          <a class='circle tertiary' @click='delete articles[article.id]'><i>delete</i></a>
-          </div>
-      </template>
-    </div>
-
-    <div class='large-space'></div> <!-- BRUH -->
     <form method='post' action='{% url "pdv:makesale" %}'>
+      <table class='padding'>
+        <tbody>
+          <tr>
+            <td><h4>Total</h4></td>
+            <td><h4>Pagado</h4></td>
+            <td><h4>Cambio</h4></td>
+          </tr>
+          <tr>
+            <td class='padding'><h4 x-text='`$ ${total}`'></h4></td>
+            <td class='padding'>
+              <div class='small prefix fill field border' style='margin-bottom: 0; max-width: 18em;'>
+                <i>attach_money</i>
+                <input name='payed' @invalid='this.setCustomValidity("Ingrese la cantidad pagada")' x-model='payed' type='number' placeholder='Cantidad pagada' pattern='\d+\.?\d*' required/>
+              </div>
+            </td>
+            <td class='padding'>
+             <h4 class='s2' x-text='change > 0? `$ ${change}`: " Pago insuficiente"'></h4>   
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <input x-ref="print_input" type="hidden" name="print" value="0" />
+      <div id='articles-section'>
+        <template x-for='article in articles'>
+        <!-- POR CADA ARTICULO EN LA LISTA DE ARTICULOS -->
+          <div class='grid'>
+            <span class='s5'>
+              <h5 x-text='article.name'></h5>
+            </span>
+            <span class='s4'>
+              <h5 x-text='`$ ${article.price}`'></h5>
+            </span>
+            <span class='s2'>
+              <nav class='no-space'>
+                <button type='button' class='border large left-round' @click='article.quantity++'><i>add</i></button type='button'>
+                <div style='max-width: 6em;' class='field min border no-round border'>
+                  <input type='number' x-bind:name='article.id' pattern='[1-9]\d*' min='1' x-model='article.quantity'/>
+                </div> 
+                <button type='button' class='border large right-round' @click='article.quantity = article.quantity > 1? article.quantity - 1 : 1'><i>remove</i></button type='button'>
+              </nav>
+            </span>
+            <span class='s1 padding'>
+              <button class='circle tertiary' @click='delete articles[article.id]'><i>delete</i></button>
+            </span>
+          </div>
+        <!-- FIN -->
+        </template>
+      </div>
+
+      <div class='large-space'></div> <!-- BRUH -->
       {% csrf_token %}
       <nav class='no-space'>
-        <template x-for='article in articles'>
-          <input type='hidden' x-bind:name='article.id' x-bind:value='article.quantity' />
-        </template>
-        <button type='submit' class='vertical border left-round primary extra'><i>print</i> Cobrar e imprimir ticket </button>
-        <button type='submit' @click='$refs.articles_input.value = articles' class='vertical border no-round primary extra'><i>payments</i> Cobrar </button>
+        <button type='submit' @click.capture='$refs.print_input.value = 1' class='vertical border left-round primary extra'><i>print</i> Cobrar e imprimir ticket </button>
+        <button type='submit' @click.capture='$refs.print_input.value = 0' class='vertical border no-round primary extra'><i>payments</i> Cobrar </button>
         <button type='button' @click='$refs.confirm_dialog.open = true' class='vertical border right-round tertiary extra'><i>close</i> Cancelar venta </button>
       </nav>
     </form>
@@ -88,9 +114,4 @@
     </dialog>
   </article>
 <div>
-{% endblock %}
-
-{% block footer %}
-    <a href='{% url "pdv:report_named" "today" %}' class='border chip'>Ventas del día</a>
-    <a href='{% url "pdv:reports" %}' class='border chip'>Reportes de ventas</a>
 {% endblock %}
