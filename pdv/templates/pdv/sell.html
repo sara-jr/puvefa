@@ -59,7 +59,9 @@
             <td class='padding'>
               <div class='small prefix fill field border' style='margin-bottom: 0; max-width: 18em;'>
                 <i>attach_money</i>
-                <input name='payed' @invalid='this.setCustomValidity("Ingrese la cantidad pagada")' x-model='payed' type='number' placeholder='Cantidad pagada' pattern='\d+\.?\d*' required/>
+                <input name='payed' type='number' placeholder='Cantidad pagada' pattern='\d+\.?\d*' required
+                  @invalid='this.setCustomValidity("Ingrese la cantidad pagada")'
+                  x-model='payed' :min='total'/>
               </div>
             </td>
             <td class='padding'>
@@ -72,7 +74,7 @@
       <div id='articles-section'>
         <template x-for='article in articles'>
         <!-- POR CADA ARTICULO EN LA LISTA DE ARTICULOS -->
-          <div class='grid'>
+          <div class='grid slideRight'>
             <span class='s5'>
               <h5 x-text='article.name'></h5>
             </span>
