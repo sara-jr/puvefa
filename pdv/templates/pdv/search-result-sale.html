@@ -1,0 +1,12 @@
+{% for article in articles %}
+    <a @click='addOrIncrement(articles, $el.dataset)'
+    class='row'
+    data-max="{{article.quantity}}"
+    data-name="{{article.name}}"
+    data-id="{{article.id}}"
+    data-price="{{article.price}}">
+        <i>barcode</i>   
+        <span>{{article.barcode}}</span>
+        <span>{{article.name}}</span>
+    </a>
+{% endfor %}
