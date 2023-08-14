@@ -20,22 +20,12 @@ def sell(request):
 
 
 def active_search(request):
+    context = {}
     barname = request.GET['barname']
-    articles = Article.objects.filter(
-        Q(name__contains=barname) | Q(barcode__contains=barname))[:20]
-    html = ''.join(map(lambda article: f'''
-        <a
-        @click='addOrIncrement(articles, $el.dataset)'
-        class='row'
-        data-name="{article.name}"
-        data-id="{article.id}"
-        data-price="{article.price}">
-            <i>barcode</i>   
-            <span>{article.barcode}</span>
-            <span>{article.name}</span>
-        </a>
-        ''', articles))
-    return HttpResponse(html)
+    context['articles'] = Article.objects.filter(
+        (Q(name__contains=barname) | Q(barcode__contains=barname)) &
+        Q(quantity__gt=0))[:20]
+    return render(request, 'pdv/search-result-sale.html', context)
 
 
 def article_search(request):
@@ -62,6 +52,8 @@ def make_sale(request):
             article = Article.objects.get(id=id)
             ssale = SingleSale.objects.create(article=article, sale=sale, quantity=quantity)
             sale.amount_payed += article.price * Decimal(ssale.quantity)
+            article.quantity -= ssale.quantity
+            article.save()
             ssale.save()
     if print_recipt:
         return redirect('pdv:recipt', sale.id)

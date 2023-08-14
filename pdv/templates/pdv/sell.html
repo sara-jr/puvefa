@@ -59,9 +59,8 @@
             <td class='padding'>
               <div class='small prefix fill field border' style='margin-bottom: 0; max-width: 18em;'>
                 <i>attach_money</i>
-                <input name='payed' type='number' placeholder='Cantidad pagada' pattern='\d+\.?\d*' required
-                  @invalid='this.setCustomValidity("Ingrese la cantidad pagada")'
-                  x-model='payed' :min='total'/>
+                <input name='payed' type='number' placeholder='Cantidad pagada'
+                  x-model='payed' :min='total' step='0.01' required/>
               </div>
             </td>
             <td class='padding'>
@@ -83,11 +82,17 @@
             </span>
             <span class='s2'>
               <nav class='no-space'>
-                <button type='button' class='border large left-round' @click='article.quantity++'><i>add</i></button type='button'>
+                <button type='button' class='border large left-round'
+                  @click='article.quantity = article.quantity == article.max? article.quantity : parseInt(article.quantity + 1)'>
+                  <i>add</i>
+                </button>
                 <div style='max-width: 6em;' class='field min border no-round border'>
-                  <input type='number' x-bind:name='article.id' pattern='[1-9]\d*' min='1' x-model='article.quantity'/>
+                  <input type='number' :name='article.id' min='1' step='1' :max='article.max' x-model='article.quantity'/>
                 </div> 
-                <button type='button' class='border large right-round' @click='article.quantity = article.quantity > 1? article.quantity - 1 : 1'><i>remove</i></button type='button'>
+                <button type='button' class='border large right-round'
+                  @click='article.quantity = article.quantity > 1? parseInt(article.quantity - 1) : 1'>
+                  <i>remove</i>
+                </button>
               </nav>
             </span>
             <span class='s1 padding'>
