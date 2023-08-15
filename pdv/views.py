@@ -312,3 +312,16 @@ def make_recipt(request, id):
     )
     return render(request, 'pdv/recipt.html', context)
 
+def sale_details(request, id):
+    context = {'id':id}
+    sale = Sale.objects.get(pk=id)
+    articles = SingleSale.objects.\
+        filter(sale=sale).\
+        values('article__name', 'article__category__name', 'article__price', 'quantity')
+    context['articles'] = articles
+    context['total'] = reduce(lambda val, item: val + item['article__price']*item['quantity'], articles, 0)
+    context['payed'] = sale.amount_payed
+    context['date'] = sale.date
+    context['change'] =  context['payed'] - context['total']
+    return render(request, 'pdv/sale-details.html', context)
+    

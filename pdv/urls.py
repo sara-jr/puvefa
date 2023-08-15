@@ -19,5 +19,6 @@ urlpatterns = [
     path('medics/search/', views.medic_search, name='medic_search'),
     path('prescriptions/', views.prescriptions, name='prescriptions'),
     path('prescriptions/all/', views.prescription_list, name='prescriptions_list'),
-    path('recipt/<int:id>/', views.make_recipt, name='recipt')
+    path('recipt/<int:id>/', views.make_recipt, name='recipt'),
+    path('sale/<int:id>/', views.sale_details, name='sale')
 ]

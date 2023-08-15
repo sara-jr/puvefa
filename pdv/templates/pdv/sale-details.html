@@ -1,0 +1,49 @@
+{% extends 'pdv/base.html' %}
+
+{% block title %}Ventas{% endblock %}
+
+{% block content %}
+<article>
+  <h3>Venta número {{id}}</h3>
+  <h5>{{date|date:"d/m/Y P"}}</h4>
+  <br />
+  <div class='grid' >
+    <span class='s4'>
+      <h5>Nombre</h5>
+    </span>
+    <span class='s4'>
+      <h5>Categoria</h5>
+    </span>
+    <span class='s2'>
+      <h5>Precio</h5>
+    </span>
+    <span class='s2'>
+      <h5>Cantidad</h5>
+    </span>
+  {% for article in articles %}
+    <span class='s4'>
+      {{article.article__name}}
+    </span>
+    <span class='s4'>
+      {{article.article__category__name}}
+    </span>
+    <span class='s2'>
+      {{article.article__price}}
+    </span>
+    <span class='s2'>
+      {{article.quantity}}
+    </span>
+  {% endfor %}
+  </div>
+  <br />
+  <hr />
+  <div class='grid'>
+    <span class='s10 center-align'><h4>Total</h4></span>
+    <span class='s2'><strong class='large-text'>{{total}}</strong></span>
+    <span class='s10 center-aling'><h4>Pagado</h4></span>
+    <span class='s2'><strong class='large-text'>{{payed}}</strong></span>
+    <span class='s10 center-aling'><h4>Cambio</h4></span>
+    <span class='s2'><strong class='large-text'>{{change}}</strong></span>
+  </div>
+</article>
+{% endblock %}
