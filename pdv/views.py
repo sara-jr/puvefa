@@ -219,8 +219,7 @@ def prescriptions(request):
     for id, date, name, quantity in unregistered_sales.values_list('sale', 'sale__date', 'article__name', 'quantity'):
         if not id in data:
             data[id] = {'date':date, 'articles':[]}
-        else:
-            data[id]['articles'].append({'name':name, 'quantity':quantity})
+        data[id]['articles'].append({'name':name, 'quantity':quantity})
         
     '''
     data = {

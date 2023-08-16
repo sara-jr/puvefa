@@ -9,7 +9,9 @@
         {% for id, data in controlled.items %}
         <div class='row'>
           <article class='max border round'>
-            <h5>Fecha {{data.date|date:"d/m/Y P"}}</h5>
+            <h3>Venta número {{id}}</h4>
+            <br/>
+            <h4>Fecha {{data.date|date:"d/m/Y P"}}</h4>
             <br/>
             <div class='grid'>
               {% for article in data.articles %}
