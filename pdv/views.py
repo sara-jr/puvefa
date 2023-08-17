@@ -50,9 +50,9 @@ def make_sale(request):
     with localcontext(prec=12):
         for id, quantity in sale_data.items():
             article = Article.objects.get(id=id)
-            ssale = SingleSale.objects.create(article=article, sale=sale, quantity=quantity)
+            ssale = SingleSale.objects.create(article=article, sale=sale, quantity=int(quantity))
             sale.amount_payed += article.price * Decimal(ssale.quantity)
-            article.quantity -= ssale.quantity
+            article.quantity = article.quantity - ssale.quantity
             article.save()
             ssale.save()
     if print_recipt:
