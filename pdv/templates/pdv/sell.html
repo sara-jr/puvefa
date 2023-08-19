@@ -17,7 +17,7 @@
     }
 
     function computeTotal(articleList){
-      return Object.values(articleList).map((a)=>a.price*a.quantity).reduce((a,b)=>a+b, 0);
+      return Object.values(articleList).reduce((acc, val)=>acc + val.price*val.quantity, 0);
     }
 
   </script>
