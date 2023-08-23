@@ -9,11 +9,14 @@
     $watch("payed", val => change=payed-total)'>
   <script>
     function addOrIncrement(articleList, article){
-      if(article.id in articleList){
-        articleList[article.id].quantity++;
+      let id = article.id;
+      if(id in articleList){
+        let max = articleList[id].max;
+        let quantity = articleList[id].quantity;
+        articleList[id].quantity  = quantity >= max? quantity + 1: max;
         return;
       }
-      articleList[article.id] = {...article, quantity: 1};
+      articleList[id] = {...article, quantity: 1};
     }
 
     function computeTotal(articleList){
