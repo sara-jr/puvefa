@@ -24,7 +24,7 @@ def active_search(request):
     barname = request.GET['barname']
     context['articles'] = Article.objects.filter(
         (Q(name__contains=barname) | Q(barcode__contains=barname)) &
-        Q(quantity__gt=0))[:20]
+        Q(quantity__gt=0))[:5]
     return render(request, 'pdv/search-result-sale.html', context)
 
 

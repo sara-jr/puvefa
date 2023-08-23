@@ -1,5 +1,10 @@
 {% for article in articles %}
-    <a @click='addOrIncrement(articles, $el.dataset)'
+    <a @click='addOrIncrement(articles, $el.dataset); $el.blur()'
+    @keydown.enter='addOrIncrement(articles, $el.dataset);$el.blur()'
+    @keydown.down='$event.preventDefault(); nxt = $el.nextElementSibling ?? $el.parentElement.firstElementChild; nxt.focus()'
+    @keydown.up='$event.preventDefault(); prev = $el.previousElementSibling ?? $el.parentElement.lastElementChild; prev.focus()'
+    @keydown.esc='$el.blur()'
+    tabindex='{{forloop.counter}}'
     class='row'
     data-max="{{article.quantity}}"
     data-name="{{article.name}}"
@@ -8,5 +13,9 @@
         <i>barcode</i>   
         <span>{{article.barcode}}</span>
         <span>{{article.name}}</span>
+    </a>
+{% empty %}
+    <a class='row center-align padding'>
+        <span class='large-text'>Sin resultados</span>
     </a>
 {% endfor %}
