@@ -32,7 +32,7 @@
         <i class='front'>barcode_reader</i>
         <input type='search'
           id='barname-search'
-          hx-get="/pdv/activesearch"
+          hx-get="{% url 'pdv:article_search' %}"
           hx-trigger="keyup changed delay:600ms"
           hx-target="#search-results" 
           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'            
@@ -41,7 +41,7 @@
           name='barname'
           @blur='$el.classList.toggle("shake")'
           @focus='$el.classList.toggle("shake");$el.select();'
-          @keydown.down='$refs.searchres.firstElementChild.focus();$event.prefentDefault()'
+          @keydown.down='$refs.searchres.firstElementChild.focus();$event.preventDefault()'
           @keydown.enter='$refs.searchres.firstElementChild.click();$el.blur()'
           autocomplete="off"
           autofocus
