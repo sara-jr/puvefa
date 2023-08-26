@@ -18,48 +18,78 @@
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="{% static 'pdv/components.js' %}"></script>
 </head>
-<body class='dark'>
-  <div @click='$el.classList.toggle("active")' x-data class="toast error top {% if error %} active {% endif %}">{{ error }}</div>
-  <header class='primary-container'>
-    <nav>
-      <h4 class='max'></h4> 
-      <div class='max'>
-        <h4 x-data='{date:new Date()}' 
-        x-init='setInterval(()=>date = new Date(), 1000)'
-        x-text='date.toLocaleTimeString("es-MX",{timeStyle:"medium"})'></h4>
-      </div>
-      <button>
-        <span>Ventas</span>
-        <i>arrow_drop_down</i>
-        <menu class='no-wrap'>
-          <a href='{% url "pdv:makesale" %}'>Hacer ventas</a>
-          <a href='{% url "pdv:reports" %}'>Reportes</a>
-        </menu>
+<body class='dark' x-data>
+  <div class="toast error top {% if error %} active {% endif %}"
+  @click='$el.classList.toggle("active")' 
+  x-data >
+    {{ error }}
+  </div>
+  <dialog id='menu' class='left modal' @keydown.escape='$el.close()'>
+    <header>
+      <button class='transparent circle tertiary' @click='document.getElementById("menu").close()'>
+        <i>close</i>
       </button>
-      <button>
-        <span>Articulos</span>
-        <i>arrow_drop_down</i>
-        <menu class='no-wrap'>
-          <a href='{% url "pdv:article_list" "all" 1 %}'>
-            Lista de Articulos
-          </a> 
-        </menu>
+    </header>
+    <article class='border'>
+      <details>
+        <summary class='none'>
+          <i>expand_more</i>
+          Ventas
+        </summary>
+        <br/>
+        <a class='row wave' href='{% url "pdv:makesale" %}'>
+          Hacer ventas
+        </a>
+        <a class='row wave' href='{% url "pdv:reports" %}'>
+          Reportes
+        </a>
+      </details>
+    </article>
+    <article class='border'>
+      <details>
+        <summary class='none'>
+          <i>expand_more</i>
+          Articulos
+        </summary>
+        <br/>
+        <a class='row wave' href='{% url "pdv:article_list" "all" 1 %}'>
+          Lista
+        </a> 
+      </details>
+    </article>
+    <article class='border'>
+      <details>
+        <summary class='none'>
+          <i>expand_more</i>
+          Farmacia
+        </summary>
+        <br/>
+        <a class='row wave' href='{% url "pdv:prescriptions" %}'>
+          Registrar Antibioticos
+        </a>
+        <a class='row wave' href='{% url "pdv:prescriptions_list" %}'>
+          Ver Recetas
+        </a>
+        <a class='row wave' href='{% url "pdv:medics" %}'>
+          Agregar Medicos
+        </a>
+      </details>
+    </article>
+  </dialog>
+  <header class='primary-container row no-margin no-padding'>
+    <span>
+      <button class='transparent square padding no-margin'
+      @click='document.getElementById("menu").show()'>
+        <i>menu</i>
       </button>
-      <button>
-        <span>Farmacia</span>
-        <i>arrow_drop_down</i>
-        <menu class='no-wrap'>
-          <a href='{% url "pdv:prescriptions" %}'>
-            Registrar Antibioticos
-          </a>
-          <a href='{% url "pdv:prescriptions_list" %}'>
-            Ver Recetas
-          </a>
-          <a href='{% url "pdv:medics" %}'>
-            Agregar Medicos
-          </a>
-        </menu>
-    </nav>
+    </span>
+    <div class='max padding'>
+      <h4 class='center-align'
+      x-ref='clock'
+      x-data='{date:new Date()}' 
+      x-init='setInterval(()=>date = new Date(), 1000)'
+      x-text='date.toLocaleTimeString("es-MX",{timeStyle:"medium"})'></h4>
+    </div>
   </header>
   <main class='responsive max center padding'>
     <br />
