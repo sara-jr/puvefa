@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(verbose_name='Nombre de categoria', max_length=256, null=False)
-    description = models.TextField(verbose_name='Descripcion', null=True)
+    description = models.TextField(verbose_name='Descripcion', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -12,7 +12,7 @@ class Category(models.Model):
 
 class Article(models.Model):
     name = models.CharField(verbose_name='Nombre del articulo', max_length=256, unique=True, null=False)
-    description = models.TextField(verbose_name='Descripcion', null=True)
+    description = models.TextField(verbose_name='Descripcion', null=True, blank=True)
     barcode = models.CharField(verbose_name='Codigo de barras', max_length=48, unique=True)
     price = models.DecimalField(verbose_name='Precio de venta', max_digits=8, decimal_places=2, null=False)
     purchase_price = models.DecimalField(verbose_name='Precio de compra', max_digits=8, decimal_places=2, null=False)
