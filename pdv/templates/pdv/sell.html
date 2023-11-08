@@ -1,0 +1,151 @@
+{% extends 'pdv/base.html' %}
+
+{% block title %}Ventas{% endblock %}
+
+{% block content %}
+<div x-data='{articles:{}, payed:0, change:0, total:0}' 
+  x-init='
+    $watch("articles", val => {total=computeTotal(val); change=payed-total;});
+    $watch("payed", val => change=payed-total)'>
+  <script type='text/javascript'>
+    function addOrIncrement(articleList, article){
+      let id = article.id;
+      if(id in articleList){
+        let max = articleList[id].max;
+        let quantity = articleList[id].quantity;
+        articleList[id].quantity = quantity >= max? max: quantity + 1;
+        return;
+      }
+      articleList[id] = {
+        max: parseInt(article.max),
+        price: parseFloat(article.price),
+        name: article.name,
+        id: article.id,
+        quantity: 1
+        };
+    }
+
+    function incrementQuantity(articleList, id){
+      if(articleList[id].quantity + 1 >= articleList[id].max){
+        return;
+      }
+      articleList[id].quantity++;
+    }
+
+    function decrementQuantity(articleList, id){
+      if(articleList[id].quantity - 1 <= 0){
+        return;
+      }
+      articleList[id].quantity--;
+    }
+
+    function computeTotal(articleList){
+      return Object.values(articleList).reduce((acc, val)=>acc + val.price*val.quantity, 0);
+    }
+
+  </script>
+  <article class='secondary-container'>
+    <h5>Venta</h5>
+    <br>
+    <div class='container'>
+      <div class='suffix field prefix fill primary large border'>
+        <i class='front'>barcode_reader</i>
+        <input type='search'
+          id='barname-search'
+          hx-get="{% url 'pdv:article_search' %}"
+          hx-trigger="keyup changed delay:200ms"
+          hx-target="#search-results" 
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'            
+          hx-validate
+          maxlength='144'
+          name='barname'
+          @blur='$el.classList.toggle("shake")'
+          @focus='$el.classList.toggle("shake");$el.select();'
+          @keydown.down='$refs.searchres.firstElementChild.focus();$event.preventDefault()'
+          @keydown.enter='$refs.searchres.firstElementChild.click();$el.blur()'
+          autocomplete="off"
+          autofocus
+          tabindex='0'
+          placeholder='Escribir nombre o codigo de barras'/>
+        <i class="front">close</i>
+      </div>
+      <menu x-ref='searchres' id='search-results'>
+      </menu>
+    </div>
+
+    <form method='post' action='{% url "pdv:makesale" %}'>
+      <table class='padding'>
+        <tbody>
+          <tr>
+            <td><h4>Total</h4></td>
+            <td><h4>Pagado</h4></td>
+            <td><h4>Cambio</h4></td>
+          </tr>
+          <tr>
+            <td class='padding'><h4 x-text='`$ ${total}`'></h4></td>
+            <td class='padding'>
+              <div class='small prefix fill field border' style='margin-bottom: 0; max-width: 18em;'>
+                <i>attach_money</i>
+                <input name='payed' type='number' placeholder='Cantidad pagada'
+                  x-model='payed' :min='total' step='0.01' required/>
+              </div>
+            </td>
+            <td class='padding'>
+             <h4 class='s2' x-text='change > 0? `$ ${change}`: " Pago insuficiente"'></h4>   
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <input x-ref="print_input" type="hidden" name="print" value="0" />
+      <div id='articles-section'>
+        <template x-for='article in articles'>
+        <!-- POR CADA ARTICULO EN LA LISTA DE ARTICULOS -->
+          <div class='grid slideRight'>
+            <span class='s5'>
+              <h5 x-text='article.name'></h5>
+            </span>
+            <span class='s4'>
+              <h5 x-text='`$ ${article.price}`'></h5>
+            </span>
+            <span class='s2'>
+              <nav class='no-space'>
+                <button type='button' class='border large left-round'
+                  @click='incrementQuantity(articles, article.id)'>
+                  <i>add</i>
+                </button>
+                <div style='max-width: 6em;' class='field min border no-round border'>
+                  <input type='number' :name='article.id' min='1' step='1' :max='article.max' x-model='article.quantity'/>
+                </div> 
+                <button type='button' class='border large right-round'
+                  @click='decrementQuantity(articles, article.id)'>
+                  <i>remove</i>
+                </button>
+              </nav>
+            </span>
+            <span class='s1 padding'>
+              <button class='circle tertiary' @click='delete articles[article.id]'><i>delete</i></button>
+            </span>
+          </div>
+        <!-- FIN -->
+        </template>
+      </div>
+
+      <div class='large-space'></div> <!-- BRUH -->
+      {% csrf_token %}
+      <nav class='no-space'>
+        <button type='submit' @click.capture='$refs.print_input.value = 1' class='vertical border left-round primary extra'><i>print</i> Cobrar e imprimir ticket </button>
+        <button type='submit' @click.capture='$refs.print_input.value = 0' class='vertical border no-round primary extra'><i>payments</i> Cobrar </button>
+        <button type='button' @click='$refs.confirm_dialog.open = true' class='vertical border right-round tertiary extra'><i>close</i> Cancelar venta </button>
+      </nav>
+    </form>
+    <dialog class='modal' x-ref='confirm_dialog'>
+      <h5>Advertencia</h5>
+      <div class='row'>¿Cancelar la venta?</div>
+      <nav>
+        <button @click='$refs.confirm_dialog.open=false; articles={}'><i>check</i></button>
+        <button @click='$refs.confirm_dialog.open=false'><i>close</i></button>
+      </nav>
+    </dialog>
+  </article>
+<div>
+{% endblock %}

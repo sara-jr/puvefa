@@ -1,0 +1,36 @@
+{% comment %}
+Parametros
+-name
+  El nombre del parametro que sera enviado en la solicitud GET al realizar la busqueda
+-urlname
+  La url a la cual se realizara la solicitud GET para poblar las opciones
+-placeholder 
+  El texto que se mostrara en la barra de busqueda cuando esté vacia
+
+Barra de busqueda que ingresa elementos html a un nodo en base al
+texto de busqueda
+
+Realiza una solicitud GET a la url asociada a la ruta {{urlname}}
+con el valor de la etiqueta input con el atributo name igual a 
+{{parameter}} mediante htmx para ingresar nodos en el elemento
+especificado por el selector css extendido con htmx 
+llamado {{target}}
+
+{% endcomment %}
+<div x-data='{value:"", display:""}' >
+  <div class="max field large prefix suffix round fill">
+    <i class='front'>search</i>
+    <input placeholder="{{placeholder}}" name='{{parameter}}'
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+      hx-get='{% url urlname %}'
+      hx-trigger="keyup changed delay:900ms" 
+      hx-target='{{target}}'
+      x-model='value'
+      autocomplete='off'
+    />
+    <span class='htmx-indicator'>
+      <a class='loader small pink'></a>
+    </span>
+    <i class='front' @click='display="";value=""'>close</i>
+  </div>
+</div>
