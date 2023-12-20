@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.db.models import Q, F
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core import serializers
 from .models import *
 from decimal import localcontext, Decimal
@@ -22,9 +22,14 @@ def sell(request):
 def active_search(request):
     context = {}
     barname = request.GET['barname']
-    context['articles'] = Article.objects.filter(
-        (Q(name__contains=barname) | Q(barcode__contains=barname)) &
-        Q(quantity__gt=0))[:5]
+    single = False
+    try:
+        articles = Article.objects.get(barcode=barname, quantity__gt=0)
+        single = True
+    except (MultipleObjectsReturned, ObjectDoesNotExist):
+        articles = Article.objects.filter(name__contains=barname, quantity__gt=0)[:5]
+    context['single'] = single
+    context['articles'] = articles
     return render(request, 'pdv/search-result-sale.html', context)
 
 
