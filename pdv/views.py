@@ -1,4 +1,5 @@
 from functools import reduce
+from django.views.decorators.http import require_POST, require_GET
 import math
 import datetime
 from django.urls import reverse
@@ -19,6 +20,7 @@ def sell(request):
     return render(request, 'pdv/sell.html', context)
 
 
+@require_GET
 def active_search(request):
     context = {}
     barname = request.GET['barname']
@@ -33,18 +35,8 @@ def active_search(request):
     return render(request, 'pdv/search-result-sale.html', context)
 
 
-def article_search(request):
-    barname = request.GET['barname']
-    data = list(map(lambda x: model_to_dict(x), Article.objects.filter(
-        Q(name__contains=barname) | Q(barcode__contains=barname)
-        )))
-    return JsonResponse(data, safe=False)
-
-
+@require_POST
 def make_sale(request):
-    if request.method != 'POST':
-        return redirect('pdv:sell')
-        
     print_recipt = request.POST['print'] == '1'
     sale = Sale.objects.create(amount_payed=Decimal(request.POST['payed']))
     sale.save()
@@ -93,6 +85,7 @@ def article_get(request, id):
     context['id'] = id
     return render(request, 'pdv/article.html', context)
 
+@require_GET
 def list_articles(request, filter, index):
     ITEMS_PER_PAGE = 10
     FILTERS = {
