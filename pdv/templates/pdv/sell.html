@@ -3,39 +3,55 @@
 {% block title %}Ventas{% endblock %}
 
 {% block content %}
-<div x-data='{articles:{}, payed:0, change:0, total:0, enough: false, count:0}' x-init='
-    $watch("articles", val => {total=computeTotal(val); change=payed-total; count=Object.keys(articles).length});
+<div x-data='{articles:[], payed:0, change:0, total:0, enough: false, count:0}' x-init='
+    $watch("articles", val => {total=computeTotal(val); change=payed-total; count=articles.length;});
     $watch("payed", val => {change=payed-total; enough = change >= 0})'>
   <script type='text/javascript'>
-    function addOrIncrement(articleList, article) {
-      let id = article.id;
-      if (id in articleList) {
-        let max = articleList[id].max;
-        let quantity = articleList[id].quantity;
-        articleList[id].quantity = quantity >= max ? max : quantity + 1;
+    function indexFromId(articleList, id) {
+      return articleList.findIndex((a) => a.id == id);
+    }
+
+
+    function deleteArticle(articleList, id) {
+      let index = indexFromId(articleList, id);
+      if (index == -1) {
         return;
       }
-      articleList[id] = {
+      articleList.splice(index, 1);
+    }
+
+    function addOrIncrement(articleList, article) {
+      let id = article.id;
+      let index = indexFromId(articleList, id);
+      if (index != -1) {
+        let max = articleList[index].max;
+        let quantity = articleList[index].quantity;
+        articleList[index].quantity = quantity >= max ? max : quantity + 1;
+        return;
+      }
+      articleList.push({
         max: parseInt(article.max),
         price: parseFloat(article.price),
         name: article.name,
         id: article.id,
         quantity: 1
-      };
+      });
     }
 
     function incrementQuantity(articleList, id) {
-      if (articleList[id].quantity + 1 > articleList[id].max) {
+      let index = indexFromId(articleList, id);
+      if (articleList[index].quantity + 1 > articleList[index].max) {
         return;
       }
-      articleList[id].quantity++;
+      articleList[index].quantity++;
     }
 
     function decrementQuantity(articleList, id) {
-      if (articleList[id].quantity - 1 <= 0) {
+      let index = indexFromId(articleList, id);
+      if (articleList[index].quantity - 1 <= 0) {
         return;
       }
-      articleList[id].quantity--;
+      articleList[index].quantity--;
     }
 
     function computeTotal(articleList) {
@@ -86,7 +102,7 @@
               <button type='button' class='border round' @click='incrementQuantity(articles, article.id)'>
                 <i>add</i>
               </button>
-              <button class='border tertiary round' @click='delete articles[article.id]'>
+              <button class='border tertiary round' @click='deleteArticle(articles, article.id)'>
                 <i>close</i>
               </button>
             </nav>
@@ -134,7 +150,7 @@
       <h5>Advertencia</h5>
       <div class='row'>¿Cancelar la venta?</div>
       <nav>
-        <button @click='$refs.confirm_dialog.open=false; articles={}'><i>check</i></button>
+        <button @click='$refs.confirm_dialog.open=false; articles = [];'><i>check</i></button>
         <button @click='$refs.confirm_dialog.open=false'><i>close</i></button>
       </nav>
     </dialog>
