@@ -59,19 +59,23 @@
     }
 
   </script>
-  <article class='secondary-container'>
-    <h5>Venta</h5>
+  <article class="large-padding secondary-container">
+    <div class="row center-align">
+      <h1>Total de la venta</h1>
+    </div>
+    <div class="row center-align">
+      <h2>$<span x-text="total"></span></h2>
+    </div>
     <br>
     <search class="row margin middle-align" x-data="{searchtext:''}">
       {% csrf_token %}
       <div class="max suffix prefix no-margin field fill primary large border">
         <i class="front">barcode_reader</i>
         <input id="searchinput" type="search" id="barname-search" maxlength="128" name="barname" autocomplete="off"
-          x-model="searchtext" hx-get="{% url 'pdv:article_search' %}" hx-trigger="input changed delay:300ms"
-          hx-include="previous input" hx-validate hx-target="#searchResults" hx-indicator="#spinner"
-          @htmx:after-swap.window="searchtext=''" autofocus tabindex="0"
-          placeholder="Escribir nombre para buscar ó codigo de barras para agregar directamente" minlength="3" required
-          @focus="$el.select()" />
+          x-model="searchtext" hx-get="{% url 'pdv:article_search' %}" hx-trigger="input changed delay:400ms"
+          hx-include="previous input" hx-validate hx-target="#searchResults" hx-indicator="#spinner" autofocus
+          tabindex="0" placeholder="Escribir nombre para buscar ó codigo de barras para agregar directamente"
+          minlength="3" required @focus="$el.select()" />
         <progress id="spinner" class="htmx-indicator circle"></progress>
       </div>
       <div id="searchResults">
