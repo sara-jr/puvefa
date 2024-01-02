@@ -96,7 +96,7 @@
             </span>
             <div class='s2 field min small border round border'>
               <input type='number' :name='article.id' min='1' step='1' :max='article.max'
-                x-model.number='article.quantity' />
+                x-model.number='article.quantity' @focus="$el.select()" />
               <span class="helper" x-text="`Cantidad maxima ${article.max}`"></span>
             </div>
             <nav class="s4 middle-align">
@@ -106,7 +106,7 @@
               <button type='button' class='border round' @click='incrementQuantity(articles, article.id)'>
                 <i>add</i>
               </button>
-              <button class='border tertiary round' @click='deleteArticle(articles, article.id)'>
+              <button type="button" class='border tertiary round' @click='deleteArticle(articles, article.id)'>
                 <i>close</i>
               </button>
             </nav>
