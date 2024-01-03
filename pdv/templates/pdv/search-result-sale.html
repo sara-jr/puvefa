@@ -3,22 +3,27 @@
   data-price="{{articles.price}}" id="article-to-add" x-data
   x-init="addOrIncrement(articles, $el.dataset); $el.remove();">
 {% else %}
-<dialog x-data class="active" @click.outside="$el.classList.remove('active')">
-  {% for article in articles %}
-  <a @click="addOrIncrement(articles, $el.dataset); $root.classList.remove('active')"
-    @keydown.enter='addOrIncrement(articles, $el.dataset);$el.blur()'
-    @keydown.down='$event.preventDefault(); nxt = $el.nextElementSibling ?? $el.parentElement.firstElementChild; nxt.focus()'
-    @keydown.up='$event.preventDefault(); prev = $el.previousElementSibling ?? $el.parentElement.lastElementChild; prev.focus()'
-    @keydown.esc='$el.blur()' tabindex='{{forloop.counter}}' class='row' data-max="{{article.quantity}}"
-    data-name="{{article.name}}" data-id="{{article.id}}" data-price="{{article.price}}">
-    <i>barcode</i>
-    <span>{{article.barcode}}</span>
-    <span>{{article.name}}</span>
-  </a>
-  {% empty %}
-  <a class='row center-align padding'>
-    <span class='large-text'>Sin resultados</span>
-  </a>
-  {% endfor %}
+<dialog x-data class="active modal responsive" @click.outside="$el.classList.remove('active')">
+  <div class="row center-align margin">
+    <h2>Resultados</h2>
+  </div>
+  <article class="border no-margin">
+    {% for article in articles %}
+    <a @click="addOrIncrement(articles, $el.dataset); $root.classList.remove('active')"
+      @keydown.enter='addOrIncrement(articles, $el.dataset);$el.blur()'
+      @keydown.down='$event.preventDefault(); nxt = $el.nextElementSibling ?? $el.parentElement.firstElementChild; nxt.focus()'
+      @keydown.up='$event.preventDefault(); prev = $el.previousElementSibling ?? $el.parentElement.lastElementChild; prev.focus()'
+      @keydown.esc='$el.blur()' tabindex='{{forloop.counter}}' class='row wave round small-margin large-padding'
+      data-max="{{article.quantity}}" data-name="{{article.name}}" data-id="{{article.id}}"
+      data-price="{{article.price}}">
+      <span class="max large-text primary-text">{{article.name}}</span>
+      <span class="chip secondary">{{article.quantity}}</span>
+    </a>
+    {% empty %}
+    <a class='row round center-align padding'>
+      <span class='large-text error-text'>Sin resultados</span>
+    </a>
+    {% endfor %}
+  </article>
 </dialog>
 {% endif %}
