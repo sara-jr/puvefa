@@ -14,6 +14,11 @@ from decimal import localcontext, Decimal
 from .forms import ArticleForm, MedicForm
 
 
+ITEMS_PER_PAGE = 5
+MAX_SEARCH_RESULTS = 8
+
+
+
 # Create your views here.
 def sell(request):
     context = {'title': 'Venta de articulos'}
@@ -29,7 +34,7 @@ def active_search(request):
         articles = Article.objects.get(barcode=barname, quantity__gt=0)
         single = True
     except (MultipleObjectsReturned, ObjectDoesNotExist):
-        articles = Article.objects.filter(name__contains=barname, quantity__gt=0)[:5]
+        articles = Article.objects.filter(name__contains=barname, quantity__gt=0)[:MAX_SEARCH_RESULTS]
     context['single'] = single
     context['articles'] = articles
     return render(request, 'pdv/search-result-sale.html', context)
@@ -56,6 +61,7 @@ def make_sale(request):
         return redirect('pdv:recipt', sale.id)
     return redirect('pdv:sell')
 
+
 def article(request):
     form = ArticleForm()
     context = {'name':'Artículo', 'url':reverse('pdv:article')}
@@ -68,6 +74,7 @@ def article(request):
         return render(request, 'pdv/sell.html', context)
     context['form'] = form.render()
     return render(request, 'pdv/post-form.html', context)
+
 
 def article_get(request, id):
     article = Article.objects.get(id=id)
@@ -85,9 +92,9 @@ def article_get(request, id):
     context['id'] = id
     return render(request, 'pdv/article.html', context)
 
+
 @require_GET
 def list_articles(request, filter, index):
-    ITEMS_PER_PAGE = 10
     FILTERS = {
         'low':Q(quantity__lte=F('min_quantity')),
         'soldout':Q(quantity=0)
@@ -245,8 +252,8 @@ def index_slicing(index, count, perpage):
 
     return slice(lower_bound, lower_bound + perpage)
 
+
 def prescription_list(request):
-    ITEMS_PERPAGE = 20
     context = {'index': 1}
     idx = 1
     values = [
@@ -278,12 +285,14 @@ def prescription_list(request):
     context['prescriptions'] = partial
     return render(request, 'pdv/prescription-list.html', context)
 
+
 def medic_search(request):
     context = {}
     query = request.GET['name']
     results = Medic.objects.filter(name__contains=query)[:20]
     context['results'] = list(map(lambda medic: {'display':str(medic), 'value':medic.id}, results))
     return render(request, 'pdv/search-result.html', context) 
+
 
 def make_recipt(request, id):
     context = {}
@@ -308,6 +317,7 @@ def make_recipt(request, id):
         address='Addres #1234 TEAST'
     )
     return render(request, 'pdv/recipt.html', context)
+
 
 def sale_details(request, id):
     context = {'id':id}
