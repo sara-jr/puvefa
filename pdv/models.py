@@ -64,7 +64,15 @@ class PrescriptionPartial(models.Model):
     date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
     sale = models.ForeignKey(Sale, null=False, on_delete=models.RESTRICT)
 
+
 class PrescriptionTotal(models.Model):
     medic = models.ForeignKey(Medic, verbose_name='Medico', on_delete=models.RESTRICT, null=False)
     date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
     sale = models.ForeignKey(Sale, null=False, on_delete=models.RESTRICT)
+
+
+class MedicalConsultation(models.Model):
+    price = models.DecimalField(verbose_name='Costo', max_digits=8, decimal_places=2, null=False)
+    description = models.TextField(verbose_name='Descripción', blank=True, null=False)
+    date = models.DateField(verbose_name='Fecha', blank=False, null=False)
+    is_consultation = models.BooleanField(verbose_name='Es consulta', null=False)
