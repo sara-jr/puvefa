@@ -18,6 +18,13 @@ ITEMS_PER_PAGE = 5
 MAX_SEARCH_RESULTS = 8
 
 
+def check(request):
+    return render(request, 'pdv/medical-check.html')
+
+
+def make_check(request):
+    pass
+
 
 # Create your views here.
 def sell(request):

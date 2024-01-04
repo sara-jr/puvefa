@@ -19,5 +19,7 @@ urlpatterns = [
     path('prescriptions/', views.prescriptions, name='prescriptions'),
     path('prescriptions/all/', views.prescription_list, name='prescriptions_list'),
     path('recipt/<int:id>/', views.make_recipt, name='recipt'),
-    path('sale/<int:id>/', views.sale_details, name='sale')
+    path('sale/<int:id>/', views.sale_details, name='sale'),
+    path('check/', views.check, name='check'),
+    path('check/', views.make_check, name='make_check'),
 ]

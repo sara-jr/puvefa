@@ -1,0 +1,38 @@
+{% extends 'pdv/base.html' %}
+{% block content %}
+<article x-data="{procedure:false, date:''}">
+  <div class="row margin center-align">
+    <h3>Registrar consulta medica</h3>
+  </div>
+  <br class="large-space">
+  <form action="{% url 'pdv:make_check' %}" method="post">
+    <h5>Tipo</h5>
+    {% csrf_token %}
+    <div class=" border field middle-align">
+      <nav>
+        <label class="radio">
+          <input type="radio" name="check" value="check" @input="procedure = $el.ehecked" required>
+          <span>Consulta</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="check" value="procedure" @input="procedure = !$el.ehecked" required>
+          <span>Procedimiento</span>
+        </label>
+      </nav>
+    </div>
+    <div class=" border field label">
+      <input type="number" name="price" min="1" max="999" step="1" required>
+      <label>Precio</label>
+    </div>
+    <div class=" border field label">
+      <input type="date" name="date" x-model="date" required>
+      <label>Fecha</label>
+    </div>
+    <div class="field textarea label round small border" x-show="procedure">
+      <textarea name="description" minlength="4" :readonly="!procedure" :required="!procedure"></textarea>
+      <label>Descripción</label>
+    </div>
+    <button type="submit">Guardar</button>
+  </form>
+</article>
+{% endblock %}
