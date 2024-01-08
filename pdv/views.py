@@ -22,11 +22,18 @@ def check(request):
     return render(request, 'pdv/medical-check.html')
 
 
+@require_POST
 def make_check(request):
-    pass
+    is_consultation = request.POST['check'] == 'check'
+    date = request.POST['date']
+    price = request.POST['price']
+    description = '' if is_consultation else request.POST['description']
+    new_check = MedicalConsultation.objects.create(
+        description=description, price=price, date=date, is_consultation=is_consultation)
+    new_check.save()
+    return redirect('pdv:check')
 
 
-# Create your views here.
 def sell(request):
     context = {'title': 'Venta de articulos'}
     return render(request, 'pdv/sell.html', context)

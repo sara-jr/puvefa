@@ -21,5 +21,5 @@ urlpatterns = [
     path('recipt/<int:id>/', views.make_recipt, name='recipt'),
     path('sale/<int:id>/', views.sale_details, name='sale'),
     path('check/', views.check, name='check'),
-    path('check/', views.make_check, name='make_check'),
+    path('check/make/', views.make_check, name='make_check'),
 ]
