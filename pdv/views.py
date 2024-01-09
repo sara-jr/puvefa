@@ -130,6 +130,18 @@ def list_articles(request, filter, index):
     return render(request, 'pdv/list.html', context)
 
 
+@require_GET
+def list_medical_consultation(request, index):
+    context = {}
+    medical_checks = MedicalConsultation.objects.all()
+    indexes = math.ceil(medical_checks.count() / ITEMS_PER_PAGE)
+    if index <= 0 or index > indexes:
+        index = 1
+    context['medical_checks'] = medical_checks[(index - 1)*ITEMS_PER_PAGE:index*ITEMS_PER_PAGE]
+    context['indexes'] = range(1, indexes+1)
+    return render(request, 'pdv/medical-check-list.html', context)
+
+
 def compute_sale_stats(items_sold):
     with localcontext(prec=12):
         count = reduce(

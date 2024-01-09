@@ -22,4 +22,5 @@ urlpatterns = [
     path('sale/<int:id>/', views.sale_details, name='sale'),
     path('check/', views.check, name='check'),
     path('check/make/', views.make_check, name='make_check'),
+    path('check/list/<int:index>/', views.list_medical_consultation, name='consultation_list')
 ]

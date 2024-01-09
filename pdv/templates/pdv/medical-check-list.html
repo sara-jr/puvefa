@@ -1,0 +1,57 @@
+{% extends 'pdv/base.html' %}
+
+{% block title %} Lista {% endblock %}
+
+{% block content %}
+<article>
+  <h4>
+    Consultas medicas
+  </h4>
+  <br />
+  {% if medical_checks %}
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Pagado</th>
+        <th>Tipo</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for check in medical_checks %}
+      <tr>
+        <td>{{ check.date }}</td>
+        <td>{{ check.price }}</td>
+        <td>
+        {% if check.is_consultation %}
+          Consulta
+        {% else %}
+          Procedimiento
+        {% endif %}
+        </td>
+        <td>
+        {% if check.is_consultation %}
+          ------
+        {% else %}
+          {{check.description}}
+        {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <h2>No hay consultas registradas</h2>
+  {% endif %}
+
+  <div class='row bottom-align center-align'>
+    {% for i in indexes %}
+      <a {% if i == index %}class='chip' {% else %}class='chip border' {% endif %}
+        href='{% url "pdv:consultation_list"  i %}'>
+        {{ i }}
+      </a>
+    {% endfor %}
+  </div>
+</article>
+{% endblock %}
