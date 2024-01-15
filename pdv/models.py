@@ -96,3 +96,4 @@ class SaleReport(models.Model):
     date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
     total_sold = models.DecimalField(verbose_name='Venta total', max_digits=8, decimal_places=2, null=False)    
     total_cost = models.DecimalField(verbose_name='Costo total', max_digits=8, decimal_places=2, null=False)    
+    sale_count = models.IntegerField(verbose_name='Ventas realizadas', default=0, null=False)
