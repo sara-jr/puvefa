@@ -121,12 +121,9 @@ def list_articles(request, filter, index):
         articles = articles.filter(FILTERS[filter])
     if barname != '':
         articles = articles.filter(Q(name__contains=barname)|Q(barcode=barname))
-    indexes = math.ceil(articles.count() / ITEMS_PER_PAGE)
-    
-    if index <= 0 or index > indexes:
-        index = 1
-    context['articles'] = articles[(index - 1)*ITEMS_PER_PAGE:index*ITEMS_PER_PAGE]
-    context['indexes'] = range(1, indexes+1)
+    count = articles.count()
+    context['articles'] = articles[index_slicing(index, count, ITEMS_PER_PAGE)]
+    context['indexes'] = index_range(count, ITEMS_PER_PAGE)
     return render(request, 'pdv/list.html', context)
 
 
@@ -134,11 +131,9 @@ def list_articles(request, filter, index):
 def list_medical_consultation(request, index):
     context = {}
     medical_checks = MedicalConsultation.objects.all()
-    indexes = math.ceil(medical_checks.count() / ITEMS_PER_PAGE)
-    if index <= 0 or index > indexes:
-        index = 1
-    context['medical_checks'] = medical_checks[(index - 1)*ITEMS_PER_PAGE:index*ITEMS_PER_PAGE]
-    context['indexes'] = range(1, indexes+1)
+    count = medical_checks.count()
+    context['medical_checks'] = medical_checks[index_slicing(index, count, ITEMS_PER_PAGE)]
+    context['indexes'] = index_range(count, ITEMS_PER_PAGE)
     return render(request, 'pdv/medical-check-list.html', context)
 
 
@@ -267,16 +262,29 @@ def prescriptions(request):
     return render(request, 'pdv/prescriptions.html', context)
 
 
+
+def index_range(count, perpage):
+    return range(1, math.ceil(count/perpage) + 1)
+
+
 def index_slicing(index, count, perpage):
     '''
-    Realiza un "slizing" a un objeto para que el resultado encaje en
-    el indice dado
+    Regresa un slice que divide en n partes con un tamaño maximo y regresa la i-esima parte
+    Se usa para vistas que listan objetos
+
+    index: El indice base 1 que se desea obtener
+    count: La cantidad de objetos a dividir
+    perpage: La cantidad maxima de objetos en la cual se va a dividir
     '''
     lower_bound = (index - 1)*perpage
+    upper_bound = lower_bound + perpage
     if lower_bound > count:
         return slice(perpage - count, count)
 
-    return slice(lower_bound, lower_bound + perpage)
+    if upper_bound > count:
+        return slice(lower_bound, count)
+
+    return slice(lower_bound, upper_bound)
 
 
 def prescription_list(request):
