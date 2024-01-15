@@ -47,6 +47,7 @@ class SingleSale(models.Model):
     def __str__(self):
         return f'x{self.quantity} {self.article.name}'
 
+
 class Medic(models.Model):
     name = models.CharField(verbose_name='Nombre', max_length=256, null=False)
     sur_name_a = models.CharField(verbose_name='Apellido Paterno', max_length=256, null=False)
@@ -76,3 +77,22 @@ class MedicalConsultation(models.Model):
     description = models.TextField(verbose_name='Descripción', blank=True, null=False)
     date = models.DateField(verbose_name='Fecha', blank=False, null=False)
     is_consultation = models.BooleanField(verbose_name='Es consulta', null=False)
+
+
+class ArticleSaleReport(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.RESTRICT)
+    date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
+    quantity = models.IntegerField(verbose_name='Cantidad vendida', null=False)
+    total_sold = models.DecimalField(verbose_name='Venta total', max_digits=8, decimal_places=2, null=False)    
+    total_cost = models.DecimalField(verbose_name='Costo total', max_digits=8, decimal_places=2, null=False)    
+
+
+class MedicalConsultationReport(models.Model):
+    date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
+    total = models.DecimalField(verbose_name='Venta total', max_digits=8, decimal_places=2, null=False)    
+
+
+class SaleReport(models.Model):
+    date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
+    total_sold = models.DecimalField(verbose_name='Venta total', max_digits=8, decimal_places=2, null=False)    
+    total_cost = models.DecimalField(verbose_name='Costo total', max_digits=8, decimal_places=2, null=False)    
