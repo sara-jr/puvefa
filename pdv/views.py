@@ -293,7 +293,7 @@ def prescription_list(request):
         'medic__sur_name_b'
     ]
     data = []
-    slicing = index_slicing(idx, PrescriptionPartial.objects.count() + PrescriptionTotal.objects.count(), ITEMS_PERPAGE)
+    slicing = index_slicing(idx, PrescriptionPartial.objects.count() + PrescriptionTotal.objects.count(), ITEMS_PER_PAGE)
     partial = PrescriptionPartial.objects.values_list(*values)[slicing]
     total = PrescriptionTotal.objects.values_list(*values)[slicing]
 
