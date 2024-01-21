@@ -6,12 +6,13 @@ from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
-from django.db.models import Q, F
+from django.db.models import Q, F, Sum
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core import serializers
 from .models import *
 from decimal import localcontext, Decimal
 from .forms import ArticleForm, MedicForm
+from .reports import *
 
 
 ITEMS_PER_PAGE = 5
@@ -201,6 +202,26 @@ def sales_report(request, begin='', end=''):
         return render(request, 'pdv/sales-report.html', context)
     
     context.update(compute_sale_stats(items_sold))
+    return render(request, 'pdv/sales-report.html', context)
+
+
+def daily_report(request):
+    today = datetime.date.today()
+    try:
+        report = SaleReport.objects.get(date=today)
+    except ObjectDoesNotExist:
+        generate_reports(today)
+    article_count = ArticleSaleReport.objects.filter(date=today).only('quantity').aggregate(Sum('quantity'))['quantity__sum']
+    context = dict(
+        begin = today,
+        end = today,
+        sale_count = report.sale_count,
+        total_count = article_count,
+        total_sold = report.total_sold,
+        total_purchased = report.total_cost,
+        gain = report.total_sold - report.total_cost,
+        gain_percentage = round(100 - report.total_cost/report.total_sold*100,2)
+    )
     return render(request, 'pdv/sales-report.html', context)
 
 
