@@ -9,7 +9,7 @@ def generate_reports(date):
     article_reports: dict[int, ArticleSaleReport] = {}
     sales = Sale.objects.filter(date__date=date)
     single_sales = SingleSale.objects.filter(sale__in=sales)
-    sale_report = SaleReport(date=date, sale_count=single_sales.count(), total_cost=0, total_sold=0)
+    sale_report = SaleReport(date=date, sale_count=sales.count(), total_cost=0, total_sold=0)
 
     # Generar los reportes de ventas de articulos
     for single_sale in single_sales:
