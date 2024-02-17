@@ -37,7 +37,7 @@ def generate_reports(date):
 
 
 def generate_consultation_report(date):
-    report = MedicalConsultationReport(date=date)
+    report = MedicalConsultationReport(date=date, total=0)
     for consultation in MedicalConsultation.objects.filter(date=date):
         report.total += consultation.price
     report.save()

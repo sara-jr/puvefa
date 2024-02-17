@@ -208,11 +208,17 @@ def sales_report(request, begin='', end=''):
 def daily_report(request):
     today = datetime.date.today()
     report: SaleReport = None
+    consultation_report: MedicalConsultationReport = None
     try:
         report = SaleReport.objects.get(date=today)
     except ObjectDoesNotExist:
         generate_reports(today)
         report = SaleReport.objects.get(date=today)
+    try:
+        consultation_report = MedicalConsultationReport.objects.get(date=today)
+    except ObjectDoesNotExist:
+        generate_consultation_report(today)
+        consultation_report = MedicalConsultationReport.objects.get(date=today)
     article_count = ArticleSaleReport.objects.filter(date=today).only('quantity').aggregate(Sum('quantity'))['quantity__sum']
     context = dict(
         begin = today,
@@ -222,7 +228,8 @@ def daily_report(request):
         total_sold = report.total_sold,
         total_purchased = report.total_cost,
         gain = report.total_sold - report.total_cost,
-        gain_percentage = round(100 - report.total_cost/report.total_sold*100,2)
+        gain_percentage = round(100 - report.total_cost/report.total_sold*100,2),
+        consultation_total = consultation_report.total if consultation_report is not None else 0
     )
     return render(request, 'pdv/sales-report.html', context)
 
