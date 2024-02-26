@@ -40,3 +40,39 @@ class BasicTestCases(TestCase):
         self.assertEqual(article.min_quantity, int(data['min_quantity']), 'Min Quantity does not match')
         self.assertEqual(article.has_iva, bool(data['has_iva']), 'Has IVA does not match')
         self.assertEqual(article.category, self.dummy_category, 'Category does not match')
+
+
+    def test_create_invalid_article(self):
+        """
+        Test if an article with invalid data can be created from a web request 
+        """
+        valid_data = {
+            'name':'Test Article 1',
+            'description':'A dummy article made for testing',
+            'barcode':'a very very very very very long barcode that should not be valid in the database<',
+            'purchase_price':'100',
+            'price':'200',
+            'quantity':'10',
+            'min_quantity':'5',
+            'has_iva':'1',
+            'category':'1',
+        }
+        invalid_data = {
+            'name':'',
+            'description':'This article should not be in the database',
+            'barcode':'1234567890',
+            'purchase_price':'-100',
+            'price':'0',
+            'quantity':'-10',
+            'min_quantity':'-5',
+            'has_iva':'',
+            'category':'-1',
+        }
+        for field, value in invalid_data.items():
+            data = valid_data
+            data[field] = value
+            response = self.client.post(reverse('pdv:article'), data)
+            self.assertNotEqual(response.status_code, 200, 'Invalid data for an Article was acepted created')
+            self.assertEqual(Article.objects.count(), 0, f"Article with invalid data for field {field} was created")
+
+
