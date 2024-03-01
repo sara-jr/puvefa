@@ -76,3 +76,21 @@ class BasicTestCases(TestCase):
             self.assertEqual(Article.objects.count(), 0, f"Article with invalid data for field {field} was created")
 
 
+    def test_empty_article_data(self):
+        """
+        Test if an article can be created from a web request whit empty data
+        """
+        data = {
+            'name': '',
+            'description': '',
+            'barcode': '',
+            'purchase_price': '',
+            'price': '',
+            'quantity': '',
+            'min_quantity': '',
+            'has_iva': '',
+            'category': '',
+        }
+        response = self.client.post(reverse('pdv:article'), data)
+        self.assertNotEqual(response.status_code, 200, 'Could create an article with empty data')
+        self.assertEqual(Article.objects.count(), 0, 'Article with empty data was created in database')
