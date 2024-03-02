@@ -116,3 +116,24 @@ class ArticleClientSideTests(TestCase):
         response = self.client.post(reverse('pdv:article'), data)
         self.assertNotEqual(response.status_code, 200, 'Long string of data accepted as article data')
         self.assertEqual(Article.objects.count(), 0, 'Article with empty data was created in database')
+
+    
+    def test_blank_article_data(self):
+        """
+        Test if an article can be created from a web request with witespase as data
+        """
+        data = {
+            'name': ' \t\n  \r ',
+            'description': ' \t\n  \r ',
+            'barcode': ' \t\n  \r ',
+            'purchase_price': ' \t\n  \r ',
+            'price': ' \t\n  \r ',
+            'quantity': ' \t\n  \r ',
+            'min_quantity': ' \t\n  \r ',
+            'has_iva': ' \t\n  \r ',
+            'category': ' \t\n  \r ',
+        }
+        response = self.client.post(reverse('pdv:article'), data)
+        self.assertNotEqual(response.status_code, 200, 'Could create an article with whitespace as data')
+        self.assertEqual(Article.objects.count(), 0, 'Article with whitespace as data was created in database')
+
