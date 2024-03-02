@@ -94,3 +94,25 @@ class ArticleClientSideTests(TestCase):
         response = self.client.post(reverse('pdv:article'), data)
         self.assertNotEqual(response.status_code, 200, 'Could create an article with empty data')
         self.assertEqual(Article.objects.count(), 0, 'Article with empty data was created in database')
+
+
+    def test_long_string_article_data(self):
+        """
+        Test client sending long strings as article data
+        """
+        long_garbage_string = \
+            10*'°ad6af76874ñ+42ñ+ad+ñ"!°0jad9fu8a9dfyhq0efy024e8fqwocdæđæøðđøæßðđſæer\'0q()=)(DF)A(DF\'?={}//)?(/=QEW)"#°!#"!4e8h2084yh10ih13#$"!"$#ASGAqERQWERfadfa9dfa9v9aa\'!$#!$Ñ"P#%R ?¡"QEFPWEF0qw0fv¿\'wq¿v0dfi'
+        data = {
+            'name': long_garbage_string,
+            'description': long_garbage_string,
+            'barcode': long_garbage_string,
+            'purchase_price': long_garbage_string,
+            'price': long_garbage_string,
+            'quantity': long_garbage_string,
+            'min_quantity': long_garbage_string,
+            'has_iva': long_garbage_string,
+            'category': long_garbage_string,
+        }
+        response = self.client.post(reverse('pdv:article'), data)
+        self.assertNotEqual(response.status_code, 200, 'Long string of data accepted as article data')
+        self.assertEqual(Article.objects.count(), 0, 'Article with empty data was created in database')
