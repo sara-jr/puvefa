@@ -1,8 +1,9 @@
 import decimal
+from datetime import date
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Article, Category
+from .models import *
 
 
 class ArticleClientSideTests(TestCase):
@@ -156,3 +157,75 @@ class ArticleClientSideTests(TestCase):
         response = self.client.get(reverse('pdv:article'), data)
         self.assertNotEqual(response.status_code, 200, 'A get request was acepted for an url only for post')
         self.assertEqual(Aritcle.objects.count(), 0, 'An article was created from a get http request')
+
+
+class SaleClientSideTests(TestCase):
+    def setUp(self):
+        self.dummy_category = Category.objects.create(name='Dummy', description='Dummy category used for testing')
+        self.article_a = Article.objects.create(
+            name='Dummy article A',
+            description='Dummy article used for tests',
+            barcode='0000000000001',
+            price=decimal.Decimal(10),
+            purchase_price=decimal.Decimal(5),
+            quantity=1,
+            min_quantity=1,
+            has_iva=False,
+            category=self.dummy_category,
+        )
+        self.article_b = Article.objects.create(
+            name='Dummy article B',
+            description='Dummy article used for tests',
+            barcode='0000000000002',
+            price=decimal.Decimal(20),
+            purchase_price=decimal.Decimal(10),
+            quantity=5,
+            min_quantity=1,
+            has_iva=False,
+            category=self.dummy_category,
+        )
+        self.article_c = Article.objects.create(
+            name='Dummy article C',
+            description='Dummy article used for tests',
+            barcode='0000000000003',
+            price=decimal.Decimal(30),
+            purchase_price=decimal.Decimal(20),
+            quantity=0,
+            min_quantity=1,
+            has_iva=False,
+            category=self.dummy_category,
+        )
+        
+
+    def test_make_sale(self):
+        """
+          Test if client can make a valid sale  
+        """
+        sale_data = {'print':0}
+        payment = 100
+        total = self.article_a.price + self.article_b.price
+        sale_data[self.article_a.id] = 1
+        sale_data[self.article_b.id] = 1
+        sale_data['payed'] = payment
+        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        self.assertEqual(response.status_code, 200, 'Could not make a valid sale')
+        sale: Sale = None
+        try:
+            sale = Sale.objects.get(id=1)
+        except ObjectDoesNotExist:
+            self.fail('Could not create a sale in the database')
+        self.assertEqual(sale.amount_payed, payment, 'Payment in the database does not match payment sent by the client')        
+
+        sale_article_a: SingleSale = None
+        sale_article_b: SingleSale = None
+
+        try:
+            sale_article_a = SingleSale.objects.get(article=self.article_a.id)
+            sale_article_b = SingleSale.objects.get(article=self.article_b.id)
+        except ObjectDoesNotExist:
+            self.fail('Sale did not create a SingleSale object for each article sold')
+
+        self.assertEqual(sale_article_a.quantity*sale_article_a.article.price \
+            + sale_article_b.quantity*sale_article_b.article.price , total, 'Sale totals do not match')
+        self.assertGreaterEqual(payment, total, 'A sale with not enough payment was created')
+        self.assertEqual(sale.date, date.today(), 'Date does not match')
