@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import Article, Category
 
 
-class BasicTestCases(TestCase):
+class ArticleClientSideTests(TestCase):
     def setUp(self):
         self.dummy_category = Category.objects.create(name='Dummy', description='Dummy category used for testing')
 
