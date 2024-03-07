@@ -148,3 +148,19 @@ class SaleClientSideTests(TestCase):
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
         self.assertEqual(self.article_a.quantity, quantity_a_before_sale, 'Article quantity was altered')
         self.assertEqual(self.article_b.quantity, quantity_b_before_sale, 'Article quantity was altered')
+
+
+    def test_make_invalid_sale(self):
+        """
+            Test if the clien can make a sale with invalid data  
+        """
+        sale_data = {
+            'print': '2',
+            'payed': '',
+            39: 4, # Articulo inexistente
+        }        
+        sale_data[self.article_a.id] = -1 # Cantidad invalida para un articulo
+        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        self.assertNotEqual(response.status_code, 200, 'Server procesed invalid data for a sale')
+        self.assertEqual(Sale.objects.count(), 0, 'Sale was created in the database')
+        self.assertEqual(SingleSale.objects.count(), 0, 'SingleSale object was created in the database')
