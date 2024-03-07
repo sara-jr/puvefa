@@ -229,3 +229,18 @@ class SaleClientSideTests(TestCase):
             + sale_article_b.quantity*sale_article_b.article.price , total, 'Sale totals do not match')
         self.assertGreaterEqual(payment, total, 'A sale with not enough payment was created')
         self.assertEqual(sale.date, date.today(), 'Date does not match')
+
+
+    def test_make_sale_no_items(self):
+        """
+          Test if client can make a sale with no items
+        """
+        sale_data = {
+            'print': 0,
+            'payed': 0,
+        }        
+        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        self.assertNotEqual(response.status_code, 200, 'Could not make a valid sale')
+
+        self.assertEqual(Article.objects.count(), 0, 'A sale was created from empty data')
+        self.assertEqual(SingleSale.objects.count(), 0, 'A single sale was created from empty data')
