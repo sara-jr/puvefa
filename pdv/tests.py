@@ -265,3 +265,21 @@ class SaleClientSideTests(TestCase):
         self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
         self.assertEqual(self.article_c.quantity, 0, 'The quantity for a soldout article was changed after a sale')
+
+
+    def test_make_unpayed_sale(self):
+        """
+          Test if the client can make a sale with not enough payment  
+        """
+        total = self.article_a.price + self.article_b.price
+        sale_data = {'print':0, 'payment':0.0}
+        quantity_a_before_sale = self.article_a.quantity
+        quantity_b_before_sale = self.article_b.quantity        
+        sale_data[self.article_a.id] = 1
+        sale_data[self.article_b.id] = 1
+        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        self.assertNotEqual(response.status_code, 200, 'Sale data without payment was accepted')
+        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
+        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
+        self.assertEqual(self.article_a.quantity, quantity_a_before_sale, 'Article quantity was altered')
+        self.assertEqual(self.article_b.quantity, quantity_b_before_sale, 'Article quantity was altered')
