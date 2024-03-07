@@ -207,6 +207,8 @@ class SaleClientSideTests(TestCase):
         sale_data[self.article_a.id] = 1
         sale_data[self.article_b.id] = 1
         sale_data['payed'] = payment
+        quantity_a_afther_sale = self.article_a.quantity - 1
+        quantity_b_afther_sale = self.article_b.quantity - 1
         response = self.client.post(reverse('pdv:makesale'), sale_data)
         self.assertEqual(response.status_code, 200, 'Could not make a valid sale')
         sale: Sale = None
@@ -229,6 +231,8 @@ class SaleClientSideTests(TestCase):
             + sale_article_b.quantity*sale_article_b.article.price , total, 'Sale totals do not match')
         self.assertGreaterEqual(payment, total, 'A sale with not enough payment was created')
         self.assertEqual(sale.date, date.today(), 'Date does not match')
+        self.assertEqual(self.article_a.quantity, quantity_a_afther_sale, 'Article quantity did not change afther sale')
+        self.assertEqual(self.article_b.quantity, quantity_b_afther_sale, 'Article quantity did not change afther sale')
 
 
     def test_make_sale_no_items(self):
