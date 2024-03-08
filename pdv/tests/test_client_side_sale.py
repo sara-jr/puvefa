@@ -178,3 +178,21 @@ class SaleClientSideTests(TestCase):
         self.assertNotEqual(response.status_code, 200, 'A very large payment was accepted from the server')
         self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
+
+
+    def test_quantity_overflow_sale(self):
+        """
+          Test if the client can make a sale with a big article quantity
+        """
+        total = self.article_a.price + self.article_b.price
+        sale_data = {'print':0, 'payed':1000.00}
+        quantity_a_before_sale = self.article_a.quantity
+        quantity_b_before_sale = self.article_b.quantity
+        sale_data[self.article_a.id] = 999_999_999_999_999_999_999_999_999
+        sale_data[self.article_b.id] = 1
+        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        self.assertNotEqual(response.status_code, 200, 'A very large payment was accepted from the server')
+        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
+        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
+        self.assertEqual(quantity_a_before_sale, self.article_a.quantity, 'Article quantity was altered')
+        self.assertEqual(quantity_b_before_sale, self.article_b.quantity, 'Article quantity was altered')
