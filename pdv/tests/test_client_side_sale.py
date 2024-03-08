@@ -164,3 +164,17 @@ class SaleClientSideTests(TestCase):
         self.assertNotEqual(response.status_code, 200, 'Server procesed invalid data for a sale')
         self.assertEqual(Sale.objects.count(), 0, 'Sale was created in the database')
         self.assertEqual(SingleSale.objects.count(), 0, 'SingleSale object was created in the database')
+
+
+    def test_payment_overflow_sale(self):
+        """
+          Test if the client can make a sale with a big quantity as payment  
+        """
+        total = self.article_a.price + self.article_b.price
+        sale_data = {'print':0, 'payed':999_999_999_999_999_999_999_999_999}
+        sale_data[self.article_a.id] = 1
+        sale_data[self.article_b.id] = 1
+        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        self.assertNotEqual(response.status_code, 200, 'A very large payment was accepted from the server')
+        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
+        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
