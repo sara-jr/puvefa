@@ -109,3 +109,28 @@ class PrescriptionClientSideTests(TestCase):
         response = self.client.post(reverse('pdv:prescriptions'), prescription_data)
         self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
         self.assertEqual(PrescriptionPartial.objects.count(), 0, 'Object was created')
+
+
+    def test_make_invalid_prescriptions(self):
+        """
+          Test if the client can register a prescription from invalid data 
+        """
+        prescription_data = {
+            'type': 'partial',
+            'sale': 141,
+            'medic': -1020,
+        }
+        response = self.client.post(reverse('pdv:prescriptions'), prescription_data)
+        self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
+        self.assertEqual(PrescriptionTotal.objects.count(), 0, 'PrescriptionTotal was created')
+
+        prescription_data['type'] = 'total'
+        response = self.client.post(reverse('pdv:prescriptions'), prescription_data)
+        self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
+        self.assertEqual(PrescriptionTotal.objects.count(), 0, 'PrescriptionTotal was created')
+
+        prescription_data['type'] = 124
+        response = self.client.post(reverse('pdv:prescriptions'), prescription_data)
+        self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
+        self.assertEqual(PrescriptionTotal.objects.count(), 0, 'PrescriptionTotal was created')
+        self.assertEqual(PrescriptionPartial.objects.count(), 0, 'PrescriptionPartial was created')
