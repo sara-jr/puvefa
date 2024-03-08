@@ -68,3 +68,25 @@ class PrescriptionClientSideTests(TestCase):
         self.assertEqual(prescription.sale, self.dummy_controlled_sale, 'Sales do not match')
         self.assertEqual(prescription.date, self.dummy_controlled_sale.date, 'Dates do not match')
         self.assertEqual(prescription.medic, self.dummy_medic, 'Medics do not match')
+
+
+    def test_make_prescription_partial(self):
+        """
+          Test if the client can register a partial prescription from a sale  
+        """
+        prescription_data = {
+            'type': 'partial',
+            'sale': self.dummy_controlled_sale.id,
+            'medic': self.dummy_medic.id,
+        }
+        response = self.client.post(reverse('pdv:prescriptions'), prescription_data)
+        self.assertEqual(response.status_code, 200, 'Could not create a prescription')
+        self.assertEqual(PrescriptionPartial.objects.count(), 1, 'Object was not created')
+        prescription: PrescriptionPartial = None
+        try:
+            prescription = PrescriptionPartial.objects.get(pk=1)
+        except ObjectDoesNotExist:
+            self.fail('Could not create a PrescriptionTotal object in the database')
+        self.assertEqual(prescription.sale, self.dummy_controlled_sale, 'Sales do not match')
+        self.assertEqual(prescription.date, self.dummy_controlled_sale.date, 'Dates do not match')
+        self.assertEqual(prescription.medic, self.dummy_medic, 'Medics do not match')
