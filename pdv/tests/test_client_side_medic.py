@@ -30,3 +30,17 @@ class MedicClientSideTests(TestCase):
         self.assertEqual(medic.address, medic_data['address'], f"Field address does not match")
         self.assertEqual(medic.cedula, medic_data['cedula'], f"Field cedula does not match")
         self.assertEqual(medic.ssa, medic_data['ssa'], f"Field ssa does not match")
+
+
+    def test_empty_medic(self):
+        medic_data = {
+            'name': '',
+            'sur_name_a': '',
+            'sur_name_b': '',
+            'address': '',
+            'cedula': '',
+            'ssa': '',
+        }
+        response = self.client.post(reverse('pdv:medics'), medic_data)
+        self.assertNotEqual(200, response.status_code, 'Server did accepted the data')
+        self.assertEqual(0, Medic.objects.count(), 'Medic object was created in the database')
