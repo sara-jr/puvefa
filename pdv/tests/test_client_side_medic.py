@@ -8,6 +8,9 @@ from pdv.models import *
 
 class MedicClientSideTests(TestCase):
     def test_post_medic(self):
+        """
+        Test if the client can register a client from valid data
+        """
         medic_data = {
             'name': 'Dummy',
             'sur_name_a': 'Dummy',
@@ -33,6 +36,9 @@ class MedicClientSideTests(TestCase):
 
 
     def test_empty_medic(self):
+        """
+        Test if the client can register a medic using empty data
+        """
         medic_data = {
             'name': '',
             'sur_name_a': '',
@@ -46,8 +52,10 @@ class MedicClientSideTests(TestCase):
         self.assertEqual(0, Medic.objects.count(), 'Medic object was created in the database')
 
 
-
     def test_post_invalid_medic(self):
+        """
+        Test if the client can register a medic using invalid data
+        """
         medic_data = {
             'name': 'Q-@%!"#"¿',
             'sur_name_a': '!"3-123"',
