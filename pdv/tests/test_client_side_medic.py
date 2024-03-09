@@ -44,3 +44,18 @@ class MedicClientSideTests(TestCase):
         response = self.client.post(reverse('pdv:medics'), medic_data)
         self.assertNotEqual(200, response.status_code, 'Server did accepted the data')
         self.assertEqual(0, Medic.objects.count(), 'Medic object was created in the database')
+
+
+
+    def test_post_invalid_medic(self):
+        medic_data = {
+            'name': 'Q-@%!"#"¿',
+            'sur_name_a': '!"3-123"',
+            'sur_name_b': '!"#%!"%7!45_¨',
+            'address': '!!!!!!!!!!!!1',
+            'cedula': '-2',
+            'ssa': '-1',
+        }
+        response = self.client.post(reverse('pdv:medics'), medic_data)
+        self.assertNotEqual(200, response.status_code, 'Server did accepted the data')
+        self.assertEqual(0, Medic.objects.count(), 'Medic object was created in the database')
