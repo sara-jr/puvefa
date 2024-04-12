@@ -23,9 +23,16 @@
 </head>
 
 <body class='dark' x-data>
-  <div class="toast error top {% if error %} active {% endif %}" @click='$el.classList.toggle("active")' x-data>
-    {{ error }}
-  </div>
+  {% if messages %}
+  <dialog class="top" open>
+    {% for msg in messages %}
+    <a class="row wave">
+      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}<i>error</i>{% endif %}
+      <div>{{ msg }}</div>
+    </a>
+    {% endfor %}
+  </dialog>
+  {% endif %}
   <dialog id='menu' class='left modal' @keydown.escape='$el.close()'>
     <header>
       <button class='transparent circle tertiary' @click='document.getElementById("menu").close()'>
