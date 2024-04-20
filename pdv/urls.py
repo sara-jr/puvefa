@@ -6,9 +6,12 @@ urlpatterns = [
     path('sell/', views.sell, name='sell'),
     path('search/', views.active_search, name='article_search'),
     path('makesale/', views.make_sale, name='makesale'),
-    path('article/', views.article, name='article'),
-    path('article/<int:id>/', views.article_get, name='article_existing'),
+    # ARTICLES
+    path('article/', views.ArticleCreateView.as_view(), name='CREATE_ARTICLE'),
+    path('article/delete/<int:pk>/', views.ArticleDeleteView.as_view(), name='DELETE_ARTICLE'),
+    path('article/<int:pk>/', views.ArticleUpdateView.as_view(), name='ARTICLE'),
     path('articles/<str:filter>/<int:index>/', views.list_articles, name='article_list'),
+
     path('sales/named/<str:name>/', views.sales_report_named, name='report_named'),
     path('sales/ranged/', views.sales_report, name='report_query'),
     path('sales/ranged/<str:begin>/', views.sales_report, name='report_from'),

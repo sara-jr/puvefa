@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import reverse
 
 
 # Create your models here.
@@ -23,6 +24,10 @@ class Article(models.Model):
 
     def __str__(self):
         return self.name
+
+
+    def get_absolute_url(self):
+        return reverse('pdv:ARTICLE', kwargs={'pk':self.pk})
 
 
 class ExpiryDate(models.Model):

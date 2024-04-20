@@ -2,7 +2,7 @@ from functools import reduce
 from django.views.decorators.http import require_POST, require_GET
 import math
 import datetime
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
@@ -13,10 +13,33 @@ from .models import *
 from decimal import localcontext, Decimal
 from .forms import ArticleForm, MedicForm
 from .reports import *
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic.edit import FormView, DeleteView, CreateView, UpdateView
+from django.views.generic import TemplateView
 
 
 ITEMS_PER_PAGE = 5
 MAX_SEARCH_RESULTS = 8
+
+
+class ArticleCreateView(SuccessMessageMixin, CreateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'pdv/post-form.html'
+    success_message = 'Articulo creado con exito'
+
+
+class ArticleDeleteView(SuccessMessageMixin, DeleteView):
+    model = Article
+    template_name = 'pdv/confirm-prompt.html'
+    success_message = 'Articulo eliminado con exito'
+
+
+class ArticleUpdateView(SuccessMessageMixin, UpdateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'pdv/post-form.html'
+    success_message = 'Articulo modificado con exito'
 
 
 def check(request):
