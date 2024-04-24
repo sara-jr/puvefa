@@ -5,7 +5,7 @@ import datetime
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect
 from django.forms.models import model_to_dict
-from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, QueryDict
 from django.db.models import Q, F, Sum
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core import serializers
@@ -15,7 +15,7 @@ from .forms import ArticleForm, MedicForm
 from .reports import *
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import FormView, DeleteView, CreateView, UpdateView
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 
 
 ITEMS_PER_PAGE = 5
@@ -41,6 +41,34 @@ class ArticleUpdateView(SuccessMessageMixin, UpdateView):
     template_name = 'pdv/post-form.html'
     success_message = 'Articulo modificado con exito'
 
+
+class ArticleListView(ListView):
+    paginate_by = ITEMS_PER_PAGE
+    model = Article
+    template_name = 'pdv/article-list.html'
+
+
+    def get_queryset(self):
+        params = self.request.GET
+        queryset = Article.objects.all()
+        if 'name' in params:
+            queryset = queryset.filter(name__icontains=params['name'])
+        if 'low' in params:
+            queryset = queryset.filter(quantity__lte=F('min_quantity'))
+        if 'barname' in params:
+            queryset = queryset.filter(Q(name__icontains=params['barname']) | Q(barcode=params['barname']))
+
+        return queryset
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        search_params = QueryDict(self.request.GET.urlencode(), mutable=True)
+        if 'page' in search_params:
+            search_params.pop('page')
+        context['search_query'] = search_params.urlencode()
+        return context
+    
 
 def check(request):
     return render(request, 'pdv/medical-check.html')

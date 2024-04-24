@@ -1,0 +1,61 @@
+{% extends 'pdv/base-list.html' %}
+{% block list-content %}
+    <div class="row">
+        {% if search_query %}
+            <h4 class="max">Resultados de la busqueda</h4>
+        {% else %}
+            <h4 class="max">Lista de artículos</h4>
+        {% endif %}
+        <h4>{{ page_obj.paginator.count }} artículos</h4>
+    </div>
+    <br />
+    <div class="row">
+        <a class="chip" href="?page=1&low=true">Ver articulos en cantidad baja</a>
+        <a class="chip" href="?page=1">Ver todos los articulos</a>
+    </div>
+    <br>
+    <search>
+    <form action="" method="get" class="row padding large-margin">
+        <input type="hidden" name="page" value="1" readonly>
+        <div class="field border round max">
+            <input type="text"
+                   name="barname"
+                   placeholder="Nombre o código de barras"
+                   minlength="3">
+        </div>
+        <button type="submit">Buscar</button>
+    </form>
+    </search>
+    <br>
+    <table class="border medium-space stripes">
+        <thead>
+            <tr>
+                <th class="min">Acciones</th>
+                <th>Código de Barras</th>
+                <th>Nombre</th>
+                <th class="min">Cantidad</th>
+                <th class="min">Precio Venta</th>
+                <th class="min">Precio Compra</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in object_list %}
+                <tr {% if article.quantity <= article.min_quantity %}class='tertiary-container'{% endif %}>
+                    <td class="min">
+                        <nav class='s1 no-space'>
+                            <a href='{% url "pdv:ARTICLE" article.id %}' class='left-round small'>
+                                <div class='tooltip'>Editar el artículo</div>
+                                <i>edit</i>
+                            </a>
+                        </nav>
+                    </td>
+                    <td>{{ article.barcode }}</td>
+                    <td>{{ article.name }}</td>
+                    <td class="min">{{ article.quantity }}</td>
+                    <td class="min">${{ article.price }}</td>
+                    <td class="min">${{ article.purchase_price }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

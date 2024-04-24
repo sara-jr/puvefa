@@ -1,0 +1,28 @@
+{% extends 'pdv/base.html' %}
+
+{% block title %} Lista {% endblock %}
+
+{% block content %}
+<article>
+  {% block list-content %}
+
+  {% endblock %}
+  <nav class="center-align padding">
+    {% if page_obj.has_previous %}
+    <a class="chip" href="?page=1&{{search_query}}"><i>first_page</i></a>
+    <a class="chip" href="?page={{ page_obj.previous_page_number }}&{{search_query}}"><i>navigate_before</i></a>
+    {% endif %}
+
+    <span class="chip secondary">
+      Página
+      {{ page_obj.number }}
+      de {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+    <a class="chip" href="?page={{ page_obj.next_page_number }}&{{search_query}}"><i>navigate_next</i></a>
+    <a class="chip" href="?page={{ page_obj.paginator.num_pages }}&{{search_query}}"><i>last_page</i></a>
+    {% endif %}
+  </nav>
+</article>
+{% endblock %}
