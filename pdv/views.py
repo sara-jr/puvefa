@@ -25,7 +25,7 @@ MAX_SEARCH_RESULTS = 8
 class ArticleCreateView(SuccessMessageMixin, CreateView):
     model = Article
     form_class = ArticleForm
-    template_name = 'pdv/post-form.html'
+    template_name = 'pdv/generic-form.html'
     success_message = 'Articulo creado con exito'
 
 
@@ -38,7 +38,7 @@ class ArticleDeleteView(SuccessMessageMixin, DeleteView):
 class ArticleUpdateView(SuccessMessageMixin, UpdateView):
     model = Article
     form_class = ArticleForm
-    template_name = 'pdv/post-form.html'
+    template_name = 'pdv/generic-form.html'
     success_message = 'Articulo modificado con exito'
 
 
