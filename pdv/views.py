@@ -70,6 +70,20 @@ class ArticleListView(ListView):
         return context
     
 
+class MedicCreateView(SuccessMessageMixin, CreateView):
+    model = Medic
+    form_class = MedicForm
+    template_name = 'pdv/generic-form-fields-wraped.html'
+    success_message = 'Medico registrado con exito'
+
+
+class MedicUpdateView(SuccessMessageMixin, UpdateView):
+    model = Medic
+    form_class = MedicForm
+    template_name = 'pdv/geric-form-fields-wraped.html'
+    success_message = 'Medico modificado con exito'
+
+
 def check(request):
     return render(request, 'pdv/medical-check.html')
 

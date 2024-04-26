@@ -17,8 +17,11 @@ urlpatterns = [
     path('sales/ranged/<str:begin>/', views.sales_report, name='report_from'),
     path('sales/ranged/<str:begin>/<str:end>/', views.sales_report, name='report'),
     path('reports/', views.reports, name='reports'),
-    path('medics/', views.medics, name='medics'),
-    path('medics/search/', views.medic_search, name='medic_search'),
+    # MEDICS
+    path('medic/', views.MedicCreateView.as_view(), name='CREATE_MEDIC'),
+    path('medic/<int:pk>/', views.MedicUpdateView.as_view(), name='MEDIC'),
+    path('search/medics/', views.medic_search, name='SEARCH_MEDIC'),
+
     path('prescriptions/', views.prescriptions, name='prescriptions'),
     path('prescriptions/all/', views.prescription_list, name='prescriptions_list'),
     path('recipt/<int:id>/', views.make_recipt, name='recipt'),

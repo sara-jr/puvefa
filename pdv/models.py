@@ -64,6 +64,10 @@ class Medic(models.Model):
     def __str__(self):
         return f'[ {self.cedula} ] {self.name} {self.sur_name_a} {self.sur_name_b}'
 
+    
+    def get_absolute_url(self):
+        return reverse('pdv:MEDIC', kwargs={'pk':self.pk})
+
 
 class PrescriptionPartial(models.Model):
     medic = models.ForeignKey(Medic, verbose_name='Medico', on_delete=models.RESTRICT, null=False)

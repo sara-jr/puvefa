@@ -1,50 +1,53 @@
 {% extends 'pdv/base.html' %}
-
 {% block content %}
-  <article>
-    <h3>Ventas de Antibioticos sin registrar</h3>
-    <br>
-    {% if count > 0 %}
-      <div class='padding'>
-        {% for id, data in controlled.items %}
-        <div class='row'>
-          <article class='max border round'>
-            <h3>Venta número {{id}}</h4>
-            <br/>
-            <h4>Fecha {{data.date|date:"d/m/Y P"}}</h4>
-            <br/>
-            <div class='grid'>
-              {% for article in data.articles %}
-                <div class='s2'><i>arrow_right</i>{{article.quantity}} {{article.name}}</div>
-              {% endfor %}
+    <article>
+        <h3>Ventas de Antibioticos sin registrar</h3>
+        <br>
+        {% if count > 0 %}
+            <div class='padding'>
+                {% for id, data in controlled.items %}
+                    <div class='row'>
+                        <article class='max border round'>
+                            <h3>
+                                Venta número {{ id }}
+                            </h4>
+                            <br />
+                            <h4>Fecha {{ data.date|date:"d/m/Y P" }}</h4>
+                            <br />
+                            <div class='grid'>
+                                {% for article in data.articles %}
+                                    <div class='s2'>
+                                        <i>arrow_right</i>{{ article.quantity }} {{ article.name }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <br />
+                            <div class='max row'>
+                                {% include "pdv/search-bar-input.html" with selector="#medic-id-input" parameter="name" placeholder="Medico" urlname="pdv:SEARCH_MEDIC" %}
+                                <form action='{% url "pdv:prescriptions" %}' method='POST'>
+                                    {% csrf_token %}
+                                    <input type='hidden' name='sale' value='{{ id }}' required />
+                                    <input type='hidden' name='medic' value='' id='medic-id-input' required />
+                                    <div class='row padding'>
+                                        <label class='radio'>
+                                            <input type='radio' name='type' value='total' required />
+                                            <span>Total</span>
+                                        </label>
+                                        <label class='radio'>
+                                            <input type='radio' name='type' value='partial' required />
+                                            <span>Parcial</span>
+                                        </label>
+                                        <button type='submit'>Guardar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </article>
+                    </div>
+                {% endfor %}
             </div>
-            <br/>
-            <div class='max row'>
-              {% include "pdv/search-bar-input.html" with selector="#medic-id-input" parameter="name" placeholder="Medico" urlname="pdv:medic_search" %}
-              <form action='{% url "pdv:prescriptions" %}' method='POST'>
-                {% csrf_token %}
-                <input type='hidden' name='sale' value='{{id}}' required/>
-                <input type='hidden' name='medic' value='' id='medic-id-input' required/>
-                <div class='row padding'>
-                  <label class='radio'>
-                    <input type='radio' name='type' value='total' required/>
-                    <span>Total</span>
-                  </label>
-                  <label class='radio'>
-                    <input type='radio' name='type' value='partial' required/>
-                    <span>Parcial</span>
-                  </label>
-                  <button type='submit'>Guardar</button>
-                </div>
-              </form>
-            </div>
-          </article>
-        </div>
-        {% endfor %}
-      </div>
-      <br/>
-    {% else %}
-      <h5>No hay medicamento que requieran receta medica</h5>
-    {% endif %}
-  </article>
+            <br />
+        {% else %}
+            <h5>No hay medicamento que requieran receta medica</h5>
+        {% endif %}
+    </article>
 {% endblock %}
