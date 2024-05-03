@@ -4,13 +4,13 @@ from . import views
 app_name = 'pdv'
 urlpatterns = [
     path('sell/', views.sell, name='sell'),
-    path('search/', views.active_search, name='article_search'),
     path('makesale/', views.make_sale, name='makesale'),
     # ARTICLES
     path('article/', views.ArticleCreateView.as_view(), name='CREATE_ARTICLE'),
     path('article/delete/<int:pk>/', views.ArticleDeleteView.as_view(), name='DELETE_ARTICLE'),
     path('article/<int:pk>/', views.ArticleUpdateView.as_view(), name='ARTICLE'),
     path('show/articles/', views.ArticleListView.as_view(), name='SHOW_ARTICLES'),
+    path('search/article/', views.ArticleSearchView.as_view(), name='ARTICLE_SEARCH'),
 
     path('sales/named/<str:name>/', views.sales_report_named, name='report_named'),
     path('sales/ranged/', views.sales_report, name='report_query'),
@@ -20,7 +20,7 @@ urlpatterns = [
     # MEDICS
     path('medic/', views.MedicCreateView.as_view(), name='CREATE_MEDIC'),
     path('medic/<int:pk>/', views.MedicUpdateView.as_view(), name='MEDIC'),
-    path('search/medics/', views.medic_search, name='SEARCH_MEDIC'),
+    path('search/medics/', views.MedicSearchView.as_view(), name='SEARCH_MEDIC'),
 
     path('prescriptions/', views.prescriptions, name='prescriptions'),
     path('prescriptions/all/', views.prescription_list, name='prescriptions_list'),

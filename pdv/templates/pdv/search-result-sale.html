@@ -1,6 +1,6 @@
-{% if single %}
-<input type="hidden" data-max="{{articles.quantity}}" data-name="{{articles.name}}" data-id="{{articles.id}}"
-  data-price="{{articles.price}}" id="article-to-add" x-data
+{% if object_list|length_is:"1" %}
+<input type="hidden" data-max="{{object_list.0.quantity}}" data-name="{{object_list.0.name}}"
+  data-id="{{object_list.0.id}}" data-price="{{object_list.0.price}}" id="article-to-add" x-data
   x-init="addOrIncrement(articles, $el.dataset); $el.remove();">
 {% else %}
 <dialog x-data class="active modal responsive" @click.outside="$el.classList.remove('active')">
@@ -8,7 +8,7 @@
     <h2>Resultados</h2>
   </div>
   <article class="border no-margin">
-    {% for article in articles %}
+    {% for article in object_list %}
     <a @click="addOrIncrement(articles, $el.dataset); $root.classList.remove('active')"
       @keydown.enter='addOrIncrement(articles, $el.dataset);$el.blur()'
       @keydown.down='$event.preventDefault(); nxt = $el.nextElementSibling ?? $el.parentElement.firstElementChild; nxt.focus()'

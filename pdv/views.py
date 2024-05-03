@@ -84,6 +84,31 @@ class MedicUpdateView(SuccessMessageMixin, UpdateView):
     success_message = 'Medico modificado con exito'
 
 
+class MedicSearchView(ListView):
+    template_name = 'pdv/search-result-medic.html'
+    allow_empty = True
+    model = Medic
+
+
+    def get_queryset(self):
+        query = self.request.GET['name']
+        return Medic.objects.filter(name__icontains=query)
+
+
+class ArticleSearchView(ListView):
+    template_name = 'pdv/search-result-sale.html'
+    allow_empty = True
+    model = Article
+
+    
+    def get_queryset(self):
+        barname = self.request.GET['barname']
+        single = Article.objects.filter(barcode__exact=barname, quantity__gt=0)
+        if single.count() == 1:
+            return single
+        return Article.objects.filter(Q(name__icontains=barname) | Q(barcode=barname), quantity__gt=0)
+    
+
 def check(request):
     return render(request, 'pdv/medical-check.html')
 

@@ -1,0 +1,5 @@
+{% for medic in object_list %}
+<a @click='value="{{medic.id}}"; display="{{medic.name|capfirst}} {{medic.sur_name_a|capfirst}} {{medic.sur_name_b|capfirst}} "' class='row wave'>
+  {{medic.name|capfirst}} {{medic.sur_name_a|capfirst}} {{medic.sur_name_b|capfirst}}
+</a>
+{% endfor %}
