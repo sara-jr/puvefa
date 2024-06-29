@@ -6,7 +6,7 @@
   <article>
     <h4>Articulo</h4>
     <br>
-    <form action='{% url "pdv:article_existing" id %}' method='POST'>
+    <form action='{% url "pdv:ARTICLE" id %}' method='POST'>
         {% csrf_token %}
         {{ form }}
       <button class='extra' type='submit'>Guardar</button>
