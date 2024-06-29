@@ -56,7 +56,7 @@ class SaleClientSideTests(TestCase):
         sale_data['payed'] = payment
         quantity_a_afther_sale = self.article_a.quantity - 1
         quantity_b_afther_sale = self.article_b.quantity - 1
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertEqual(response.status_code, 200, 'Could not make a valid sale')
         sale: Sale = None
         try:
@@ -90,7 +90,7 @@ class SaleClientSideTests(TestCase):
             'print': 0,
             'payed': 0,
         }        
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertNotEqual(response.status_code, 200, 'Could not make a valid sale')
 
         self.assertEqual(Article.objects.count(), 0, 'A sale was created from empty data')
@@ -107,7 +107,7 @@ class SaleClientSideTests(TestCase):
         }        
         sale_data[self.article_a.id] = 1
         sale_data[self.article_c.id] = 1
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertNotEqual(response.status_code, 200, 'Could make a sale with soldout items')
         self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
@@ -124,7 +124,7 @@ class SaleClientSideTests(TestCase):
         }        
         sale_data[self.article_a.id] = 2
         quantity_before_sell = self.article_a.quantity
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertNotEqual(response.status_code, 200, 'Could make a sale with an article oversold')
         self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')
@@ -141,7 +141,7 @@ class SaleClientSideTests(TestCase):
         quantity_b_before_sale = self.article_b.quantity        
         sale_data[self.article_a.id] = 1
         sale_data[self.article_b.id] = 1
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertNotEqual(response.status_code, 200, 'Sale data without payment was accepted')
         self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
@@ -159,7 +159,7 @@ class SaleClientSideTests(TestCase):
         quantity_b_before_sale = self.article_b.quantity        
         sale_data[self.article_a.id] = 1
         sale_data[self.article_b.id] = 1
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertNotEqual(response.status_code, 200, 'Sale data without payment was accepted')
         self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
@@ -177,7 +177,7 @@ class SaleClientSideTests(TestCase):
             39: 4, # Articulo inexistente
         }        
         sale_data[self.article_a.id] = -1 # Cantidad invalida para un articulo
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertNotEqual(response.status_code, 200, 'Server procesed invalid data for a sale')
         self.assertEqual(Sale.objects.count(), 0, 'Sale was created in the database')
         self.assertEqual(SingleSale.objects.count(), 0, 'SingleSale object was created in the database')
@@ -191,7 +191,7 @@ class SaleClientSideTests(TestCase):
         sale_data = {'print':0, 'payed':999_999_999_999_999_999_999_999_999}
         sale_data[self.article_a.id] = 1
         sale_data[self.article_b.id] = 1
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertNotEqual(response.status_code, 200, 'A very large payment was accepted from the server')
         self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
@@ -207,7 +207,7 @@ class SaleClientSideTests(TestCase):
         quantity_b_before_sale = self.article_b.quantity
         sale_data[self.article_a.id] = 999_999_999_999_999_999_999_999_999
         sale_data[self.article_b.id] = 1
-        response = self.client.post(reverse('pdv:makesale'), sale_data)
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
         self.assertNotEqual(response.status_code, 200, 'A very large payment was accepted from the server')
         self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
         self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
