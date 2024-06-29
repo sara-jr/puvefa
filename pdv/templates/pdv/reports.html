@@ -5,11 +5,11 @@
 {% block content %}
   <article>
     <h4>Reportes de ventas</h4>
-    <a href='{% url "pdv:report_named" "today" %}' class='chip'>Ventas de hoy</a>
-    <a href='{% url "pdv:report_named" "week" %}' class='chip'>Ventas de la semana</a>
-    <a href='{% url "pdv:report_named" "month" %}' class='chip'>Ventas del mes</a>
+    <a href='{% url "pdv:REPORT_NAMED" "today" %}' class='chip'>Ventas de hoy</a>
+    <a href='{% url "pdv:REPORT_NAMED" "week" %}' class='chip'>Ventas de la semana</a>
+    <a href='{% url "pdv:REPORT_NAMED" "month" %}' class='chip'>Ventas del mes</a>
     <h5>Generar reporte de ventas</h5>
-    <form method='GET' action='{% url "pdv:report_query" %}'>
+    <form method='GET' action='{% url "pdv:REPORT_QUERY" %}'>
       <div class='field label border'>
         <label>Desde</label>
         <input type='date' name='begin'/>
