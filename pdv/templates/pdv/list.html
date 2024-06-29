@@ -8,17 +8,17 @@
       Buscando artículos  
     </h4>
     <div class='row top-align center-align'>
-      <a class='chip fill' href='{% url "pdv:article" %}'><i>add</i>Agregar producto</a>
-      <form class='max' action='{% url "pdv:article_list" filter 1 %}' method='GET'>
+      <a class='chip fill' href='{% url "pdv:CREATE_ARTICLE" %}'><i>add</i>Agregar producto</a>
+      <form class='max' action='{% url "pdv:SHOW_ARTICLES" filter 1 %}' method='GET'>
         <div class='fill field border primary prefix'>
           <i class='front'>barcode_reader</i>
           <input type='text' name='barname' 
           placeholder='Escribir nombre o código de barras'/>
         </div>
       </form>
-      <a class='chip border' href='{% url "pdv:article_list" "all" 1 %}'>Todos</a>
-      <a class='chip border' href='{% url "pdv:article_list" "low" 1 %}'>En baja cantidad</a>
-      <a class='chip border' href='{% url "pdv:article_list" "soldout" 1 %}'>Agotados</a>
+      <a class='chip border' href='{% url "pdv:SHOW_ARTICLES" "all" 1 %}'>Todos</a>
+      <a class='chip border' href='{% url "pdv:SHOW_ARTICLES" "low" 1 %}'>En baja cantidad</a>
+      <a class='chip border' href='{% url "pdv:SHOW_ARTICLES" "soldout" 1 %}'>Agotados</a>
     </div>
     <br/>
     {% if articles %}
@@ -41,7 +41,7 @@
         {% endif %}>
             <td>
               <nav class='s1 no-space'>
-                <a href='{% url "pdv:article_existing" article.id %}' class='left-round small'><div class='tooltip'>Editar el artículo</div><i>edit</i></a>
+                <a href='{% url "pdv:ARTICLE" article.id %}' class='left-round small'><div class='tooltip'>Editar el artículo</div><i>edit</i></a>
               </nav>
             </td>
             <td>{{ article.barcode }}</td>
@@ -61,7 +61,7 @@
     {% for i in indexes %}
       <a 
       {% if i == index %}class='chip'{% else %}class='chip border'{% endif %}
-      href='{% url "pdv:article_list" filter i %}'>
+      href='{% url "pdv:SHOW_ARTICLES" filter i %}'>
         {{ i }}
       </a>
     {% endfor %}
