@@ -122,7 +122,7 @@ def make_check(request):
     new_check = MedicalConsultation.objects.create(
         description=description, price=price, date=date, is_consultation=is_consultation)
     new_check.save()
-    return redirect('pdv:check')
+    return redirect('pdv:CHECK')
 
 
 def sell(request):
@@ -163,13 +163,13 @@ def make_sale(request):
             article.save()
             ssale.save()
     if print_recipt:
-        return redirect('pdv:recipt', sale.id)
-    return redirect('pdv:sell')
+        return redirect('pdv:RECIPT', sale.id)
+    return redirect('pdv:MAKESALE')
 
 
 def article(request):
     form = ArticleForm()
-    context = {'name':'Artículo', 'url':reverse('pdv:article')}
+    context = {'name':'Artículo', 'url':reverse('pdv:CREATE_ARTICLE')}
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
