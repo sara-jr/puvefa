@@ -92,8 +92,8 @@ class ArticleClientSideTests(TestCase):
             'has_iva': '',
             'category': '',
         }
-        response = self.client.post(reverse('pdv:CREATE_ARTICLE'), DATA)
-        SELF.ASSERTnOTeQUAL(response.status_code, 200, 'Could create an article with empty data')
+        response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
+        self.assertNotEqual(response.status_code, 200, 'Could create an article with empty data')
         self.assertEqual(Article.objects.count(), 0, 'Article with empty data was created in database')
 
 
@@ -134,7 +134,7 @@ class ArticleClientSideTests(TestCase):
             'has_iva': ' \t\n  \r ',
             'category': ' \t\n  \r ',
         }
-        response = self.client.post(reverse('pdv:CREATE_ARTICLE'), DATA)
+        response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
         self.assertNotEqual(response.status_code, 200, 'Could create an article with whitespace as data')
         self.assertEqual(Article.objects.count(), 0, 'Article with whitespace as data was created in database')
 
