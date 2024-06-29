@@ -19,7 +19,7 @@ class MedicClientSideTests(TestCase):
             'cedula': 1234567890,
             'ssa': 1234567890,
         }
-        response = self.client.post(reverse('pdv:medics'), medic_data)
+        response = self.client.post(reverse('pdv:CREATE_MEDIC'), medic_data)
         self.assertEqual(200, response.status_code, 'Server did not accepted the data')
         medic: Medic = None
         try:
@@ -47,7 +47,7 @@ class MedicClientSideTests(TestCase):
             'cedula': '',
             'ssa': '',
         }
-        response = self.client.post(reverse('pdv:medics'), medic_data)
+        response = self.client.post(reverse('pdv:CREATE_MEDIC'), medic_data)
         self.assertNotEqual(200, response.status_code, 'Server did accepted the data')
         self.assertEqual(0, Medic.objects.count(), 'Medic object was created in the database')
 
@@ -64,6 +64,6 @@ class MedicClientSideTests(TestCase):
             'cedula': '-2',
             'ssa': '-1',
         }
-        response = self.client.post(reverse('pdv:medics'), medic_data)
+        response = self.client.post(reverse('pdv:CREATE_MEDIC'), medic_data)
         self.assertNotEqual(200, response.status_code, 'Server did accepted the data')
         self.assertEqual(0, Medic.objects.count(), 'Medic object was created in the database')
