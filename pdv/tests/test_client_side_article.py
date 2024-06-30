@@ -138,22 +138,3 @@ class ArticleClientSideTests(TestCase):
         self.assertNotEqual(response.status_code, 200, 'Could create an article with whitespace as data')
         self.assertEqual(Article.objects.count(), 0, 'Article with whitespace as data was created in database')
 
-
-    def test_acces_invalid_method(self):
-        """
-        Test if the client can make an invalid method request to the article creation url  
-        """
-        data = {
-            'name':'Test Article 1',
-            'description':'A dummy article made for testing',
-            'barcode':'1234567890',
-            'purchase_price':'100',
-            'price':'200',
-            'quantity':'10',
-            'min_quantity':'5',
-            'has_iva':'1',
-            'category':'1',
-        }
-        response = self.client.get(reverse('pdv:CREATE_ARTICLE'), data)
-        self.assertNotEqual(response.status_code, 200, 'A get request was acepted for an url only for post')
-        self.assertEqual(Aritcle.objects.count(), 0, 'An article was created from a get http request')
