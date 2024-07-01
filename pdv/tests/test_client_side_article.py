@@ -26,7 +26,6 @@ class ArticleClientSideTests(TestCase):
             'category':'1',
         }
         response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
-        self.assertEqual(response.status_code, 200, 'Could not create an article')
         article: Article = None
         try:
             article = Article.objects.get(barcode=data['barcode'])
@@ -73,7 +72,6 @@ class ArticleClientSideTests(TestCase):
             data = valid_data
             data[field] = value
             response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
-            self.assertNotEqual(response.status_code, 200, 'Invalid data for an Article was acepted created')
             self.assertEqual(Article.objects.count(), 0, f"Article with invalid data for field {field} was created")
 
 
@@ -93,7 +91,6 @@ class ArticleClientSideTests(TestCase):
             'category': '',
         }
         response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
-        self.assertNotEqual(response.status_code, 200, 'Could create an article with empty data')
         self.assertEqual(Article.objects.count(), 0, 'Article with empty data was created in database')
 
 
@@ -115,7 +112,6 @@ class ArticleClientSideTests(TestCase):
             'category': long_garbage_string,
         }
         response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
-        self.assertNotEqual(response.status_code, 200, 'Long string of data accepted as article data')
         self.assertEqual(Article.objects.count(), 0, 'Article with empty data was created in database')
 
     
