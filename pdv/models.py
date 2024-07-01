@@ -1,5 +1,6 @@
 from django.db import models
 from django.shortcuts import reverse
+from .validators import make_non_whitespace_validator
 
 
 # Create your models here.
@@ -12,7 +13,11 @@ class Category(models.Model):
 
 
 class Article(models.Model):
-    name = models.CharField(verbose_name='Nombre del articulo', max_length=256, unique=True, null=False)
+    name = models.CharField(verbose_name='Nombre del articulo', max_length=256, unique=True, null=False,
+        validators=[
+            make_non_whitespace_validator('El nombre del articulo no puede ser solamente espacios', 'whitespace')
+        ]
+    )
     description = models.TextField(verbose_name='Descripcion', null=True, blank=True)
     barcode = models.CharField(verbose_name='Codigo de barras', max_length=48, unique=True)
     price = models.DecimalField(verbose_name='Precio de venta', max_digits=8, decimal_places=2, null=False)
