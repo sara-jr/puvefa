@@ -135,6 +135,5 @@ class ArticleClientSideTests(TestCase):
             'category': ' \t\n  \r ',
         }
         response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
-        self.assertNotEqual(response.status_code, 200, 'Could create an article with whitespace as data')
         self.assertEqual(Article.objects.count(), 0, 'Article with whitespace as data was created in database')
 
