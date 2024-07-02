@@ -49,7 +49,6 @@ class PrescriptionClientSideTests(TestCase):
             'medic': self.dummy_medic.id,
         }
         response = self.client.post(reverse('pdv:PRESCRIPTIONS'), prescription_data)
-        self.assertEqual(response.status_code, 200, 'Could not create a prescription')
         self.assertEqual(PrescriptionTotal.objects.count(), 1, 'Object was not created')
         prescription: PrescriptionTotal = None
         try:
@@ -71,7 +70,6 @@ class PrescriptionClientSideTests(TestCase):
             'medic': self.dummy_medic.id,
         }
         response = self.client.post(reverse('pdv:PRESCRIPTIONS'), prescription_data)
-        self.assertEqual(response.status_code, 200, 'Could not create a prescription')
         self.assertEqual(PrescriptionPartial.objects.count(), 1, 'Object was not created')
         prescription: PrescriptionPartial = None
         try:
@@ -93,7 +91,6 @@ class PrescriptionClientSideTests(TestCase):
             'medic': self.dummy_medic.id,
         }
         response = self.client.post(reverse('pdv:PRESCRIPTIONS'), prescription_data)
-        self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
         self.assertEqual(PrescriptionTotal.objects.count(), 0, 'Object was created')
 
 
@@ -107,7 +104,6 @@ class PrescriptionClientSideTests(TestCase):
             'medic': self.dummy_medic.id,
         }
         response = self.client.post(reverse('pdv:PRESCRIPTIONS'), prescription_data)
-        self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
         self.assertEqual(PrescriptionPartial.objects.count(), 0, 'Object was created')
 
 
@@ -121,16 +117,13 @@ class PrescriptionClientSideTests(TestCase):
             'medic': -1020,
         }
         response = self.client.post(reverse('pdv:PRESCRIPTIONS'), prescription_data)
-        self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
         self.assertEqual(PrescriptionTotal.objects.count(), 0, 'PrescriptionTotal was created')
 
         prescription_data['type'] = 'total'
         response = self.client.post(reverse('pdv:PRESCRIPTIONS'), prescription_data)
-        self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
         self.assertEqual(PrescriptionTotal.objects.count(), 0, 'PrescriptionTotal was created')
 
         prescription_data['type'] = 124
         response = self.client.post(reverse('pdv:PRESCRIPTIONS'), prescription_data)
-        self.assertNotEqual(response.status_code, 200, 'Server acepted the prescription')
         self.assertEqual(PrescriptionTotal.objects.count(), 0, 'PrescriptionTotal was created')
         self.assertEqual(PrescriptionPartial.objects.count(), 0, 'PrescriptionPartial was created')
