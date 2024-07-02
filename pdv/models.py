@@ -1,6 +1,6 @@
 from django.db import models
 from django.shortcuts import reverse
-from .validators import make_non_whitespace_validator
+from .validators import make_non_whitespace_validator, make_name_validator
 
 
 # Create your models here.
@@ -59,9 +59,21 @@ class SingleSale(models.Model):
 
 
 class Medic(models.Model):
-    name = models.CharField(verbose_name='Nombre', max_length=256, null=False)
-    sur_name_a = models.CharField(verbose_name='Apellido Paterno', max_length=256, null=False)
-    sur_name_b = models.CharField(verbose_name='Apellido Materno', max_length=256, null=True)
+    name = models.CharField(verbose_name='Nombre', max_length=256, null=False,
+        validators=[
+            make_name_validator('Nombre invalido', 'invalid')        
+        ]
+    )
+    sur_name_a = models.CharField(verbose_name='Apellido Paterno', max_length=256, null=False,
+        validators=[
+            make_name_validator('Nombre invalido', 'invalid')        
+        ]
+    )
+    sur_name_b = models.CharField(verbose_name='Apellido Materno', max_length=256, null=True,
+        validators=[
+            make_name_validator('Nombre invalido', 'invalid')        
+        ]
+    )
     address = models.TextField(verbose_name='Direccion', null=False)
     cedula = models.IntegerField(verbose_name='Cedula Profesional', null=False, unique=True)
     ssa = models.IntegerField(verbose_name='Registro de Salubridad', null=False, unique=True)
