@@ -351,6 +351,7 @@ def make_prescription(request):
         return HttpResponseRedirect(request.path_info)
     prescription = PrescriptionTotal() if request.POST['type'] == 'total' else PrescriptionPartial()
     prescription.sale = sale
+    prescription.date = sale.date
     prescription.medic = medic
     prescription.save()
     messages.info(request, 'Receta creada')

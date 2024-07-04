@@ -77,7 +77,7 @@ class PrescriptionClientSideTests(TestCase):
         except ObjectDoesNotExist:
             self.fail('Could not create a PrescriptionTotal object in the database')
         self.assertEqual(prescription.sale, self.dummy_controlled_sale, 'Sales do not match')
-        self.assertEqual(prescription.date, self.dummy_controlled_sale.date, 'Dates do not match')
+        self.assertEqual(prescription.date, self.dummy_controlled_sale.date.date(), 'Dates do not match')
         self.assertEqual(prescription.medic, self.dummy_medic, 'Medics do not match')
 
 
