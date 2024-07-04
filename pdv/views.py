@@ -13,6 +13,7 @@ from .models import *
 from decimal import localcontext, Decimal
 from .forms import ArticleForm, MedicForm
 from .reports import *
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import FormView, DeleteView, CreateView, UpdateView
 from django.views.generic import TemplateView, ListView
@@ -341,16 +342,26 @@ def medics(request):
     return render(request, 'pdv/sell.html', context)
 
 
+def make_prescription(request):
+    try:
+        sale = Sale.objects.get(pk=request.POST['sale'])
+        medic = Medic.objects.get(pk=request.POST['medic'])
+    except ObjectDoesNotExist:
+        messages.error(request, 'Error al registrar la receta, medico o venta invalida')
+        return HttpResponseRedirect(request.path_info)
+    prescription = PrescriptionTotal() if request.POST['type'] == 'total' else PrescriptionPartial()
+    prescription.sale = sale
+    prescription.medic = medic
+    prescription.save()
+    messages.info(request, 'Receta creada')
+    return HttpResponseRedirect(request.path_info)
+    
+
 def prescriptions(request):
     context = {}
     
     if request.method == 'POST':
-        prescription = PrescriptionTotal() if request.POST['type'] == 'total' else PrescriptionPartial()
-        prescription.sale = Sale.objects.get(pk=request.POST['sale'])
-        prescription.medic = Medic.objects.get(pk=request.POST['medic'])
-        prescription.save()
-        context['message'] = 'Receta creada'
-        return HttpResponseRedirect(request.path_info)
+        return make_prescription(request)
         
     # Ids de las ventas registradas en recetas
     sales_in_prescriptions = PrescriptionTotal.objects.only('sale') \
