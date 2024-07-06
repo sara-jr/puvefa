@@ -1,5 +1,5 @@
 import decimal
-from datetime import date
+from datetime import date, datetime
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
@@ -32,10 +32,16 @@ class PrescriptionClientSideTests(TestCase):
             has_iva=False,
             category=self.dummy_controlled_category,
         )
-        self.dummy_controlled_sale = Sale.objects.create(date=date.today(), amount_payed=self.dummy_controlled_article.price)
+        self.dummy_controlled_sale = Sale.objects.create(
+            date=datetime(2024, 7, 30),
+            amount_payed=self.dummy_controlled_article.price
+        )
         self.dummy_controlled_single_sale = SingleSale.objects.create(quantity=1, article=self.dummy_controlled_article, sale=self.dummy_controlled_sale)
         self.dummy_medic = Medic.objects.create(name='Dummy', sur_name_a='Dummy', sur_name_b='Dummy', address='#123 Calle falsa', cedula='1234567890', ssa='1234567890')
-        self.dummy_sale = Sale.objects.create(date=date.today(), amount_payed=self.dummy_article.price)
+        self.dummy_sale = Sale.objects.create(
+            date=datetime(2024, 7, 30),
+            amount_payed=self.dummy_article.price
+        )
         self.dummy_single_sale = SingleSale.objects.create(quantity=1, article=self.dummy_article, sale=self.dummy_sale)
 
 
