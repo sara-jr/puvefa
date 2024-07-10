@@ -10,7 +10,7 @@ from django.db.models import Q, F, Sum
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core import serializers
 from .models import *
-from decimal import localcontext, Decimal
+from decimal import localcontext, Decimal, InvalidOperation
 from .forms import ArticleForm, MedicForm
 from .reports import *
 from django.contrib import messages
@@ -149,7 +149,12 @@ def active_search(request):
 @require_POST
 def make_sale(request):
     print_recipt = request.POST['print'] == '1'
-    sale = Sale.objects.create(amount_payed=Decimal(request.POST['payed']))
+    try:
+        payed = Decimal(request.POST['payed'])
+    except InvalidOperation:
+        messages.error(request, 'Cantidad a pagar invalida')
+        return redirect('pdv:MAKESALE')
+    sale = Sale.objects.create(amount_payed=payed)
     sale.save()
     sale_data = request.POST.dict()
     del sale_data['csrfmiddlewaretoken']
