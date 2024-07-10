@@ -1,6 +1,7 @@
 from django.db import models
 from django.shortcuts import reverse
 from .validators import make_non_whitespace_validator, make_name_validator
+from . import settings
 
 
 # Create your models here.
@@ -46,6 +47,11 @@ class Sale(models.Model):
 
     def __str__(self):
         return f'{self.id} {self.date.isoformat(timespec="minutes", sep=" ")}'
+
+
+    def has_controlled_articles(self):
+        articles = SingleSale.objects.filter(sale=self.pk).only('article').values_list('article', flat=True)
+        return Article.objects.filter(category__name=settings.CONTROLLED_CATEGORY_NAME, id__in=articles).exists()
 
 
 class SingleSale(models.Model):

@@ -1,0 +1,1 @@
+CONTROLLED_CATEGORY_NAME = 'Antibiotico'

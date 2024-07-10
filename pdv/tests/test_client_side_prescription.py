@@ -3,13 +3,18 @@ from datetime import date, datetime
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
+from .. import settings
 from pdv.models import *
 
 
 class PrescriptionClientSideTests(TestCase):
     def setUp(self):
         self.dummy_category = Category.objects.create(name='Dummy', description='Dummy category used for testing')
-        self.dummy_controlled_category = Category.objects.create(name='Dummy Controlled', description='Dummy category used for testing controlled products')
+        self.dummy_controlled_category = Category.objects.create(
+            name=settings.CONTROLLED_CATEGORY_NAME,
+            description='Dummy category used for testing controlled products'
+        )
         self.dummy_article = Article.objects.create(
             name='Dummy article',
             description='Dummy article used for tests',
@@ -83,7 +88,7 @@ class PrescriptionClientSideTests(TestCase):
         except ObjectDoesNotExist:
             self.fail('Could not create a PrescriptionTotal object in the database')
         self.assertEqual(prescription.sale, self.dummy_controlled_sale, 'Sales do not match')
-        self.assertEqual(prescription.date, self.dummy_controlled_sale.date.date(), 'Dates do not match')
+        self.assertEqual(prescription.date, timezone.localdate(self.dummy_controlled_sale.date), 'Dates do not match')
         self.assertEqual(prescription.medic, self.dummy_medic, 'Medics do not match')
 
 

@@ -349,6 +349,9 @@ def make_prescription(request):
     except ObjectDoesNotExist:
         messages.error(request, 'Error al registrar la receta, medico o venta invalida')
         return HttpResponseRedirect(request.path_info)
+    if not sale.has_controlled_articles():
+        messages.error(request, 'Error al registrar la receta, la venta no requiere registrarse')
+        return HttpResponseRedirect(request.path_info)
     prescription = PrescriptionTotal() if request.POST['type'] == 'total' else PrescriptionPartial()
     prescription.sale = sale
     prescription.date = sale.date
