@@ -154,13 +154,19 @@ def make_sale(request):
     except InvalidOperation:
         messages.error(request, 'Cantidad a pagar invalida')
         return redirect('pdv:MAKESALE')
+
+    if payed <= 0:
+        messages.error(request, 'Cantidad a pagar invalida, debe ser un valor mayor a cero')
+        return redirect('pdv:MAKESALE')
+    
     sale = Sale.objects.create(amount_payed=payed)
     sale.save()
     sale_data = request.POST.dict()
-    del sale_data['csrfmiddlewaretoken']
-    del sale_data['print']
-    del sale_data['payed']
-    with localcontext(prec=12):
+    sale_data.pop('csrfmiddlewaretoken', None)
+    sale_data.pop('print', None)
+    sale_data.pop('payed', None)
+    with localcontext() as ctx:
+        ctx.prec=12
         for id, quantity in sale_data.items():
             article = Article.objects.get(id=id)
             ssale = SingleSale.objects.create(article=article, sale=sale, quantity=int(quantity))
