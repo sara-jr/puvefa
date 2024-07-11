@@ -133,7 +133,7 @@ class SaleClientSideTests(TestCase):
           Test if the client can make a sale with not enough payment  
         """
         total = self.article_a.price + self.article_b.price
-        sale_data = {'print':0, 'payment':0.0}
+        sale_data = {'print':0, 'payed':0.0}
         quantity_a_before_sale = self.article_a.quantity
         quantity_b_before_sale = self.article_b.quantity        
         sale_data[self.article_a.id] = 1
@@ -150,7 +150,7 @@ class SaleClientSideTests(TestCase):
           Test if the client can make a sale with negative payment  
         """
         total = self.article_a.price + self.article_b.price
-        sale_data = {'print':0, 'payment':-1_000.0}
+        sale_data = {'print':0, 'payed':-1_000.0}
         quantity_a_before_sale = self.article_a.quantity
         quantity_b_before_sale = self.article_b.quantity        
         sale_data[self.article_a.id] = 1
