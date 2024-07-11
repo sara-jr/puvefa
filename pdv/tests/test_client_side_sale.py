@@ -107,8 +107,8 @@ class SaleClientSideTests(TestCase):
         sale_data[self.article_a.id] = 1
         sale_data[self.article_c.id] = 1
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
-        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
-        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
+        self.assertEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
+        self.assertEqual(SingleSale.objects.count(), 0, 'A single sale object was created in the database')        
         self.assertEqual(self.article_c.quantity, 0, 'The quantity for a soldout article was changed after a sale')
 
     
@@ -123,8 +123,8 @@ class SaleClientSideTests(TestCase):
         sale_data[self.article_a.id] = 2
         quantity_before_sell = self.article_a.quantity
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
-        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')
-        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')
+        self.assertEqual(Sale.objects.count(), 0, 'A sale object was created in the database')
+        self.assertEqual(SingleSale.objects.count(), 0, 'A single sale object was created in the database')
         self.assertEqual(self.article_a.quantity, quantity_before_sell, 'The quantity for the oversell article was changed after a sale')
 
 
@@ -139,8 +139,8 @@ class SaleClientSideTests(TestCase):
         sale_data[self.article_a.id] = 1
         sale_data[self.article_b.id] = 1
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
-        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
-        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
+        self.assertEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
+        self.assertEqual(SingleSale.objects.count(), 0, 'A single sale object was created in the database')        
         self.assertEqual(self.article_a.quantity, quantity_a_before_sale, 'Article quantity was altered')
         self.assertEqual(self.article_b.quantity, quantity_b_before_sale, 'Article quantity was altered')
 
@@ -156,8 +156,8 @@ class SaleClientSideTests(TestCase):
         sale_data[self.article_a.id] = 1
         sale_data[self.article_b.id] = 1
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
-        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
-        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
+        self.assertEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
+        self.assertEqual(SingleSale.objects.count(), 0, 'A single sale object was created in the database')        
         self.assertEqual(self.article_a.quantity, quantity_a_before_sale, 'Article quantity was altered')
         self.assertEqual(self.article_b.quantity, quantity_b_before_sale, 'Article quantity was altered')
 
@@ -186,8 +186,8 @@ class SaleClientSideTests(TestCase):
         sale_data[self.article_a.id] = 1
         sale_data[self.article_b.id] = 1
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
-        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
-        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
+        self.assertEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
+        self.assertEqual(SingleSale.objects.count(), 0, 'A single sale object was created in the database')        
 
 
     def test_quantity_overflow_sale(self):
@@ -201,7 +201,7 @@ class SaleClientSideTests(TestCase):
         sale_data[self.article_a.id] = 999_999_999_999_999_999_999_999_999
         sale_data[self.article_b.id] = 1
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
-        self.assertNotEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
-        self.assertNotEqual(SaleSingleSale.objects.count(), 0, 'A single sale object was created in the database')        
+        self.assertEqual(Sale.objects.count(), 0, 'A sale object was created in the database')        
+        self.assertEqual(SingleSale.objects.count(), 0, 'A single sale object was created in the database')        
         self.assertEqual(quantity_a_before_sale, self.article_a.quantity, 'Article quantity was altered')
         self.assertEqual(quantity_b_before_sale, self.article_b.quantity, 'Article quantity was altered')
