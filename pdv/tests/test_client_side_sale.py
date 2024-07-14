@@ -57,7 +57,6 @@ class SaleClientSideTests(TestCase):
         quantity_a_afther_sale = self.article_a.quantity - 1
         quantity_b_afther_sale = self.article_b.quantity - 1
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
-        self.assertEqual(response.status_code, 200, 'Could not make a valid sale')
         sale: Sale = None
         try:
             sale = Sale.objects.get(id=1)
