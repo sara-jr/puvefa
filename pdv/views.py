@@ -1,5 +1,6 @@
 from functools import reduce
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST, require_GET        
+from django.db import transaction
 import math
 import datetime
 from django.urls import reverse, reverse_lazy
@@ -147,6 +148,7 @@ def active_search(request):
 
 
 @require_POST
+@transaction.atomic
 def make_sale(request):
     print_recipt = request.POST['print'] == '1'
     try:
@@ -160,7 +162,7 @@ def make_sale(request):
         return redirect('pdv:MAKESALE')
     
     sale = Sale.objects.create(amount_payed=payed)
-    sale.save()
+    models_to_save: List[models.Model] = []
     sale_data = request.POST.dict()
     sale_data.pop('csrfmiddlewaretoken', None)
     sale_data.pop('print', None)
@@ -171,9 +173,17 @@ def make_sale(request):
             article = Article.objects.get(id=id)
             ssale = SingleSale.objects.create(article=article, sale=sale, quantity=int(quantity))
             sale.amount_payed += article.price * Decimal(ssale.quantity)
-            article.quantity = article.quantity - ssale.quantity
-            article.save()
-            ssale.save()
+            remaining_quantity = article.quantity - ssale.quantity
+            if remaining_quantity < 0:
+                transaction.set_rollback(True)
+                messages.error(request, f"Cantidad invalida para el articulo {article.name}, disponible: {article.quantity}, vendido: {ssale.quantity}")
+                return redirect('pdv:MAKESALE')
+            article.quantity = remaining_quantity
+            models_to_save.append(article)
+            models_to_save.append(ssale)
+    sale.save()
+    for model in models_to_save:
+        model.save()
     if print_recipt:
         return redirect('pdv:RECIPT', sale.id)
     return redirect('pdv:MAKESALE')
