@@ -162,6 +162,7 @@ def make_sale(request):
         return redirect('pdv:MAKESALE')
     
     sale = Sale.objects.create(amount_payed=payed)
+    sale.amount_payed = payed
     models_to_save: List[models.Model] = []
     sale_data = request.POST.dict()
     sale_data.pop('csrfmiddlewaretoken', None)
@@ -172,7 +173,6 @@ def make_sale(request):
         for id, quantity in sale_data.items():
             article = Article.objects.get(id=id)
             ssale = SingleSale.objects.create(article=article, sale=sale, quantity=int(quantity))
-            sale.amount_payed += article.price * Decimal(ssale.quantity)
             remaining_quantity = article.quantity - ssale.quantity
             if remaining_quantity < 0:
                 transaction.set_rollback(True)

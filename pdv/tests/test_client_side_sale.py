@@ -3,6 +3,7 @@ from datetime import date
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from pdv.models import *
 
 
@@ -48,12 +49,13 @@ class SaleClientSideTests(TestCase):
         """
           Test if client can make a valid sale  
         """
-        sale_data = {'print':0}
-        payment = 100
+        sale_data = {
+            'payed': 100,
+            'print': 0
+        }
         total = self.article_a.price + self.article_b.price
         sale_data[self.article_a.id] = 1
         sale_data[self.article_b.id] = 1
-        sale_data['payed'] = payment
         quantity_a_afther_sale = self.article_a.quantity - 1
         quantity_b_afther_sale = self.article_b.quantity - 1
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
@@ -62,7 +64,7 @@ class SaleClientSideTests(TestCase):
             sale = Sale.objects.get(id=1)
         except ObjectDoesNotExist:
             self.fail('Could not create a sale in the database')
-        self.assertEqual(sale.amount_payed, payment, 'Payment in the database does not match payment sent by the client')        
+        self.assertEqual(sale.amount_payed, sale_data['payed'], 'Payment in the database does not match payment sent by the client')        
 
         sale_article_a: SingleSale = None
         sale_article_b: SingleSale = None
@@ -75,8 +77,10 @@ class SaleClientSideTests(TestCase):
 
         self.assertEqual(sale_article_a.quantity*sale_article_a.article.price \
             + sale_article_b.quantity*sale_article_b.article.price , total, 'Sale totals do not match')
-        self.assertGreaterEqual(payment, total, 'A sale with not enough payment was created')
-        self.assertEqual(sale.date, date.today(), 'Date does not match')
+        self.assertGreaterEqual(sale_data['payed'], total, 'A sale with not enough payment was created')
+        self.assertEqual(timezone.localdate(sale.date), date.today(), 'Date does not match')
+        self.article_a.refresh_from_db(None, ['quantity'])
+        self.article_b.refresh_from_db(None, ['quantity'])
         self.assertEqual(self.article_a.quantity, quantity_a_afther_sale, 'Article quantity did not change afther sale')
         self.assertEqual(self.article_b.quantity, quantity_b_afther_sale, 'Article quantity did not change afther sale')
 
