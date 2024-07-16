@@ -156,15 +156,15 @@ def make_sale(request):
         payed = Decimal(request.POST['payed'])
     except InvalidOperation:
         messages.error(request, 'Cantidad a pagar invalida')
-        return redirect('pdv:MAKESALE')
+        return redirect('pdv:CREATE_SALE')
 
     if payed <= 0:
         messages.error(request, 'Cantidad a pagar invalida, debe ser un valor mayor a cero')
-        return redirect('pdv:MAKESALE')
+        return redirect('pdv:CREATE_SALE')
 
     if payed >= MAX_PAYMENT_PER_SALE:
         messages.error(request, f"Cantidad a pagar invalida, la cantidad a pagar es demasiado grande, maximo {MAX_PAYMENT_PER_SALE}")
-        return redirect('pdv:MAKESALE')
+        return redirect('pdv:CREATE_SALE')
     
     sale = Sale.objects.create(amount_payed=payed)
     models_to_save: List[models.Model] = []
@@ -174,7 +174,7 @@ def make_sale(request):
     sale_data.pop('payed', None)
     if len(sale_data) == 0:
         messages.error(request, 'Ningun articulo en la venta')
-        return redirect('pdv:MAKESALE')
+        return redirect('pdv:CREATE_SALE')
     with localcontext() as ctx:
         ctx.prec=12
         for id, quantity in sale_data.items():
@@ -183,7 +183,7 @@ def make_sale(request):
             if remaining_quantity < 0:
                 transaction.set_rollback(True)
                 messages.error(request, f"Cantidad invalida para el articulo {article.name}, disponible: {article.quantity}, vendido: {quantity}")
-                return redirect('pdv:MAKESALE')
+                return redirect('pdv:CREATE_SALE')
             ssale = SingleSale.objects.create(article=article, sale=sale, quantity=int(quantity))
             article.quantity = remaining_quantity
             models_to_save.append(article)
@@ -191,13 +191,13 @@ def make_sale(request):
     if len(models_to_save) == 0:
         transaction.set_rollback(True)
         messages.error(request, 'Ningun articulo en la venta')
-        return redirect('pdv:MAKESALE')
+        return redirect('pdv:CREATE_SALE')
     sale.save()
     for model in models_to_save:
         model.save()
     if print_recipt:
         return redirect('pdv:RECIPT', sale.id)
-    return redirect('pdv:MAKESALE')
+    return redirect('pdv:CREATE_SALE')
 
 
 def article(request):
