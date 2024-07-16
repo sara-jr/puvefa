@@ -168,6 +168,9 @@ def make_sale(request):
     sale_data.pop('csrfmiddlewaretoken', None)
     sale_data.pop('print', None)
     sale_data.pop('payed', None)
+    if len(sale_data) == 0:
+        messages.error(request, 'Ningun articulo en la venta')
+        return redirect('pdv:MAKESALE')
     with localcontext() as ctx:
         ctx.prec=12
         for id, quantity in sale_data.items():
@@ -181,6 +184,10 @@ def make_sale(request):
             article.quantity = remaining_quantity
             models_to_save.append(article)
             models_to_save.append(ssale)
+    if len(models_to_save) == 0:
+        transaction.set_rollback(True)
+        messages.error(request, 'Ningun articulo en la venta')
+        return redirect('pdv:MAKESALE')
     sale.save()
     for model in models_to_save:
         model.save()

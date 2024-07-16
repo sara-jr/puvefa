@@ -92,11 +92,19 @@ class SaleClientSideTests(TestCase):
         sale_data = {
             'print': 0,
             'payed': 0,
-        }        
+        }
+        quantity_a = self.article_a.quantity
+        quantity_b = self.article_b.quantity
+        quantity_c = self.article_c.quantity
         response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
-
-        self.assertEqual(Article.objects.count(), 0, 'A sale was created from empty data')
+        self.assertEqual(Sale.objects.count(), 0, 'A sale was created in the database')
         self.assertEqual(SingleSale.objects.count(), 0, 'A single sale was created from empty data')
+        self.article_a.refresh_from_db(None, ['quantity'])
+        self.article_b.refresh_from_db(None, ['quantity'])
+        self.article_c.refresh_from_db(None, ['quantity'])
+        self.assertEqual(quantity_a, self.article_a.quantity, 'Article quantity was altered from an empty sale')
+        self.assertEqual(quantity_b, self.article_b.quantity, 'Article quantity was altered from an empty sale')
+        self.assertEqual(quantity_c, self.article_c.quantity, 'Article quantity was altered from an empty sale')
 
     
     def test_make_soldout_sale(self):
