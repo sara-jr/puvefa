@@ -22,6 +22,7 @@ from django.views.generic import TemplateView, ListView
 
 ITEMS_PER_PAGE = 5
 MAX_SEARCH_RESULTS = 8
+MAX_PAYMENT_PER_SALE = 500_000
 
 
 class ArticleCreateView(SuccessMessageMixin, CreateView):
@@ -160,9 +161,12 @@ def make_sale(request):
     if payed <= 0:
         messages.error(request, 'Cantidad a pagar invalida, debe ser un valor mayor a cero')
         return redirect('pdv:MAKESALE')
+
+    if payed >= MAX_PAYMENT_PER_SALE:
+        messages.error(request, f"Cantidad a pagar invalida, la cantidad a pagar es demasiado grande, maximo {MAX_PAYMENT_PER_SALE}")
+        return redirect('pdv:MAKESALE')
     
     sale = Sale.objects.create(amount_payed=payed)
-    sale.amount_payed = payed
     models_to_save: List[models.Model] = []
     sale_data = request.POST.dict()
     sale_data.pop('csrfmiddlewaretoken', None)
@@ -175,12 +179,12 @@ def make_sale(request):
         ctx.prec=12
         for id, quantity in sale_data.items():
             article = Article.objects.get(id=id)
-            ssale = SingleSale.objects.create(article=article, sale=sale, quantity=int(quantity))
-            remaining_quantity = article.quantity - ssale.quantity
+            remaining_quantity = article.quantity - int(quantity)
             if remaining_quantity < 0:
                 transaction.set_rollback(True)
-                messages.error(request, f"Cantidad invalida para el articulo {article.name}, disponible: {article.quantity}, vendido: {ssale.quantity}")
+                messages.error(request, f"Cantidad invalida para el articulo {article.name}, disponible: {article.quantity}, vendido: {quantity}")
                 return redirect('pdv:MAKESALE')
+            ssale = SingleSale.objects.create(article=article, sale=sale, quantity=int(quantity))
             article.quantity = remaining_quantity
             models_to_save.append(article)
             models_to_save.append(ssale)
