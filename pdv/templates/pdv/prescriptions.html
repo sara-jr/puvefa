@@ -24,7 +24,7 @@
                             <br />
                             <div class='max row'>
                                 {% include "pdv/search-bar-input.html" with selector="#medic-id-input" parameter="name" placeholder="Medico" urlname="pdv:SEARCH_MEDIC" %}
-                                <form action='{% url "pdv:prescriptions" %}' method='POST'>
+                                <form action='{% url "pdv:PRESCRIPTIONS" %}' method='POST'>
                                     {% csrf_token %}
                                     <input type='hidden' name='sale' value='{{ id }}' required />
                                     <input type='hidden' name='medic' value='' id='medic-id-input' required />

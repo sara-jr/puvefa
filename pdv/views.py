@@ -262,7 +262,8 @@ def list_medical_consultation(request, index):
 
 
 def compute_sale_stats(items_sold):
-    with localcontext(prec=12):
+    with localcontext() as ctx:
+        ctx.prec = 12
         count = reduce(
             lambda value, ssale: value + ssale.quantity,
             items_sold, 0)
