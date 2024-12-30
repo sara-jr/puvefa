@@ -1,5 +1,11 @@
 from functools import reduce
 from django.views.decorators.http import require_POST, require_GET        
+import tempfile
+import cups
+import os
+from xhtml2pdf import pisa
+from django.template import loader
+from django.apps import apps
 from django.db import transaction
 import math
 import datetime
@@ -23,6 +29,8 @@ from django.views.generic import TemplateView, ListView
 ITEMS_PER_PAGE = 5
 MAX_SEARCH_RESULTS = 8
 MAX_PAYMENT_PER_SALE = 500_000
+PRINTER_NAME = 'epson-termal'
+RECIPT_DIR = '/tmp/'
 
 
 class ArticleCreateView(SuccessMessageMixin, CreateView):
@@ -518,7 +526,13 @@ def make_recipt(request, id):
         header='HEADER',
         address='Addres #1234 TEAST'
     )
-    return render(request, 'pdv/recipt.html', context)
+    cups_conn = cups.Connection()
+    html = loader.render_to_string('pdv/recipt.html', context, request)
+    print(RECIPT_DIR)
+    with open(os.path.join(RECIPT_DIR, f'r_{sale.date}.pdf'), 'wb') as pdf_file:
+        status = pisa.CreatePDF(html, dest=pdf_file)
+    cups_conn.printFile(PRINTER_NAME, pdf_file.name, 'recipt_print', {})
+    return redirect('pdv:CREATE_SALE')
 
 
 def sale_details(request, id):

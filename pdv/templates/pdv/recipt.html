@@ -5,97 +5,95 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Receta</title>
         <style>
-          h1, h2, h3, h4, h5{
-            text-align: center;  
+          *{
+            font-size: 20pt;
+            font-family: monospace;
           }
-
-          h1{ font-size: 16pt; }
-          h2{ font-size: 14pt; }
-          h3{ font-size: 12pt; }
-                  
-          main{
-            max-width: 80mm;
-            display: flex;
-            flex-direction: column;
-            padding: 8pt;
-            font-size: 8pt;
-          }
-
-          tr{
-            display: grid;
-            grid-template-columns: 9fr 1fr 3fr 3fr;
-          }
-          
-          tbody tr{
-            border-bottom: solid black 2px;
-          }
-
-          tfoot tr{
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            font-size: 12pt;
-          }
-
-          tbody, tfoot{
-            margin-bottom: 24pt;
-          }
-
-          table{
-            display: flex;
-            flex-direction: column;
-          }
-
-
+          h1, h2, h3, h4, h5, h6{
+            font-weight: bolder;
+            text-align: center;
+            margin-top: 4mm;
+            margin-bottom: 4mm;
+          }          
+          h1 { font-size: 48pt; }
+          h2 { font-size: 40pt; }
+          h3 { font-size: 32pt; }
+          h4 { font-size: 24pt; }
           th{
-            text-align: center;
+            font-weight: bold;
+            text-align: left;
+          }          
+          tr{
+            border-bottom-style: solid;
+            border-bottom-width: 1pt;
+            border-bottom-color: black;
+            margin-top: 1mm;
+            margin-bottom: 1mm;
           }
-
-          .txtcenter{
-            text-align: center;
+          td{
+            padding-top: 2mm;
+            padding-bottom: 1mm;
+            text-align: left;
+          }
+          tfoot td{
+            font-weight: bold;
+          }
+          table{
+            -pdf-keep-in-frame-mode: shrink;
+            margin-left: 0;
+            margin-right: 0;
+            left: 0;
+          }
+          .namecol{
+            width: 80mm;
+          }
+          .countcol{
+            width: 20mm;
+          }
+          .pricecol{
+            width: 48mm;
           }
         </style>
     </head>
     <body>
-    <main>
-      <header>
-        <h1>{{header}}</h1>
-        <h2>{{address}}</h2>
-        <h3>{{date|date:"d F Y H:i:s a"}}</h3>
-      </header>
+      <h1>{{header}}</h1>
+      <h2>{{address}}</h2>
+      <h3>{{date|date:"d F Y"}}</h3>
+      <h3>{{date|date:"H:i:s a"}}</h3>
+      <br/>
       <table>
           <thead>
+            <tr>
+              <th class="namecol">Nombre</th>
+              <th class="countcol">Cnt.</th>
+              <th class="pricecol">P.Unitario</th>
+              <th class="pricecol">Precio</th>
+            </tr>
           </thead>
           <tbody>
-            <tr>
-              <th>Descripción</th>
-              <th>C.</th>
-              <th>Precio</th>
-              <th>Subtotal</th>
-            </tr>
             {% for article in articles %}
               <tr>
-                <td>{{article.description}}</td>
-                <td class="txtcenter">{{article.quantity}}</td>
-                <td>${{article.price}}</td>
-                <td>${{article.sub}}</td>
+                <td class="namecol">{{article.description}}</td>
+                <td class="countcol">{{article.quantity}}</td>
+                <td class="pricecol">${{article.price}}</td>
+                <td class="pricecol">${{article.sub}}</td>
               </tr>
             {% endfor %}
           </tbody>
           <tfoot>
             <tr>
-              <td>TOTAL</td>
+              <td colspan="3">TOTAL</td>
               <td>${{total}}</td>
             </tr>
             <tr>
-              <td>PAGADO</td>
+              <td colspan="3">PAGADO</td>
               <td>${{payed}}</td>
             </tr>
             <tr>
-              <td>CAMBIO</td>
+              <td colspan="3">CAMBIO</td>
               <td>${{change}}</td>
             </tr>
           </tfoot>
       </table>
-    </main>
     </body>
 </html>
