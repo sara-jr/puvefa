@@ -3,6 +3,7 @@ from django.views.decorators.http import require_POST, require_GET
 import tempfile
 import cups
 import os
+import json
 from xhtml2pdf import pisa
 from django.template import loader
 from django.apps import apps
@@ -528,7 +529,6 @@ def make_recipt(request, id):
     )
     cups_conn = cups.Connection()
     html = loader.render_to_string('pdv/recipt.html', context, request)
-    print(RECIPT_DIR)
     with open(os.path.join(RECIPT_DIR, f'r_{sale.date}.pdf'), 'wb') as pdf_file:
         status = pisa.CreatePDF(html, dest=pdf_file)
     cups_conn.printFile(PRINTER_NAME, pdf_file.name, 'recipt_print', {})
@@ -548,3 +548,32 @@ def sale_details(request, id):
     context['change'] =  context['payed'] - context['total']
     return render(request, 'pdv/sale-details.html', context)
     
+
+@require_POST
+@transaction.atomic
+def add_articles_from_json(request):
+    data = json.load(request.FILES['json_file'])['data']
+    count = 0
+    duplicated = []
+    for article_data in data:
+        new_category_name = article_data['Categoría']    
+        new_name = article_data['Nombre Artículo']
+        new_quantity = article_data['Cantidad en Stock']
+        new_purchase_price = article_data['Precio de Compra'].strip('$')
+        new_sale_price = article_data['Precio de Venta'].strip('$')
+        new_barcode = article_data['UPC/EAN/ISBN']
+        is_duplicated = Article.objects.filter(name=new_name).exists()
+        if not is_duplicated:
+            category, was_created = Category.objects.get_or_create(name=new_category_name, defaults={'description':''})
+            new_article = Article(name=new_name, barcode=new_barcode, price=new_sale_price, purchase_price=new_purchase_price, quantity=new_quantity, category=category)
+            new_article.save()
+            count += 1
+        else:
+            duplicated.append(new_name)
+    messages.success(request, f'Articulos guardados: {count}. {len(duplicated)} Duplicados: {", ".join(duplicated)}')
+    return redirect('pdv:ARTICLE_IMPORT_PAGE')
+
+
+@require_GET
+def article_json_import(request):
+    return render(request, 'pdv/article-import-form.html')

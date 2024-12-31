@@ -13,6 +13,8 @@ urlpatterns = [
     path('article/<int:pk>/', views.ArticleUpdateView.as_view(), name='ARTICLE'),
     path('show/articles/', views.ArticleListView.as_view(), name='SHOW_ARTICLES'),
     path('search/article/', views.ArticleSearchView.as_view(), name='ARTICLE_SEARCH'),
+    path('import/json/articles/', views.article_json_import, name='ARTICLE_IMPORT_PAGE'),
+    path('article/jsonfile/', views.add_articles_from_json, name='ARTICLE_IMPORT_JSON_FILE'),
     # REPORTS
     path('sales/named/<str:name>/', views.sales_report_named, name='REPORT_NAMED'),
     path('sales/ranged/', views.sales_report, name='REPORT_QUERY'),
