@@ -215,6 +215,8 @@ def make_sale(request):
                 return redirect('pdv:CREATE_SALE')
             ssale = SingleSale.objects.create(article=article, sale=sale, quantity=int(quantity))
             article.quantity = remaining_quantity
+            controlled_inout = ControlledArticleInOut(article=article, delta=-int(quantity))
+            models_to_save.append(controlled_inout)
             models_to_save.append(article)
             models_to_save.append(ssale)
     if len(models_to_save) == 0:
@@ -599,8 +601,3 @@ def add_articles_from_json(request):
 def article_json_import(request):
     return render(request, 'pdv/article-import-form.html')
 
-
-@require_GET
-def controlled_inout_page(request):
-    data
-    return render(request, 'pdv/controlled-inout-list.html')

@@ -5,11 +5,13 @@ from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from pdv.models import *
+from pdv.settings import CONTROLLED_CATEGORY_NAME
 
 
 class SaleClientSideTests(TestCase):
     def setUp(self):
         self.dummy_category = Category.objects.create(name='Dummy', description='Dummy category used for testing')
+        self.dummy_controlled_category = Category.objects.create(name=CONTROLLED_CATEGORY_NAME, description='Dummy category used for testing')
         self.article_a = Article.objects.create(
             name='Dummy article A',
             description='Dummy article used for tests',
@@ -43,7 +45,18 @@ class SaleClientSideTests(TestCase):
             has_iva=False,
             category=self.dummy_category,
         )
-        
+        self.controlled_article = Article.objects.create(
+            name='Dummy controlled article',
+            description='Dummy article used for tests',
+            barcode='0000000000004',
+            price=decimal.Decimal(30),
+            purchase_price=decimal.Decimal(20),
+            quantity=1,
+            min_quantity=1,
+            has_iva=False,
+            category=self.dummy_controlled_category,
+        )
+
 
     def test_make_sale(self):
         """
@@ -216,3 +229,15 @@ class SaleClientSideTests(TestCase):
         self.assertEqual(SingleSale.objects.count(), 0, 'A single sale object was created in the database')        
         self.assertEqual(quantity_a_before_sale, self.article_a.quantity, 'Article quantity was altered')
         self.assertEqual(quantity_b_before_sale, self.article_b.quantity, 'Article quantity was altered')
+
+
+    def test_controlled_inout_sale(self):
+        sale_data = {'print':0, 'payed':30}
+        sale_data[self.controlled_article.id] = 1
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
+        self.assertEqual(Sale.objects.count(), 1, 'A sale object was not created')
+        self.assertEqual(ControlledArticleInOut.objects.count(), 1, 'The controlled article out was not created')
+        controlled_inout = ControlledArticleInOut.objects.all()[0]
+        self.assertEqual(controlled_inout.delta, -1, 'The inout delta was not registered correctly')
+        self.controlled_article.refresh_from_db()
+        self.assertEqual(self.controlled_article.quantity, 0, 'The sale did not decrement the article quantity')

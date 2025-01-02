@@ -36,6 +36,10 @@ class Article(models.Model):
         return reverse('pdv:ARTICLE', kwargs={'pk':self.pk})
 
 
+    def is_controlled(self):
+        return self.category.name == settings.CONTROLLED_CATEGORY_NAME
+
+
 class ExpiryDate(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, primary_key=True)
     date = models.DateField(null=False)
