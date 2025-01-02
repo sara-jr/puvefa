@@ -569,8 +569,9 @@ def add_articles_from_json(request):
             new_article.save()
             count += 1
         else:
-            duplicated.append(new_name)
-    messages.success(request, f'Articulos guardados: {count}. {len(duplicated)} Duplicados: {", ".join(duplicated)}')
+            duplicated.append(f'"{new_name}"')
+    messages.success(request, f'Articulos guardados: {count}')
+    messages.info(request, f'Articulos duplicados: {len(duplicated)}\n{", ".join(duplicated)}')
     return redirect('pdv:ARTICLE_IMPORT_PAGE')
 
 
