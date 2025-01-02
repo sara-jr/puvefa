@@ -25,13 +25,9 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import FormView, DeleteView, CreateView, UpdateView
 from django.views.generic import TemplateView, ListView
+from .settings import ITEMS_PER_PAGE, MAX_SEARCH_RESULTS, MAX_PAYMENT_PER_SALE, PRINTER_NAME, RECIPT_DIR
 
 
-ITEMS_PER_PAGE = 5
-MAX_SEARCH_RESULTS = 8
-MAX_PAYMENT_PER_SALE = 500_000
-PRINTER_NAME = 'epson-termal'
-RECIPT_DIR = '/tmp/'
 
 
 class ArticleCreateView(SuccessMessageMixin, CreateView):
