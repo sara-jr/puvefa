@@ -29,7 +29,6 @@ from .settings import ITEMS_PER_PAGE, MAX_SEARCH_RESULTS, MAX_PAYMENT_PER_SALE, 
 
 
 
-
 class ArticleCreateView(SuccessMessageMixin, CreateView):
     model = Article
     form_class = ArticleForm
@@ -77,6 +76,31 @@ class ArticleListView(ListView):
         context['search_query'] = search_params.urlencode()
         return context
     
+
+class ControlledInOutListView(ListView):
+    paginate_by = ITEMS_PER_PAGE
+    model = ControlledArticleInOut
+    template_name = 'pdv/controlled-inout-list.html'
+
+
+    def get_queryset(self):
+        params = self.request.GET
+        queryset = self.model.objects.all()
+        if 'name' in params:
+            queryset = queryset.filter(article__name__icontains=params['name'])
+        if 'date' in params:
+            queryset = queryset.filter(date=params['date'])
+        return queryset
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        search_params = QueryDict(self.request.GET.urlencode(), mutable=True)
+        if 'page' in search_params:
+            search_params.pop('page')
+        context['search_query'] = search_params.urlencode()
+        return context
+
 
 class MedicCreateView(SuccessMessageMixin, CreateView):
     model = Medic
@@ -574,3 +598,9 @@ def add_articles_from_json(request):
 @require_GET
 def article_json_import(request):
     return render(request, 'pdv/article-import-form.html')
+
+
+@require_GET
+def controlled_inout_page(request):
+    data
+    return render(request, 'pdv/controlled-inout-list.html')
