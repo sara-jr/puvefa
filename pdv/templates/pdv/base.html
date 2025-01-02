@@ -24,12 +24,28 @@
 
 <body class='dark' x-data>
   {% if messages %}
-  <dialog class="top" open>
+  <dialog open class="top" x-data="{msg_count: {{messages|length}} }" x-init="$watch('msg_count', val => val == 0? $el.close(): 0)">
+    <div class="row">
+      <h1>Mensajes</h1>
+    </div>
     {% for msg in messages %}
-    <a class="row wave">
-      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}<i>error</i>{% endif %}
-      <div>{{ msg }}</div>
-    </a>
+    <article x-data="{dissmissed:false}" x-show="!dissmissed"
+        {% if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+          class="error-container"
+        {% elif msg.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+          class="secondary-container"
+        {% elif msg.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+          class="primary-container"
+        {% elif msg.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+          class="tertiary-container"
+        {% else %} 
+          class=""
+        {% endif %}>
+      <p class="large-text">{{ msg|truncatewords:96 }}</p> 
+      <nav>
+        <button class="transparent circle" @click="msg_count -= 1; dissmissed = true;"><i>close</i></button>
+      </nav>
+    </article>
     {% endfor %}
   </dialog>
   {% endif %}
