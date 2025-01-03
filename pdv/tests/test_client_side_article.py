@@ -9,6 +9,7 @@ from pdv.models import *
 class ArticleClientSideTests(TestCase):
     def setUp(self):
         self.dummy_category = Category.objects.create(name='Dummy', description='Dummy category used for testing')
+        
 
     def test_create_article(self):
         """
