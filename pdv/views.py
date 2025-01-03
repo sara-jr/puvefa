@@ -11,7 +11,7 @@ from django.db import transaction
 import math
 import datetime
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, QueryDict
 from django.db.models import Q, F, Sum
@@ -600,4 +600,46 @@ def add_articles_from_json(request):
 @require_GET
 def article_json_import(request):
     return render(request, 'pdv/article-import-form.html')
+
+
+@require_GET
+def alter_article_quantity_page(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+    context = {'id':pk, 'quantity':article.quantity, 'name':article.name}
+    return render(request, 'pdv/alter-quantity-article-form.html', context)
+
+
+@require_POST
+def alter_article_quantity(request):
+    article_id = request.POST['id']
+    add = 'add' in request.POST
+    delta = int(request.POST['delta'])
+    next = request.POST.get('next', '/')
+    article = None
+
+    if delta == 0:
+        messages.error(request, 'No se especifico una cantidad a modificar')
+        return HttpResponseRedirect(next)
+    
+    if not add:
+        delta = -delta
+
+    try:
+        article = Article.objects.get(pk=article_id)
+    except ObjectDoesNotExist:
+        return HttpResponseRedirect(next)
+
+    new_quantity = article.quantity 
+    new_quantity += delta
+    if new_quantity < 0:
+        messages.error(request, f'No se puede reducir la cantidad en {-delta} porque solo hay {article.quantity} en existencia')
+        return HttpResponseRedirect(next)
+
+    article.quantity = new_quantity
+    if article.is_controlled():
+        inout = ControlledArticleInOut(article=article, delta=delta)
+        inout.save()
+    article.save()
+    messages.success(request, f'Articulo modificado con exito')
+    return HttpResponseRedirect(next)
 

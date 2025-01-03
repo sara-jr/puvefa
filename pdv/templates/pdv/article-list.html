@@ -43,10 +43,14 @@
                 <tr {% if article.quantity <= article.min_quantity %}class='tertiary-container'{% endif %}>
                     <td class="min">
                         <nav class='s1 no-space'>
-                            <a href='{% url "pdv:ARTICLE" article.id %}' class='left-round small'>
+                            <a href='{% url "pdv:ARTICLE" article.id %}' class='small small-margin'>
                                 <div class='tooltip'>Editar el artículo</div>
                                 <i>edit</i>
                             </a>
+                            <a href="{% url 'pdv:ARTICLE_ALTER_QUANTITY_PAGE' article.id %}" class="small small-margin">
+                                <div class='tooltip'>Entradas y salidas</div>
+                                <i>difference</i>
+                            </button>
                         </nav>
                     </td>
                     <td>{{ article.barcode }}</td>

@@ -1,0 +1,33 @@
+{% extends 'pdv/base.html' %}
+{% block content %}
+<article class="max" x-data="{add:true}">
+    <h5>Alta y baja de articulos</h5>
+    <h6>{{ name }}</h6>
+    <h6>En existencia {{ quantity }}</h6>
+    <form action="{% url 'pdv:ARTICLE_ALTER_QUANTITY' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{id}}" readonly>
+        <input type="hidden" name="next" value="{{request.path}}" readonly>
+        <div class="row small field fill round">
+            <input type="number" name="delta" required>
+        </div>
+        <div class="row field">
+          <nav>
+            <div class="max">
+              <h6 x-text="add? 'Alta' : 'Baja'"></h6>
+            </div>
+            <label class="checkbox icon">
+              <input type="checkbox" name="add" @input="add=$el.checked" checked>
+              <span>
+                <i>remove</i>
+                <i>add</i>
+              </span>
+            </label>
+          </nav>
+        </div>
+        <button type="submit small">
+        Aceptar
+        </button>
+    </form>
+</article>
+{% endblock %}
