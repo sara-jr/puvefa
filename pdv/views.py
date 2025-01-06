@@ -584,7 +584,7 @@ def add_articles_from_json(request):
         new_purchase_price = article_data['Precio de Compra'].strip('$')
         new_sale_price = article_data['Precio de Venta'].strip('$')
         new_barcode = article_data['UPC/EAN/ISBN']
-        is_duplicated = Article.objects.filter(name=new_name).exists()
+        is_duplicated = Article.objects.filter(Q(name=new_name)|Q(barcode=new_barcode)).exists()
         if not is_duplicated:
             category, was_created = Category.objects.get_or_create(name=new_category_name, defaults={'description':''})
             new_article = Article(name=new_name, barcode=new_barcode, price=new_sale_price, purchase_price=new_purchase_price, quantity=new_quantity, category=category)
