@@ -14,7 +14,8 @@ class ArticleForm(forms.ModelForm):
             "quantity",
             "min_quantity",
             "has_iva",
-            "category"
+            "category",
+            "controlled",
         ]
 
 class MedicForm(forms.ModelForm):

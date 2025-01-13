@@ -32,6 +32,7 @@
     <div class='field label prefix border round'>
       <i>percent</i>
       <input type='number' step='1' min='1' value='20' x-model='percent' />
+      <label>Porcentaje de ganancia</label>
     </div>
   </div>
 </div>
@@ -43,10 +44,16 @@
 <div class='field label border round'>
   {{ form.min_quantity }} {{ form.min_quantity.label_tag }}
 </div>
-<label class='checkbox'>
-  {{ form.has_iva }} 
-  <span><h4>Incluye IVA</h4></span>
-</label>
+  <div class="row small-margin:w">
+    <label class='checkbox'>
+      {{ form.has_iva }} 
+      <span class="large-text">Incluye IVA</span>
+    </label>
+    <label class='checkbox'>
+      {{ form.controlled }} 
+      <span class="large-text">Antibiotico</span>
+    </label>
+  </div>
 <div class='field label border round'>
   {{ form.category }} {{ form.category.label_tag }}
 </div>
