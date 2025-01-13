@@ -436,7 +436,7 @@ def prescriptions(request):
         .union(PrescriptionPartial.objects.only('sale')) \
         .values('sale')
     # Ventas individuales de antibioticos
-    antibiotics_sold = SingleSale.objects.filter(article__category__name='Antibiotico')
+    antibiotics_sold = SingleSale.objects.filter(article__controlled=True)
     # Ventas individuales de antibioticos sin registrar en recetas
     unregistered_sales = antibiotics_sold.exclude(sale__in=sales_in_prescriptions)
 

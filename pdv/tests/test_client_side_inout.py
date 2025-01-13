@@ -10,9 +10,8 @@ from pdv.settings import CONTROLLED_CATEGORY_NAME
 class ArticleInOutClientSideTests(TestCase):
     def setUp(self):
         self.dummy_category = Category.objects.create(name='Dummy', description='Dummy category used for testing')
-        self.dummy_controlled_category = Category.objects.create(name=CONTROLLED_CATEGORY_NAME, description='Dummy category used for testing')
         self.dummy_article = Article.objects.create(name='Dummy article', barcode='zbc123456789', purchase_price=10, price=20, quantity=10, min_quantity=1, has_iva=True, category=self.dummy_category)
-        self.dummy_controlled_article = Article.objects.create(name='Dummy controlled article', barcode='ybc123456789', purchase_price=10, price=20, quantity=10, min_quantity=1, has_iva=True, category=self.dummy_controlled_category)
+        self.dummy_controlled_article = Article.objects.create(name='Dummy controlled article', barcode='ybc123456789', purchase_price=10, price=20, quantity=10, min_quantity=1, has_iva=True, category=self.dummy_category, controlled=True)
         
 
     def test_article_inout(self):

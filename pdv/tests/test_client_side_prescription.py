@@ -11,10 +11,6 @@ from pdv.models import *
 class PrescriptionClientSideTests(TestCase):
     def setUp(self):
         self.dummy_category = Category.objects.create(name='Dummy', description='Dummy category used for testing')
-        self.dummy_controlled_category = Category.objects.create(
-            name=settings.CONTROLLED_CATEGORY_NAME,
-            description='Dummy category used for testing controlled products'
-        )
         self.dummy_article = Article.objects.create(
             name='Dummy article',
             description='Dummy article used for tests',
@@ -35,7 +31,8 @@ class PrescriptionClientSideTests(TestCase):
             quantity=5,
             min_quantity=1,
             has_iva=False,
-            category=self.dummy_controlled_category,
+            category=self.dummy_category,
+            controlled=True
         )
         self.dummy_controlled_sale = Sale.objects.create(
             date=datetime(2024, 7, 30),
