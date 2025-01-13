@@ -27,6 +27,7 @@ class Article(models.Model):
     min_quantity = models.IntegerField(verbose_name='Cantidad minima', default=1, null=False)
     has_iva = models.BooleanField(verbose_name='Incluye IVA', default=False, null=False)
     category = models.ForeignKey(Category, verbose_name='Categoria', on_delete=models.RESTRICT)
+    controlled = models.BooleanField(verbose_name='Antibiotico', default=False, null=False)
 
     def __str__(self):
         return self.name
@@ -37,7 +38,7 @@ class Article(models.Model):
 
 
     def is_controlled(self):
-        return self.category.name == settings.CONTROLLED_CATEGORY_NAME
+        return self.controlled
 
 
 class ExpiryDate(models.Model):
@@ -55,7 +56,7 @@ class Sale(models.Model):
 
     def has_controlled_articles(self):
         articles = SingleSale.objects.filter(sale=self.pk).only('article').values_list('article', flat=True)
-        return Article.objects.filter(category__name=settings.CONTROLLED_CATEGORY_NAME, id__in=articles).exists()
+        return Article.objects.filter(controlled=True, id__in=articles).exists()
 
 
 class SingleSale(models.Model):
