@@ -31,7 +31,7 @@ urlpatterns = [
     path('search/medics/', views.MedicSearchView.as_view(), name='SEARCH_MEDIC'),
     # PRESCRIPTIONS
     path('prescriptions/', views.prescriptions, name='PRESCRIPTIONS'),
-    path('prescriptions/all/', views.prescription_list, name='PRESCRIPTIONS_LIST'),
+    path('prescriptions/all/', views.PrescriptionListView.as_view(), name='PRESCRIPTIONS_LIST'),
     path('recipt/<int:id>/', views.make_recipt, name='RECIPT'),
     # MEDICAL CHECKS
     path('check/', views.check, name='CHECK'),

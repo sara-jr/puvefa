@@ -14,7 +14,8 @@ from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms.models import model_to_dict
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, QueryDict
-from django.db.models import Q, F, Sum
+from django.db.models import Q, F, Sum, Value
+from django.db.models.functions import Concat
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.core import serializers
 from .models import *
@@ -100,6 +101,29 @@ class ControlledInOutListView(ListView):
             search_params.pop('page')
         context['search_query'] = search_params.urlencode()
         return context
+
+
+class PrescriptionListView(ListView):
+    template_name = 'pdv/prescription-list.html'
+    paginate_by = ITEMS_PER_PAGE
+
+    
+    def get_queryset(self):
+        total = PrescriptionTotal.objects.all().defer('medic').annotate(
+            total=Value(True), 
+            number=F('id'),
+            full_name=Concat(F('medic__name'), F('medic__sur_name_a'), F('medic__sur_name_b')), 
+            cedula=F('medic__cedula'), 
+            address=F('medic__address'),
+            ssa=F('medic__ssa'))
+        partial = PrescriptionTotal.objects.all().defer('medic').annotate(
+            total=Value(False), 
+            number=Value(''),
+            full_name=Concat(F('medic__name'), F('medic__sur_name_a'), F('medic__sur_name_b')), 
+            cedula=F('medic__cedula'), 
+            address=F('medic__address'),
+            ssa=F('medic__ssa'))
+        return total.union(partial).order_by('-date')
 
 
 class MedicCreateView(SuccessMessageMixin, CreateView):
@@ -484,39 +508,6 @@ def index_slicing(index, count, perpage):
         return slice(lower_bound, count)
 
     return slice(lower_bound, upper_bound)
-
-
-def prescription_list(request):
-    context = {'index': 1}
-    idx = 1
-    values = [
-        'id', 
-        'date',
-        'medic__cedula',
-        'medic__ssa',
-        'medic__address',
-        'medic__name',
-        'medic__sur_name_a',
-        'medic__sur_name_b'
-    ]
-    data = []
-    slicing = index_slicing(idx, PrescriptionPartial.objects.count() + PrescriptionTotal.objects.count(), ITEMS_PER_PAGE)
-    partial = PrescriptionPartial.objects.values_list(*values)[slicing]
-    total = PrescriptionTotal.objects.values_list(*values)[slicing]
-
-    partial = list(map(
-        lambda t: {'id':t[0], 'number':'-'*4, 'date':t[1], 'cedula':t[2], 'ssa':t[3], 'address':t[4], 'medic':f'{t[5]} {t[6]} {t[7]}', 'total':False},
-        partial
-    ))
-    total = list(map(
-        lambda t: {'id':t[0], 'number':t[0], 'date':t[1], 'cedula':t[2], 'ssa':t[3], 'address':t[4], 'medic':f'{t[5]} {t[6]} {t[7]}', 'total':True},
-        total
-    ))
-
-    partial.extend(total)
-    partial.sort(key=lambda t: t['date'], reverse=True)
-    context['prescriptions'] = partial
-    return render(request, 'pdv/prescription-list.html', context)
 
 
 def medic_search(request):
