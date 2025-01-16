@@ -59,102 +59,114 @@
     }
 
   </script>
-  <article class="large-padding secondary-container">
-    <div class="row center-align">
-      <h1>Total de la venta</h1>
-    </div>
-    <div class="row center-align">
-      <h2>$<span x-text="total"></span></h2>
-    </div>
-    <br>
-
-    <!-- BUSQUEDA DE ARTICULOS -->
-    <search class="row margin middle-align" x-data="{searchtext:''}">
+  <article class="secondary-container">
+    <header class="fixed">
+    </header>
+      <form id="sale_form" method='post' action='{% url "pdv:MAKESALE" %}'>
+        <input x-ref="print_input" type="hidden" name="print" value="0" />
+        <div id='articles-section' class="large-height scroll">
+          <table class="stripes">
+            <thead class="fixed">
+              <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>En existencia</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for='article in articles'>
+                <!-- POR CADA ARTICULO EN LA LISTA DE ARTICULOS -->
+                <tr class="slideRight">
+                  <td class="large-text" x-text='article.name'></td>
+                  <td class="large-text" x-text='`$ ${article.price}`'></td>
+                  <td>
+                    <div class='s1 field min small border round border'>
+                      <input type='number' :name='article.id' min='1' step='1' :max='article.max'
+                        x-model.number='article.quantity' @focus="$el.select()" />
+                    </div>
+                  </td>
+                  <td x-text="article.max"></td>
+                  <td>
+                    <nav class="middle-align">
+                      <button type='button' class='border round' @click='decrementQuantity(articles, article.id)'>
+                        <i>remove</i>
+                      </button>
+                      <button type='button' class='border round' @click='incrementQuantity(articles, article.id)'>
+                        <i>add</i>
+                      </button>
+                      <button type="button" class='border tertiary round' @click='deleteArticle(articles, article.id)'>
+                        <i>close</i>
+                      </button>
+                    </nav>
+                  </td>
+                </tr>
+                <!-- FIN -->
+              </template>
+            </tbody>
+          </table>
+      </div>
+      <dialog class="modal grid padding" x-ref="sale_dialog">
+        <h4 class="s5">Pagado</h4>
+        <div class='s7 small prefix fill field border no-margin'>
+          <i>attach_money</i>
+          <input name='payed' type='number' placeholder='Cantidad pagada' x-model='payed' :min='total' step='0.01'
+            required />
+        </div>
+        <h4 class="s5">Total</h4>
+        <h4 class="s7" x-text='`$ ${total}`'></h4>
+        <h4 class="s5">Cambio</h4>
+        <h4 class='s7' x-text='enough? `$ ${change}`: " Pago insuficiente"'></h4>
+        <nav class="s12 no-space">
+          <button type="submit" @click.capture='$refs.print_input.value = 1; $refs.sale_dialog.open = true'
+            class="vertical border left-round primary extra"><i>print</i> Cobrar e imprimir ticket </button>
+          <button type="submit" @click.capture='$refs.print_input.value = 0; $refs.sale_dialog.open = true'
+            class="vertical border no-round primary extra"><i>payments</i> Cobrar </button>
+          <button type="button" @click='$refs.sale_dialog.open = false'
+            class="vertical border right-round tertiary extra"><i>close</i> Cancelar </button>
+        </nav>
+      </dialog>
       {% csrf_token %}
-      <div class="max suffix prefix no-margin field fill primary large border">
-        <i class="front">barcode_reader</i>
-        <input id="searchinput" type="search" id="barname-search" maxlength="128" name="barname" autocomplete="off"
-          x-model="searchtext" hx-get="{% url 'pdv:ARTICLE_SEARCH' %}"
-          hx-trigger="input changed delay:400ms, keydown[key=='Enter']" hx-include="previous input" hx-validate
-          hx-target="#searchResults" hx-indicator="#spinner" autofocus tabindex="0"
-          placeholder="Escribir nombre para buscar ó codigo de barras para agregar directamente" minlength="3" required
-          @focus="$el.select()" @keydown.enter.self="htmx.trigger('#searchinput')" />
-        <progress id="spinner" class="htmx-indicator circle"></progress>
-      </div>
-      <div id="searchResults">
-      </div>
-    </search>
-    <!-- /BUSQUEDA DE ARTICULOS -->
-
-    <form id="sale_form" method='post' action='{% url "pdv:MAKESALE" %}'>
-      <input x-ref="print_input" type="hidden" name="print" value="0" />
-      <div id='articles-section' class="padding margin">
-        <template x-for='article in articles'>
-          <!-- POR CADA ARTICULO EN LA LISTA DE ARTICULOS -->
-          <div class='grid middle-align slideRight'>
-            <span class='s4'>
-              <p class="large-text" x-text='article.name'></p>
-            </span>
-            <span class='s2'>
-              <p class="large-text" x-text='`$ ${article.price}`'></p>
-            </span>
-            <div class='s2 field min small border round border'>
-              <input type='number' :name='article.id' min='1' step='1' :max='article.max'
-                x-model.number='article.quantity' @focus="$el.select()" />
-              <span class="helper" x-text="`Cantidad maxima ${article.max}`"></span>
-            </div>
-            <nav class="s4 middle-align">
-              <button type='button' class='border round' @click='decrementQuantity(articles, article.id)'>
-                <i>remove</i>
-              </button>
-              <button type='button' class='border round' @click='incrementQuantity(articles, article.id)'>
-                <i>add</i>
-              </button>
-              <button type="button" class='border tertiary round' @click='deleteArticle(articles, article.id)'>
-                <i>close</i>
-              </button>
-            </nav>
-          </div>
-          <!-- FIN -->
-        </template>
-        <dialog class="modal grid padding" x-ref="sale_dialog">
-          <h4 class="s5">Pagado</h4>
-          <div class='s7 small prefix fill field border no-margin'>
-            <i>attach_money</i>
-            <input name='payed' type='number' placeholder='Cantidad pagada' x-model='payed' :min='total' step='0.01'
-              required />
-          </div>
-          <h4 class="s5">Total</h4>
-          <h4 class="s7" x-text='`$ ${total}`'></h4>
-          <h4 class="s5">Cambio</h4>
-          <h4 class='s7' x-text='enough? `$ ${change}`: " Pago insuficiente"'></h4>
-          <nav class="s12 no-space">
-            <button type="submit" @click.capture='$refs.print_input.value = 1; $refs.sale_dialog.open = true'
-              class="vertical border left-round primary extra"><i>print</i> Cobrar e imprimir ticket </button>
-            <button type="submit" @click.capture='$refs.print_input.value = 0; $refs.sale_dialog.open = true'
-              class="vertical border no-round primary extra"><i>payments</i> Cobrar </button>
-            <button type="button" @click='$refs.sale_dialog.open = false'
-              class="vertical border right-round tertiary extra"><i>close</i> Cancelar </button>
-          </nav>
-        </dialog>
-      </div>
-
-      <div class='large-space'></div> <!-- BRUH -->
-      {% csrf_token %}
-      <nav class='no-space'>
-        <button type="button" @click.capture='$refs.sale_dialog.open = true'
-          class='vertical border left-round primary extra' disabled x-init="$watch('count', (c)=>$el.disabled=c<=0)">
-          <i>paid</i>
-          <span>Cobrar</span>
-        </button>
-        <button type="button" @click='$refs.confirm_dialog.open = true'
-          class='vertical border right-round tertiary extra' disabled x-init="$watch('count', (c)=>$el.disabled=c<=0)">
-          <i>delete</i>
-          <span>Cancelar venta</span>
-        </button>
-      </nav>
     </form>
-    <dialog class='modal' x-ref='confirm_dialog'>
+    <footer class="fixed">
+      <div class="row left-align">
+        <nav class='no-space'>
+          <button type="button" @click.capture='$refs.sale_dialog.open = true'
+            class='vertical border left-round primary extra' disabled x-init="$watch('count', (c)=>$el.disabled=c<=0)">
+            <i>paid</i>
+            <span>Cobrar</span>
+          </button>
+          <button type="button" @click='$refs.confirm_dialog.open = true'
+            class='vertical border right-round tertiary extra' disabled x-init="$watch('count', (c)=>$el.disabled=c<=0)">
+            <i>delete</i>
+            <span>Cancelar venta</span>
+          </button>
+        </nav>
+        <div class="padding">
+          <h3 class="center-align">Total</h3>
+          <h4 x-text="Intl.NumberFormat('es-MX', {style: 'currency', currency:'MXN'}).format(total)"></h4>
+        </div>
+        <!-- BUSQUEDA DE ARTICULOS -->
+        <search class="row margin middle-align max" x-data="{searchtext:''}">
+          {% csrf_token %}
+          <div class="max suffix prefix no-margin field fill primary large border">
+            <i class="front">barcode_reader</i>
+            <input id="searchinput" type="search" id="barname-search" maxlength="128" name="barname" autocomplete="off"
+              x-model="searchtext" hx-get="{% url 'pdv:ARTICLE_SEARCH' %}"
+              hx-trigger="input changed delay:400ms, keydown[key=='Enter']" hx-include="previous input" hx-validate
+              hx-target="#searchResults" hx-indicator="#spinner" autofocus tabindex="0"
+              placeholder="Escribir nombre para buscar ó codigo de barras para agregar directamente" minlength="3" required
+              @focus="$el.select()" @keydown.enter.self="htmx.trigger('#searchinput')" />
+            <progress id="spinner" class="htmx-indicator circle"></progress>
+          </div>
+          <div id="searchResults">
+          </div>
+        </search>
+        <!-- /BUSQUEDA DE ARTICULOS -->
+      </div>
+    </footer>
+    <dialog class="max" x-ref='confirm_dialog'>
       <h5>Advertencia</h5>
       <div class='row'>¿Cancelar la venta?</div>
       <nav>

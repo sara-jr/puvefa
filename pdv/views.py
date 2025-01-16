@@ -162,7 +162,7 @@ class ArticleSearchView(ListView):
         single = Article.objects.filter(barcode__exact=barname, quantity__gt=0)
         if single.count() == 1:
             return single
-        return Article.objects.filter(Q(name__icontains=barname) | Q(barcode=barname), quantity__gt=0)
+        return Article.objects.filter(Q(name__icontains=barname) | Q(barcode=barname), quantity__gt=0)[:MAX_SEARCH_RESULTS]
     
 
 def check(request):
