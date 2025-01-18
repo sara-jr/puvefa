@@ -5,7 +5,7 @@
 {% else %}
 <dialog x-data class="active modal responsive" @click.outside="$el.classList.remove('active')">
   <div class="row center-align margin">
-    <h2>Resultados</h2>
+    <h3>Resultados</h3>
   </div>
   <article class="border no-margin">
     {% for article in object_list %}
@@ -13,7 +13,7 @@
       @keydown.enter='addOrIncrement(articles, $el.dataset);$el.blur()'
       @keydown.down='$event.preventDefault(); nxt = $el.nextElementSibling ?? $el.parentElement.firstElementChild; nxt.focus()'
       @keydown.up='$event.preventDefault(); prev = $el.previousElementSibling ?? $el.parentElement.lastElementChild; prev.focus()'
-      @keydown.esc='$el.blur()' tabindex='{{forloop.counter}}' class='row wave round small-margin large-padding'
+      @keydown.esc='$el.blur()' tabindex='{{forloop.counter}}' class='row wave round small-margin small-padding'
       data-max="{{article.quantity}}" data-name="{{article.name}}" data-id="{{article.id}}"
       data-price="{{article.price}}">
       <span class="max large-text primary-text">{{article.name}}</span>
