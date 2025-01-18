@@ -4,9 +4,10 @@
 
 {% block content %}
 <div x-data='{articles:[], payed:0, change:0, total:0, enough: false, count:0}' x-init='
-    $watch("articles", val => {total=computeTotal(val); change=payed-total; count=articles.length;});
-    $watch("payed", val => {change=payed-total; enough = change >= 0})'>
-  <script type='text/javascript'>
+    $watch("articles", val => {total=computeTotal(val); change=payed-total; count=articles.length; storeSaleInBrowser($data.articles)});
+    $watch("payed", val => {change=payed-total; enough = change >= 0});
+    $data.articles=loadSaleFromBrowser()'>
+  <script type='text/javascript'>;
     function indexFromId(articleList, id) {
       return articleList.findIndex((a) => a.id == id);
     }
@@ -68,6 +69,21 @@
       element.focus();
     }
 
+
+    function storeSaleInBrowser(sale_data){
+      json_string = JSON.stringify(sale_data);
+      localStorage.setItem('sale_data', json_string);
+    }
+
+
+    function loadSaleFromBrowser(){
+      data = localStorage.getItem('sale_data');
+      if(!data){
+        return [];
+      }
+      sale_data = JSON.parse(data);
+      return sale_data;
+    }
 
     document.addEventListener("keydown", focusSearchOnTyping);
   </script>
