@@ -72,44 +72,49 @@
     document.addEventListener("keydown", focusSearchOnTyping);
   </script>
   <article class="secondary-container">
-      <form id="sale_form" method='post' action='{% url "pdv:MAKESALE" %}'>
+      <form id="sale_form" method='post' action='{% url "pdv:MAKESALE" %}' x-ref="sale_form">
         <input x-ref="print_input" type="hidden" name="print" value="0" />
         <div id='articles-section' class="large-height scroll">
           <table class="stripes">
             <thead class="fixed">
               <tr>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>En existencia</th>
-                <th>Acciones</th>
+                <th class="center-align">Nombre</th>
+                <th class="center-align">Precio</th>
+                <th class="center-align">Cantidad</th>
+                <th class="center-align">En existencia</th>
+                <th class="center-align">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <template x-for='article in articles'>
                 <!-- POR CADA ARTICULO EN LA LISTA DE ARTICULOS -->
                 <tr class="slideRight">
-                  <td class="large-text" x-text='article.name'></td>
-                  <td class="large-text" x-text='`$ ${article.price}`'></td>
-                  <td>
-                    <div class='s1 field min small border round border'>
-                      <input type='number' :name='article.id' min='1' step='1' :max='article.max'
-                        x-model.number='article.quantity' @focus="$el.select()" />
-                    </div>
+                  <td class="center-align large-text">
+                    <span x-text="article.name"></span>
                   </td>
-                  <td x-text="article.max"></td>
-                  <td>
-                    <nav class="middle-align">
-                      <button type='button' class='border round' @click='decrementQuantity(articles, article.id)'>
-                        <i>remove</i>
-                      </button>
-                      <button type='button' class='border round' @click='incrementQuantity(articles, article.id)'>
-                        <i>add</i>
-                      </button>
-                      <button type="button" class='border tertiary round' @click='deleteArticle(articles, article.id)'>
-                        <i>close</i>
-                      </button>
-                    </nav>
+                  <td class="center-align large-text">
+                    $<span x-text="article.price"></span>
+                  </td>
+                  <td class="center-align">
+                      <input type="hidden" :name='article.id' min='1' step='1' :max='article.max' pattern="\d+"
+                        x-model.number='article.quantity' required/>
+                      <div class="no-space">
+                        <button type='button' class="transparent circle small" @click='decrementQuantity(articles, article.id)'>
+                          <i>remove</i>
+                        </button>
+                        <span class="small-width large-text margin" x-text="article.quantity">000</span>
+                        <button type="button" class="transparent circle small" @click='incrementQuantity(articles, article.id)'>
+                          <i>add</i>
+                        </button>
+                      </div>
+                  </td>
+                  <td class="center-align">
+                    <p x-text="article.max"></p>
+                  </td>
+                  <td class="center-align">
+                    <button type="button" class='border tertiary round' @click='deleteArticle(articles, article.id)'>
+                      <i>close</i>
+                    </button>
                   </td>
                 </tr>
                 <!-- FIN -->
