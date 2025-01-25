@@ -1,0 +1,8 @@
+[Unit]
+Description=Gunicorn socket for puvefa
+
+[Socket]
+ListenStream=/run/gunicorn.sock
+
+[Install]
+WantedBy=sockets.target

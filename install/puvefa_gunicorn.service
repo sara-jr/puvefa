@@ -1,0 +1,15 @@
+[Unit]
+Description=gunicorn daemon for puvefa
+Requires=puvefa_gunicorn.socket
+After=network.target
+
+[Service]
+WorkingDirectory=/srv/puvefa/src
+ExecStart=/srv/puvefa/env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.socket puvefa.wsgi:application
+Restart=on-failure
+StartLimitBurst=3
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
