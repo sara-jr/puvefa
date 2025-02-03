@@ -1,0 +1,23 @@
+{
+  "name": "puvefa-build",
+  "version": "1.0.0",
+  "description": "Paquetes para construir los assets web de puvefa",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^5.0.0",
+    "gulp-cli": "^3.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify": "^3.0.2"
+  },
+  "dependencies": {
+    "alpinejs": "^3.14.8",
+    "beercss": "^3.8.0",
+    "currency.js": "^2.0.4",
+    "htmx.org": "^2.0.4"
+  }
+}
