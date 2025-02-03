@@ -90,7 +90,7 @@
   <article class="secondary-container">
       <form id="sale_form" method='post' action='{% url "pdv:MAKESALE" %}' x-ref="sale_form">
         <input x-ref="print_input" type="hidden" name="print" value="0" />
-        <div id='articles-section' class="large-height scroll">
+        <div id='articles-section' class="large-height scroll surface">
           <table class="stripes">
             <thead class="fixed">
               <tr>
@@ -142,7 +142,7 @@
         <h4 class="s5">Pagado</h4>
         <div class='s7 small prefix fill field border no-margin'>
           <i>attach_money</i>
-          <input name='payed' type='number' placeholder='Cantidad pagada' x-model='payed' :min='total' step='0.01'
+          <input name='payed' type='number' placeholder='Cantidad pagada' x-model='payed' :min='total' step='0.01' @focus="$el.select()"
             required />
         </div>
         <h4 class="s5">Total</h4>
