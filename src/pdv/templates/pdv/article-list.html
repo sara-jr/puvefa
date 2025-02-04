@@ -50,7 +50,11 @@
                             <a href="{% url 'pdv:ARTICLE_ALTER_QUANTITY_PAGE' article.id %}" class="small small-margin">
                                 <div class='tooltip'>Entradas y salidas</div>
                                 <i>difference</i>
-                            </button>
+                            </a>
+                            <a href="{% url 'pdv:DELETE_ARTICLE' article.id %}" class="small small-margin">
+                                <div class='tooltip'>Eliminar</div>
+                                <i>delete_forever</i>
+                            </a>
                         </nav>
                     </td>
                     <td>{{ article.barcode }}</td>

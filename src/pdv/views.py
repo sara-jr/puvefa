@@ -39,7 +39,8 @@ class ArticleCreateView(SuccessMessageMixin, CreateView):
 
 class ArticleDeleteView(SuccessMessageMixin, DeleteView):
     model = Article
-    template_name = 'pdv/confirm-prompt.html'
+    template_name = 'pdv/delete-page.html'
+    success_url = reverse_lazy('pdv:SHOW_ARTICLES')
     success_message = 'Articulo eliminado con exito'
 
 

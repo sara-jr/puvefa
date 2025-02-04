@@ -1,0 +1,15 @@
+{% extends 'pdv/base.html' %}
+{% block content %}
+  <article class="round margin error">
+    <h1 class="center-align">ADVERTENCIA</h1>
+    <p class="large-text center-align">¿Desea eliminar permanentemente el siguiente objeto?</p>
+    <h2 class="center-align">{{object}}</h2>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="row center-align">
+        <button class="extra margin primary" type="submit">Sí</button>
+        <button class="extra margin primary" type="button" onclick="javascript:history.back()">Volver</a>
+      </div>
+    </form>
+  </article>
+{% endblock %}
