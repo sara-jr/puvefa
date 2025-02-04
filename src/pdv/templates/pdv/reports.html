@@ -10,14 +10,20 @@
     <a href='{% url "pdv:REPORT_NAMED" "month" %}' class='chip'>Ventas del mes</a>
     <h5>Generar reporte de ventas</h5>
     <form method='GET' action='{% url "pdv:REPORT_QUERY" %}'>
-      <div class='field label border'>
+      <div class="row">
         <label>Desde</label>
-        <input type='date' name='begin'/>
+        <div class='field border'>
+          <input type='date' name='begin'/>
+        </div>
       </div>
-      <div class='field label border'>
+      <br/>
+      <div class="row">
         <label>Hasta</label>
-        <input type='date' name='end'/>
+        <div class='field border'>
+          <input type='date' name='end'/>
+        </div>
       </div>
+      <br/>
       <button type='submit' class='primary fill'>Generar</button>
     </form>
   </article>
