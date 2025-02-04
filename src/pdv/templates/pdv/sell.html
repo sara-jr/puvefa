@@ -85,10 +85,14 @@
       return sale_data;
     }
 
+    function clearSaleFromBrowser(){
+      localStorage.removeItem('sale_data');
+    }
+    
     document.addEventListener("keydown", focusSearchOnTyping);
   </script>
   <article class="secondary-container">
-      <form id="sale_form" method='post' action='{% url "pdv:MAKESALE" %}' x-ref="sale_form">
+      <form id="sale_form" method='post' action='{% url "pdv:MAKESALE" %}' x-ref="sale_form" onsubmit="clearSaleFromBrowser()">
         <input x-ref="print_input" type="hidden" name="print" value="0" />
         <div id='articles-section' class="large-height scroll surface">
           <table class="stripes">
