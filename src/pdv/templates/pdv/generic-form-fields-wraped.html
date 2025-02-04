@@ -9,10 +9,13 @@
     <form action='{{ url }}' method='POST'>
         {% csrf_token %}
         {% for field in form %}
-          <div class='label border field'>
-            {{ field.label_tag }}
+        <div class="row">
+          {{ field.label_tag }}
+          <div class='border field'>
             {{ field }}
           </div>
+        </div>
+        <br/>
         {% endfor %}
       <button class='extra' type='submit'>Guardar</button>
     </form>
