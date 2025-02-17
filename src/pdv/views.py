@@ -338,19 +338,18 @@ def sales_report_named(request, name):
     begin = datetime.date.today()
     end = None
 
-    match name:
-        case 'today':
-            end = begin
-        case 'week':
-            begin -= datetime.timedelta(days=begin.weekday())
-            end = begin + datetime.timedelta(days=6)
-        case 'month':
-            begin = begin.replace(day=1)
-            end = begin
-            end = begin.replace(month=begin.month + 1)
-            end -= datetime.timedelta(days=1)
-        case _:
-            return HttpResponseBadRequest('Nombre de reporte invalido')
+    if name == 'today':
+        end = begin
+    elif name == 'week':
+        begin -= datetime.timedelta(days=begin.weekday())
+        end = begin + datetime.timedelta(days=6)
+    elif name ==  'month':
+        begin = begin.replace(day=1)
+        end = begin
+        end = begin.replace(month=begin.month + 1)
+        end -= datetime.timedelta(days=1)
+    else:
+        return HttpResponseBadRequest('Nombre de reporte invalido')
 
     return sales_report(request, begin.isoformat(), end.isoformat())
 
