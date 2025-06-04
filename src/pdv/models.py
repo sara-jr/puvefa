@@ -61,7 +61,7 @@ class Sale(models.Model):
 
 
 class SingleSale(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.RESTRICT)
+    article = models.ForeignKey(Article, on_delete=models.DO_NOTHING)
     sale = models.ForeignKey(Sale, on_delete=models.RESTRICT)
     quantity = models.IntegerField(default=1, null=False)
 
@@ -138,6 +138,6 @@ class SaleReport(models.Model):
 
 
 class ControlledArticleInOut(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.RESTRICT)
+    article = models.ForeignKey(Article, on_delete=models.DO_NOTHING)
     date = models.DateField(verbose_name='Fecha', auto_now_add=True, null=False)
     delta = models.IntegerField(verbose_name='Cambio en cantidad', null=False)
