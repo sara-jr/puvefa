@@ -565,26 +565,45 @@ def sale_details(request, id):
 @require_POST
 @transaction.atomic
 def add_articles_from_json(request):
-    data = json.load(request.FILES['json_file'])['data']
+    data = json.load(request.FILES['json_file'])
     count = 0
     duplicated = []
-    for article_data in data:
-        new_category_name = article_data['Categoría']    
-        new_name = article_data['Nombre Artículo']
-        new_quantity = article_data['Cantidad en Stock']
-        new_purchase_price = article_data['Precio de Compra'].strip('$')
-        new_sale_price = article_data['Precio de Venta'].strip('$')
-        new_barcode = article_data['UPC/EAN/ISBN']
-        is_duplicated = Article.objects.filter(Q(name=new_name)|Q(barcode=new_barcode)).exists()
-        if not is_duplicated:
-            category, was_created = Category.objects.get_or_create(name=new_category_name, defaults={'description':''})
-            new_article = Article(name=new_name, barcode=new_barcode, price=new_sale_price, purchase_price=new_purchase_price, quantity=new_quantity, category=category)
-            new_article.save()
-            count += 1
-        else:
-            duplicated.append(f'"{new_name}"')
+    try:
+        for article_data in data:
+            new_category_name = article_data['category']
+            new_name = article_data['name']
+            new_quantity = article_data['quantity']
+            new_purchase_price = article_data['purchase_price'].strip('$')
+            new_sale_price = article_data['price'].strip('$')
+            new_barcode = article_data['barcode']
+            new_iva = article_data['has_iva']
+            new_controlled = article_data['controlled']
+            is_duplicated = Article.objects.filter(Q(name=new_name)|Q(barcode=new_barcode)).exists()
+            if not is_duplicated:
+                category, was_created = Category.objects.get_or_create(
+                        name=new_category_name, defaults={'description':''}
+                )
+                new_article = Article(
+                        name=new_name,
+                        barcode=new_barcode,
+                        price=new_sale_price,
+                        purchase_price=new_purchase_price,
+                        quantity=new_quantity,
+                        has_iva=new_iva,
+                        controlled=new_controlled,
+                        category=category
+                )
+                new_article.save()
+                count += 1
+            else:
+                duplicated.append(f'"{new_name}"')
+    except KeyError:
+        messages.error(request, 'Formato invalido al importar articulos desde archivo')
+        return redirect('pdv:ARTICLE_IMPORT_PAGE')
+
     messages.success(request, f'Articulos guardados: {count}')
-    messages.info(request, f'Articulos duplicados: {len(duplicated)}\n{", ".join(duplicated)}')
+    if len(duplicated) > 0:
+        messages.info(request, f'Articulos duplicados: {len(duplicated)}\n{", ".join(duplicated)}')
     return redirect('pdv:ARTICLE_IMPORT_PAGE')
 
 
