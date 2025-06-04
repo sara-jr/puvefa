@@ -16,6 +16,7 @@ urlpatterns = [
     path('show/controlled/', views.ControlledInOutListView.as_view(), name='CONTROLLED_ARTICLE_INOUT'),
     path('import/json/articles/', views.article_json_import, name='ARTICLE_IMPORT_PAGE'),
     path('article/jsonfile/', views.add_articles_from_json, name='ARTICLE_IMPORT_JSON_FILE'),
+    path('article/export/json/', views.article_json_export, name='ARTICLE_EXPORT_JSON_FILE'),
     path('article/quantity/<int:pk>/', views.alter_article_quantity_page, name='ARTICLE_ALTER_QUANTITY_PAGE'),
     path('article/quantity/', views.alter_article_quantity, name='ARTICLE_ALTER_QUANTITY'),
     # REPORTS

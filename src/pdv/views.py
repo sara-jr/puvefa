@@ -594,6 +594,26 @@ def article_json_import(request):
 
 
 @require_GET
+def article_json_export(request):
+    query = Article.objects.values(
+        'name', 
+        'barcode', 
+        'price', 
+        'purchase_price', 
+        'quantity', 
+        'min_quantity', 
+        'has_iva', 
+        'controlled'
+    ).annotate(category=F('category__name'))
+    def serialize_decimal_json(obj):
+        if isinstance(obj, Decimal):
+            return str(obj)
+        raise TypeError('Unserializable JSON type')
+    json_articles = json.dumps(list(query), default=serialize_decimal_json)
+    return HttpResponse(json_articles, content_type='application/json')
+
+
+@require_GET
 def alter_article_quantity_page(request, pk):
     article = get_object_or_404(Article, pk=pk)
     context = {'id':pk, 'quantity':article.quantity, 'name':article.name}
