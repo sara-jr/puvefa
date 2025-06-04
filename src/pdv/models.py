@@ -1,5 +1,6 @@
 from django.db import models
 from django.shortcuts import reverse
+from django_softdelete.models import SoftDeleteModel
 from .validators import make_non_whitespace_validator, make_name_validator
 from . import settings
 
@@ -13,7 +14,7 @@ class Category(models.Model):
         return self.name
 
 
-class Article(models.Model):
+class Article(SoftDeleteModel):
     name = models.CharField(verbose_name='Nombre del articulo', max_length=256, unique=True, null=False,
         validators=[
             make_non_whitespace_validator('El nombre del articulo no puede ser solamente espacios', 'whitespace')
