@@ -134,3 +134,28 @@ class ArticleClientSideTests(TestCase):
         response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
         self.assertEqual(Article.objects.count(), 0, 'Article with whitespace as data was created in database')
 
+
+    def test_delete_article(self):
+        """
+        Probar si un articulo se elimina correctamente
+        """
+        data = {
+            'name':'Test Article 1',
+            'description':'A dummy article made for testing',
+            'barcode':'1234567890',
+            'purchase_price':'100',
+            'price':'200',
+            'quantity':'10',
+            'min_quantity':'5',
+            'has_iva':'1',
+            'category':'1',
+        }
+        response = self.client.post(reverse('pdv:CREATE_ARTICLE'), data)
+        article: Article = None
+        try:
+            article = Article.objects.get(barcode=data['barcode'])
+        except ObjectDoesNotExist:
+            self.fail('Article data was posted but it was not created in the database')
+
+        response = self.client.delete(reverse('pdv:DELETE_ARTICLE', kwargs={'pk': article.id}))
+        self.assertEquals(Article.objects.count(), 0, 'No se elimino el articulo de la base de datos')

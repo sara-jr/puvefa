@@ -241,3 +241,31 @@ class SaleClientSideTests(TestCase):
         self.assertEqual(controlled_inout.delta, -1, 'The inout delta was not registered correctly')
         self.controlled_article.refresh_from_db()
         self.assertEqual(self.controlled_article.quantity, 0, 'The sale did not decrement the article quantity')
+
+
+    def test_sale_deleted_article(self):
+        """
+          Probar que un articulo eliminado no propage la eliminación a los datos de compra
+        """
+        sale_data = {
+            'payed': 100,
+            'print': 0
+        }
+        total = self.article_a.price + self.article_b.price
+        article_a_id = self.article_a.id
+        sale_data[self.article_a.id] = 1
+        sale_data[self.article_b.id] = 1
+        response = self.client.post(reverse('pdv:MAKESALE'), sale_data)
+        sale: Sale = None
+        try:
+            sale = Sale.objects.get(id=1)
+        except ObjectDoesNotExist:
+            self.fail('Could not create a sale in the database')
+
+        self.article_a.delete()
+
+        try:
+            SingleSale.objects.get(article=article_a_id)
+        except ObjectDoesNotExist:
+            self.fail('Sale did not create a SingleSale object for each article sold')
+
